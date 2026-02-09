@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:ui_183/ui_183.dart';
 
 void main() {
+  UI183.init();
   runApp(const MainApp());
 }
 
@@ -9,12 +11,6 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
-    );
+    return UI183.app183();
   }
 }
