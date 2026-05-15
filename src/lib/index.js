@@ -1,1 +1,3 @@
-// place files you want to import through the `$lib` alias in this folder.
+// files here can be accessed using $lib alias
+
+export * from "./theme.svelte";

@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from "svelte";
 	import { gsap } from "gsap";
-	import { page } from '$app/state';
+	import { page } from "$app/state";
 
 	/** @type {HTMLHeadingElement} */
 	let title;
@@ -33,16 +33,16 @@
 </script>
 
 <section
-	class="flex min-h-screen flex-col items-center justify-center bg-zinc-950"
+	class="flex min-h-screen flex-col items-center justify-center bg-[var(--color-bg)]"
 >
 	<h1
 		bind:this={title}
-		class="text-7xl font-black tracking-tight text-zinc-100"
+		class="text-7xl font-black tracking-tight text-[var(--color-text)]"
 	>
 		{page.status}
 	</h1>
 
-	<p bind:this={subtitle} class="mt-4 text-xl text-zinc-400">
-		{page.error ? page.error.message : "An Unknown Error Occured!"}
+	<p bind:this={subtitle} class="mt-4 text-xl text-[var(--color-muted)]">
+		{page.error ? page.error.message : "An Unknown Error Occurred!"}
 	</p>
 </section>
