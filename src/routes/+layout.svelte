@@ -42,7 +42,7 @@
 	<section
 		class="flex min-h-screen flex-col items-center justify-center bg-[var(--color-bg)]"
 	>
-		<h1 class="text-7xl font-black tracking-tight text-[var(--color-text)]">
+		<h1 class="text-7xl font-black tracking-tight text-[var(--color-error)]">
 			{crash.error ? crash.error.name : "unknown error"}
 		</h1>
 
