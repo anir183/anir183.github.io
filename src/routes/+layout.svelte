@@ -1,6 +1,6 @@
 <script>
 	import "./layout.css";
-	import { initTheme } from "$lib/theme.svelte.js";
+	import { initTheme } from "$lib/utils/theme.svelte.js";
 	import { crash } from "$lib/utils/assert.svelte";
 	import { onMount } from "svelte";
 
@@ -13,6 +13,29 @@
 
 <svelte:head>
 	<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+	<script>
+		// NOTE: this is used to mitigate theme flicker on loads, caused by
+		//       delay before onMount() is called
+
+		const saved = localStorage.getItem("theme");
+		const prefersLight = window.matchMedia(
+			"(prefers-color-scheme: light)"
+		).matches;
+		const prefersDark = window.matchMedia(
+			"(prefers-color-scheme: dark)"
+		).matches;
+
+		const root = document.documentElement;
+		root.classList.remove("light", "dark");
+
+		if (saved === "light" || prefersLight) {
+			root.classList.add("light");
+		}
+
+		if (saved === "dark" || prefersDark) {
+			root.classList.add("dark");
+		}
+	</script>
 </svelte:head>
 
 {#if crash.occurred}

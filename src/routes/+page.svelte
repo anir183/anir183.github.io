@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from "svelte";
 	import { gsap } from "gsap";
-	import { theme, toggleTheme } from "$lib/theme.svelte.js";
+	import { theme, toggleTheme } from "$lib/utils/theme.svelte.js";
 
 	/** @type {HTMLHeadingElement} */
 	let title;

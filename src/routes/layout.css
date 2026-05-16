@@ -4,8 +4,8 @@
 
 @import "tailwindcss";
 
-/* dark mode */
-:root {
+/* light mode */
+.dark {
 	--color-bg: #09090b;
 	--color-surface: #18181b;
 
