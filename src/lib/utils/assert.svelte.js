@@ -14,8 +14,8 @@ export function assert(
 ) {
 	if (!condition) {
 		crash.occurred = true;
-		
-		if(result instanceof Error) {
+
+		if (result instanceof Error) {
 			crash.error = result;
 		} else {
 			crash.error = new Error(result);
