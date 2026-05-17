@@ -33,22 +33,22 @@
 </script>
 
 <section
-	class="flex min-h-screen flex-col items-center justify-center bg-[var(--color-bg)]"
+	class="flex min-h-screen flex-col items-center justify-center bg-bg"
 >
 	<h1
 		bind:this={title}
-		class="text-7xl font-black tracking-tight text-[var(--color-text)]"
+		class="text-7xl font-black tracking-tight text-text"
 	>
 		Hello, World!
 	</h1>
 
-	<p bind:this={subtitle} class="mt-4 text-xl text-[var(--color-muted)]">
+	<p bind:this={subtitle} class="mt-4 text-xl text-muted">
 		Coming soon!
 	</p>
 
 	<button
 		onclick={toggleTheme}
-		class="absolute top-4 right-4 rounded-lg border border-[var(--color-border)] px-4 py-2"
+		class="absolute top-4 right-4 rounded-lg border border-border px-4 py-2"
 	>
 		{theme.current}
 	</button>

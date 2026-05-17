@@ -1,42 +1,25 @@
 @import "tailwindcss";
+
 @plugin "@tailwindcss/forms";
 @plugin "@tailwindcss/typography";
 
-@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
-/* dark mode */
-.dark {
+@theme {
+	--font-unbounded: Unbounded, sans-serif;
+	--font-bebas-neue:  "Bebas Neue", sans-serif;
+	--font-ubuntu:  "Ubuntu", sans-serif;
+
 	/* core surfaces */
-	--color-bg: #171a1e;         /* default bg */
-	--color-surface: #282c34;    /* main panels */
-	--color-surface-2: #31353f;  /* hover / elevated UI */
-
-	/* text */
-	--color-text: #abb2bf;       /* fg */
-	--color-muted: #5c6370;      /* grey */
-
-	/* accents */
-	--color-accent: #eda792;     /* orange (primary) */
-	--color-accent-alt: #61afef; /* blue */
-
-	--color-success: #98c379;    /* green */
-	--color-warning: #e5c07b;    /* yellow */
-	--color-error: #e86671;      /* red */
-	--color-info: #56b6c2;       /* cyan */
-
-	/* subtle borders */
-	--color-border: #31353f;
-}
-
-/* light mode */
-.light {
 	--color-bg: #e0e0e0;
 	--color-surface: #b8b8b8;
 	--color-surface-2: #9c9c9c;
 
+	/* text */
 	--color-text: #383a42;
 	--color-muted: #818387;
 
+	/* accents */
 	--color-accent: #4078f2;
 	--color-accent-alt: #a626a4;
 
@@ -45,5 +28,34 @@
 	--color-error: #e45649;
 	--color-info: #0184bc;
 
+	/* subtle borders */
 	--color-border: #9c9c9c;
+}
+
+@layer theme {
+	:root,
+	:host {
+		@variant dark {
+			/* core surfaces */
+			--color-bg: #171a1e; /* default bg */
+			--color-surface: #282c34; /* main panels */
+			--color-surface-2: #31353f; /* hover / elevated UI */
+
+			/* text */
+			--color-text: #abb2bf; /* fg */
+			--color-muted: #5c6370; /* grey */
+
+			/* accents */
+			--color-accent: #eda792; /* orange (primary) */
+			--color-accent-alt: #61afef; /* blue */
+
+			--color-success: #98c379; /* green */
+			--color-warning: #e5c07b; /* yellow */
+			--color-error: #e86671; /* red */
+			--color-info: #56b6c2; /* cyan */
+
+			/* subtle borders */
+			--color-border: #31353f;
+		}
+	}
 }

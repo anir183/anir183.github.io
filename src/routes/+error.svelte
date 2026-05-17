@@ -33,16 +33,16 @@
 </script>
 
 <section
-	class="flex min-h-screen flex-col items-center justify-center bg-[var(--color-bg)]"
+	class="flex min-h-screen flex-col items-center justify-center bg-bg"
 >
 	<h1
 		bind:this={title}
-		class="text-7xl font-black tracking-tight text-[var(--color-text)]"
+		class="text-7xl font-black tracking-tight text-error"
 	>
 		{page.status}
 	</h1>
 
-	<p bind:this={subtitle} class="mt-4 text-xl text-[var(--color-muted)]">
+	<p bind:this={subtitle} class="mt-4 text-xl text-muted">
 		{page.error ? page.error.message : "An Unknown Error Occurred!"}
 	</p>
 </section>

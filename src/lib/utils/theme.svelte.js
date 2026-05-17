@@ -1,6 +1,6 @@
-/** @typedef {"dark" | "light"} ThemeMode */
-
 import { assert } from "$lib/utils/assert.svelte";
+
+/** @typedef {"dark" | "light"} ThemeMode */
 
 /** @type {{ DARK: ThemeMode, LIGHT: ThemeMode }} */
 export const themes = {
@@ -21,31 +21,30 @@ export function applyTheme(mode) {
 	);
 
 	const root = document.documentElement;
-	root.classList.remove(themes.LIGHT, themes.DARK);
-	root.classList.add(mode);
+	root.classList.remove(themes.DARK);
 
+	if (mode === themes.DARK) {
+		root.classList.add(themes.DARK);
+	}
 	theme.current = mode;
-	localStorage.setItem("theme", mode);
 }
 
 export function toggleTheme() {
-	applyTheme(theme.current !== themes.DARK ? themes.DARK : themes.LIGHT);
+	let mode = theme.current !== themes.DARK ? themes.DARK : themes.LIGHT;
+	applyTheme(mode);
+	localStorage.setItem("theme", mode);
 }
 
 export function initTheme() {
 	const saved = localStorage.getItem("theme");
-
-	const prefersLight = window.matchMedia(
-		"(prefers-color-scheme: light)"
-	).matches;
 	const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-	if (saved === themes.LIGHT || prefersLight) {
+	if (saved === themes.LIGHT || (!saved && !prefersDark)) {
 		applyTheme(themes.LIGHT);
 		return;
 	}
 
-	if (saved === themes.DARK || prefersDark) {
+	if (saved === themes.DARK || (!saved && prefersDark)) {
 		applyTheme(themes.DARK);
 		return;
 	}
