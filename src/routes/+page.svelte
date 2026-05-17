@@ -37,18 +37,18 @@
 >
 	<h1
 		bind:this={title}
-		class="text-7xl font-black tracking-tight text-text"
+		class="text-7xl font-unbounded font-black tracking-tight text-text"
 	>
 		Hello, World!
 	</h1>
 
-	<p bind:this={subtitle} class="mt-4 text-xl text-muted">
+	<p bind:this={subtitle} class="mt-4 font-ubuntu text-xl text-muted">
 		Coming soon!
 	</p>
 
 	<button
 		onclick={toggleTheme}
-		class="absolute top-4 right-4 rounded-lg border border-border px-4 py-2"
+		class="absolute font-bebas top-4 right-4 rounded-lg border border-border px-4 py-2"
 	>
 		{theme.current}
 	</button>

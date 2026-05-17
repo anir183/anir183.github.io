@@ -35,11 +35,11 @@
 	<section
 		class="flex min-h-screen flex-col items-center justify-center bg-bg"
 	>
-		<h1 class="text-7xl font-black tracking-tight text-error">
+		<h1 class="text-7xl font-unbounded font-black tracking-tight text-error">
 			{crash.error ? crash.error.name : "unknown error"}
 		</h1>
 
-		<p class="mt-4 text-xl text-muted">
+		<p class="mt-4 font-ubuntu text-xl text-muted">
 			{crash.error ? crash.error.message : "something went wrong"}
 		</p>
 	</section>

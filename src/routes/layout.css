@@ -5,10 +5,28 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@font-face {
+	font-family: Unbounded;
+	font-display: swap;
+	src: url("/fonts/unbounded/Unbounded-VariableFont_wght.ttf") format("truetype");
+}
+
+@font-face {
+	font-family: Ubuntu;
+	font-display: swap;
+	src: url("/fonts/ubuntu_sans/UbuntuSans-VariableFont_wdth,wght.ttf") format("truetype");
+}
+
+@font-face {
+	font-family: BebasNeue;
+	font-display: swap;
+	src: url("/fonts/bebas_neue/BebasNeue-Regular.ttf") format("truetype");
+}
+
 @theme {
 	--font-unbounded: Unbounded, sans-serif;
-	--font-bebas-neue:  "Bebas Neue", sans-serif;
-	--font-ubuntu:  "Ubuntu", sans-serif;
+	--font-bebas:  BebasNeue, sans-serif;
+	--font-ubuntu:  Ubuntu, sans-serif;
 
 	/* core surfaces */
 	--color-bg: #e0e0e0;
