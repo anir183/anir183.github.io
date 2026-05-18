@@ -24,7 +24,7 @@
 	});
 </script>
 
-<section class="flex min-h-screen flex-col items-center justify-center bg-bg">
+<section class="flex min-h-screen flex-col items-center justify-center bg-bg-0">
 	<h1
 		bind:this={title}
 		class="font-unbounded text-7xl font-black tracking-tight text-error"
@@ -32,7 +32,7 @@
 		{error}
 	</h1>
 
-	<p bind:this={subtitle} class="mt-4 font-ubuntu text-xl text-muted">
+	<p bind:this={subtitle} class="mt-4 font-ubuntu text-xl text-neutral-1">
 		{details}
 	</p>
 </section>

@@ -20,21 +20,23 @@
 	});
 </script>
 
-<section class="flex min-h-screen flex-col items-center justify-center bg-bg">
+<section
+	class="flex min-h-screen flex-col items-center justify-center bg-c-bg-0"
+>
 	<h1
 		bind:this={title}
-		class="font-unbounded text-7xl font-black tracking-tight text-text"
+		class="font-c-unbounded text-7xl font-black tracking-tight text-c-neutral-0"
 	>
 		Hello, World!
 	</h1>
 
-	<p bind:this={subtitle} class="mt-4 font-ubuntu text-xl text-muted">
+	<p bind:this={subtitle} class="mt-4 font-c-ubuntu text-xl text-c-neutral-1">
 		Coming soon!
 	</p>
 
 	<button
 		onclick={toggleTheme}
-		class="absolute top-4 right-4 rounded-lg border border-border px-4 py-2 font-bebas"
+		class="absolute top-4 right-4 rounded-lg border border-c-border px-4 py-2 font-c-bebas text-c-neutral-0"
 	>
 		{theme.current}
 	</button>

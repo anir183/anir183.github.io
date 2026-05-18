@@ -24,56 +24,60 @@
 }
 
 @theme {
-	--font-unbounded: Unbounded, sans-serif;
-	--font-bebas:  BebasNeue, sans-serif;
-	--font-ubuntu:  Ubuntu, sans-serif;
+	--font-c-unbounded: Unbounded, sans-serif;
+	--font-c-bebas: BebasNeue, sans-serif;
+	--font-c-ubuntu: Ubuntu, sans-serif;
 
-	/* core surfaces */
-	--color-bg: #e0e0e0;
-	--color-surface: #b8b8b8;
-	--color-surface-2: #9c9c9c;
+	--color-c-bg-0: #cbcbcb;
+	--color-c-bg-1: #bbbbae;
+	--color-c-bg-2: #a7a7a7;
 
-	/* text */
-	--color-text: #383a42;
-	--color-muted: #818387;
+	--color-c-neutral-0: #383a42;
+	--color-c-neutral-1: #6f7175;
 
-	/* accents */
-	--color-accent: #4078f2;
-	--color-accent-alt: #a626a4;
+	--color-c-accent-0: #e27250;
+	--color-c-accent-1: #4078f2;
 
-	--color-success: #50a14f;
-	--color-warning: #c18401;
-	--color-error: #e45649;
-	--color-info: #0184bc;
+	--color-c-success: #50a14f;
+	--color-c-warning: #b7b701;
+	--color-c-error: #e45649;
+	--color-c-info: #0184bc;
 
-	/* subtle borders */
-	--color-border: #9c9c9c;
+	--color-c-border: #696969;
 }
 
 @layer theme {
 	:root,
 	:host {
 		@variant dark {
-			/* core surfaces */
-			--color-bg: #171a1e; /* default bg */
-			--color-surface: #282c34; /* main panels */
-			--color-surface-2: #31353f; /* hover / elevated UI */
+			--color-c-bg-0: #131518;
+			--color-c-bg-1: #282c34;
+			--color-c-bg-2: #31353f;
 
-			/* text */
-			--color-text: #abb2bf; /* fg */
-			--color-muted: #5c6370; /* grey */
+			--color-c-neutral-0: #abb2bf;
+			--color-c-neutral-1: #5c6370;
 
-			/* accents */
-			--color-accent: #eda792; /* orange (primary) */
-			--color-accent-alt: #61afef; /* blue */
+			--color-c-accent-0: #eda792;
+			--color-c-accent-1: #61afef;
 
-			--color-success: #98c379; /* green */
-			--color-warning: #e5c07b; /* yellow */
-			--color-error: #e86671; /* red */
-			--color-info: #56b6c2; /* cyan */
+			--color-c-success: #98c379;
+			--color-c-warning: #e5c07b;
+			--color-c-error: #e86671;
+			--color-c-info: #56b6c2;
 
-			/* subtle borders */
-			--color-border: #31353f;
+			--color-c-border: #454b59;
 		}
+	}
+}
+
+@layer base {
+	::selection {
+		background-color: var(--color-c-accent-0);
+		color: var(--color-c-bg-0);
+	}
+
+	::-moz-selection {
+		background-color: var(--color-c-accent-0);
+		color: var(--color-c-bg-0);
 	}
 }
