@@ -1,5 +1,5 @@
 /** @type {{ occurred: boolean, error: Error? }} */
-export const crash = $state({
+export const assert_failure = $state({
 	occurred: false,
 	error: null
 });
@@ -13,14 +13,14 @@ export function assert(
 	result = "unexpected state resulted in assertion failure"
 ) {
 	if (!condition) {
-		crash.occurred = true;
+		assert_failure.occurred = true;
 
 		if (result instanceof Error) {
-			crash.error = result;
+			assert_failure.error = result;
 		} else {
-			crash.error = new Error(result);
+			assert_failure.error = new Error(result);
 		}
 
-		throw crash.error;
+		throw assert_failure.error;
 	}
 }

@@ -2,8 +2,12 @@
 	import { gsap } from "gsap";
 	import { onMount } from "svelte";
 
-	import { theme, toggleTheme } from "$lib";
 	import { fadeUpTitleSubtitle } from "$lib";
+
+	let {
+		error = "unknown error",
+		details = "something went wrong"
+	} = $props();
 
 	/** @type {HTMLHeadingElement} */
 	let title;
@@ -23,19 +27,12 @@
 <section class="flex min-h-screen flex-col items-center justify-center bg-bg">
 	<h1
 		bind:this={title}
-		class="font-unbounded text-7xl font-black tracking-tight text-text"
+		class="font-unbounded text-7xl font-black tracking-tight text-error"
 	>
-		Hello, World!
+		{error}
 	</h1>
 
 	<p bind:this={subtitle} class="mt-4 font-ubuntu text-xl text-muted">
-		Coming soon!
+		{details}
 	</p>
-
-	<button
-		onclick={toggleTheme}
-		class="absolute top-4 right-4 rounded-lg border border-border px-4 py-2 font-bebas"
-	>
-		{theme.current}
-	</button>
 </section>
