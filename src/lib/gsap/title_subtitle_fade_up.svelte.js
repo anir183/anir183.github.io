@@ -10,14 +10,12 @@ import { gsap } from "gsap";
 export function fadeUpTitleSubtitle({ title, subtitle, timeline }) {
 	const tl = timeline || gsap.timeline();
 
-	tl
-	.from(title, {
+	tl.from(title, {
 		y: 80,
 		opacity: 0,
 		duration: 1,
 		ease: "power3.out"
-	})
-	.from(
+	}).from(
 		subtitle,
 		{
 			y: 30,
