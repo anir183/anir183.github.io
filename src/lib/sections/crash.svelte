@@ -4,10 +4,7 @@
 
 	import { fadeUpTitleSubtitle } from "$lib";
 
-	let {
-		error = "unknown error",
-		details = "something went wrong"
-	} = $props();
+	let { error = "unknown error", details = "something went wrong" } = $props();
 
 	/** @type {HTMLHeadingElement} */
 	let title;
@@ -24,15 +21,17 @@
 	});
 </script>
 
-<section class="flex min-h-screen flex-col items-center justify-center bg-bg-0">
+<section
+	class="flex min-h-screen flex-col items-center justify-center bg-c-bg-0"
+>
 	<h1
 		bind:this={title}
-		class="font-unbounded text-7xl font-black tracking-tight text-error"
+		class="font-c-unbounded text-7xl font-black tracking-tight text-c-error"
 	>
 		{error}
 	</h1>
 
-	<p bind:this={subtitle} class="mt-4 font-ubuntu text-xl text-neutral-1">
+	<p bind:this={subtitle} class="mt-4 font-c-ubuntu text-xl text-c-neutral-1">
 		{details}
 	</p>
 </section>
