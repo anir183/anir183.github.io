@@ -16,7 +16,7 @@
 </script>
 
 <svelte:head>
-	<title>anir183 // portfolio</title>
+	<title>anir183</title>
 	<link rel="icon" type="image/svg+xml" href="/assets/branding/logo_w_bg.svg" />
 	<script>
 		// NOTE: removes theme switch flicker due to delay before onMount
