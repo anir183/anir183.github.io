@@ -20,9 +20,7 @@
 	});
 </script>
 
-<section
-	class="flex min-h-screen flex-col items-center justify-center"
->
+<section class="flex min-h-screen flex-col items-center justify-center">
 	<h1
 		bind:this={title}
 		class="font-c-unbounded text-7xl font-black tracking-tight text-c-neutral-0"
