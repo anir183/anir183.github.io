@@ -6,6 +6,7 @@ import { gsap } from "gsap";
  *   heroHeadline: HTMLElement,
  *   navLinks: HTMLElement[],
  *   themeButton: HTMLElement,
+ *   hamburgerButton: HTMLElement,
  *   delay?: number,
  * }} config
  * @returns {Promise<{tl: gsap.core.Timeline, navSplit: *, headlineSplit: *}>}
@@ -16,6 +17,7 @@ export async function heroEntrySequence(config) {
 		heroHeadline = null,
 		navLinks = [],
 		themeButton = null,
+		hamburgerButton = null,
 		delay = 0.5,
 	} = config ?? {};
 
@@ -156,7 +158,22 @@ export async function heroEntrySequence(config) {
 		},
 		{
 			opacity: 1,
-			y: -7,
+			y: 0,
+			scale: 1,
+			duration: 1,
+			ease: "power3.out",
+		},
+		"<0.2"
+	);
+
+	tl.fromTo(
+		hamburgerButton,
+		{
+			opacity: 0,
+			scale: 0.8,
+		},
+		{
+			opacity: 1,
 			scale: 1,
 			duration: 1,
 			ease: "power3.out",

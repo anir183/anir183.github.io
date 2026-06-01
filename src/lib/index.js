@@ -9,6 +9,7 @@ export { default as Navbar } from "./components/navbar.svelte";
 // animations
 export * from "./gsap/title_subtitle_fade_up.svelte.js";
 export * from "./gsap/sequences/hero_entry.svelte.js";
+export * from "./gsap/clips/stagger_wipe.svelte.js";
 
 // utilities
 export * from "./utils/theme.svelte";

@@ -21,6 +21,8 @@
 	let navEl = $state();
 	/** @type {HTMLButtonElement | undefined} */
 	let themeBtn = $state();
+	/** @type {HTMLButtonElement | undefined} */
+	let hamburgerBtn = $state();
 
 	/** @type {gsap.core.Timeline | undefined} */
 	let tl;
@@ -41,6 +43,7 @@
 			heroHeadline: heroH1,
 			navLinks: navEl ? [...navEl.querySelectorAll("a")] : [],
 			themeButton: themeBtn,
+			hamburgerButton: hamburgerBtn,
 		})
 			.then((result) => {
 				if (!mounted) {
@@ -72,7 +75,7 @@
 	</div>
 {/if}
 
-<Navbar bind:navEl={navEl} bind:themeBtn={themeBtn} />
+<Navbar bind:navEl={navEl} bind:themeBtn={themeBtn} bind:hamburgerBtn={hamburgerBtn} />
 
 <section class="hero relative h-svh w-full overflow-hidden">
 	<div

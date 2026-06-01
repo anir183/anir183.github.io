@@ -54,6 +54,11 @@ modularisation should not be done when
 	- the code is small and managable
 	- it doesnt make sense outside the file
 
+### font usage
+- **Unbounded** → branding, logo, title/heading texts
+- **BebasNeue** → supporting texts (nav links, labels, captions)
+- **Ubuntu** → readability / large body texts
+
 ### code style
 always follow the latest and correct version of technologies used. this is a
 static svelte site with gsap for animation. it should be suitably fast and use
@@ -119,6 +124,10 @@ After completing the code, ask the user if they want a playground link. Only cal
 - timeline has 0.5s delay to let preloader fade-out complete before images animate
 - nav links use `resolve("/")` from `$app/paths` for base-path-agnostic hrefs
 - portrait images (light/dark) use class-based `theme.current` toggling with CSS transition crossfade
+- mobile hamburger: 3-span → X morph via CSS transitions (top[10→19], middle[opacity 0], bottom[28→19], rotate ±45)
+- mobile menu: fly-in panel (right, 250ms, x:400) + fade backdrop, nav links centered vertically with BebasNeue, close ✕ button top-right
+- mobile menu overlay is a sibling of `<nav>` (NOT inside it) so the GSAP hero sequence doesn't capture mobile links via `navEl.querySelectorAll("a")`
+- navbar starts transparent (no bg/blur/border) in hero, gains glass effect on scroll (scrollY > 0) via scroll listener + conditional classes with 500ms transition
 
 ### hero_entry.svelte.js animation sequence
 1. dynamic import of SplitText plugin
@@ -154,6 +163,9 @@ After completing the code, ask the user if they want a playground link. Only cal
 
 [x] preloader component (basic Loading... overlay with animated dots)
 [x] navbar component (fixed nav with logo, links, theme toggle)
+[x] navbar — replaced "183" text link with static theme-aware SVG logo
+[x] navbar — responsive: lg+ inline nav links, <lg hamburger with animated fly-in panel
+[x] navbar — font-c-bebas for nav links, glass-effect backdrop-blur, accent hover
 [x] hero_entry GSAP sequence (full intro animation from hero.bak, minus preloader)
 [x] hero.svelte production rewrite (composing preloader + navbar + images + animation)
 [x] update barrel exports (index.js)
