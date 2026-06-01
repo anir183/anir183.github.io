@@ -2,7 +2,13 @@
 	import { onMount, tick } from "svelte";
 	import { resolve } from "$app/paths";
 	import { fade, fly } from "svelte/transition";
-	import { theme, toggleTheme, staggerWipeIn, STAGGER_FAST } from "$lib";
+	import {
+		theme,
+		themes,
+		toggleTheme,
+		staggerWipeIn,
+		STAGGER_FAST
+	} from "$lib";
 
 	let {
 		navEl = $bindable(),
@@ -60,7 +66,7 @@
 		class="flex shrink-0 items-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)]"
 	>
 		<img
-			src={theme.current === "dark"
+			src={theme.current === themes.DARK
 				? "/assets/branding/logo_light.svg"
 				: "/assets/branding/logo_dark.svg"}
 			alt="anir183"
@@ -93,7 +99,7 @@
 			class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-c-border/40 bg-c-bg-2/30 text-lg text-c-neutral-0 opacity-0 backdrop-blur-xl transition-all duration-300 hover:border-c-border hover:bg-c-bg-2/50 max-lg:h-9 max-lg:w-9"
 		>
 			<img
-				src={theme.current === "dark"
+				src={theme.current === themes.DARK
 					? "/assets/icons/sun_light.svg"
 					: "/assets/icons/moon_dark.svg"}
 				alt=""

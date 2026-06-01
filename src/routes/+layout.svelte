@@ -3,10 +3,7 @@
 
 	import { onMount } from "svelte";
 
-	import { initTheme } from "$lib";
-	import { assert_failure } from "$lib";
-
-	import { Crash } from "$lib";
+	import { initTheme, assert_failure, Crash } from "$lib";
 
 	let { children } = $props();
 

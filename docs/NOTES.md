@@ -24,6 +24,7 @@ src/
 │   │   └── hero.svelte        [implemented — production]
 │   └── utils					[utility functions]
 │       ├── constants.svelte.js
+│       ├── loading.svelte.js
 │       ├── assert.svelte.js
 │       └── theme.svelte.js
 └── routes						[full page compositions]
@@ -125,6 +126,12 @@ design tokens and repeated values that cross the JS/CSS boundary live in
 - `STAGGER_FAST` (0.1) — shared stagger duration for link-line animations
 - `BODY_SCROLL_LOCK` ("overflow-hidden") — CSS class used in JS for body scroll blocking
 
+image loading is centralized in `src/lib/utils/loading.svelte.js`:
+
+- `loadAllImages(onProgress)` — scans `document.images`, tracks per-image load progress,
+  calls `onProgress(loaded/total)` after each image, returns a promise that resolves when
+  all images (including cached) have loaded. Used during the preloader phase.
+
 ### code quality refactors applied
 
 - hero.svelte intro images: 5 repeated `<div>` blocks refactored into `{#each}` loop with `imageData` array
@@ -148,8 +155,10 @@ design tokens and repeated values that cross the JS/CSS boundary live in
 - GSAP easings: use built-in eases only (power2.out, power3.out, power4.out) — no CustomEase
 - SplitText is the only GSAP bonus plugin used (dynamically imported)
 - body scroll is locked only during preloader phase via `overflow-hidden` on body
-- preloader always hides due to `try/catch/finally` in hero.svelte
+- preloader always hides due to `.finally()` chain in hero.svelte
 - timeline has 0.5s delay to let preloader fade-out complete before images animate
+- image loading is decoupled from `heroEntrySequence` — `loadAllImages(onProgress)` runs first,
+  tracks per-image progress, then hero sequence starts (images already cached)
 - nav links use `resolve("/")` from `$app/paths` for base-path-agnostic hrefs
 - portrait images (light/dark) use class-based `theme.current` toggling with CSS transition crossfade
 - mobile hamburger: 3-span → X morph via CSS transitions (top[10→19], middle[opacity 0], bottom[28→19], rotate ±45)
@@ -160,11 +169,10 @@ design tokens and repeated values that cross the JS/CSS boundary live in
 ### hero_entry.svelte.js animation sequence
 
 1. dynamic import of SplitText plugin
-2. wait for all document images to load
-3. apply SplitText to nav links + hero headline (lines + mask)
-4. collect `.line` elements from refs (no global CSS selectors)
-5. set initial off-screen positions for all 5 intro images
-6. timeline:
+2. apply SplitText to nav links + hero headline (lines + mask)
+3. collect `.line` elements from refs (no global CSS selectors)
+4. set initial off-screen positions for all 5 intro images
+5. timeline:
    - all images slide into centered fan layout (power4.out, staggered)
    - left 2 images spread left, right 2 spread right (power4.out)
    - center portrait expands to full viewport (power4.out)
@@ -175,8 +183,15 @@ design tokens and repeated values that cross the JS/CSS boundary live in
 ### preloader
 
 - full-viewport fixed overlay (bg-c-bg-0), z-100
-- centered "Loading..." with dots cycling via setInterval in $effect
-- controlled from hero.svelte: visible during image loading, fades out via svelte/fade transition
+- accepts `progress` prop (0-1) via `$bindable()`:
+  - when defined: shows `{Math.round(progress * 100)}%`
+  - when undefined: shows "Loading..." with animated dots (fallback)
+- dots animation via `setInterval` in `$effect` — only runs when progress is undefined
+- controlled from hero.svelte:
+  1. `loadAllImages(onProgress)` tracks per-image load, calls back with progress fraction
+  2. preloader shows percentage in real-time as images load
+  3. when all images loaded → `heroEntrySequence` starts → `.finally()` sets `preloaderVisible = false`
+  4. fade-out via svelte/fade transition (500ms)
 - body overflow:hidden is applied during preloader, removed in `.finally()`
 - always hides — `.finally()` runs regardless of promise resolve/reject
 
@@ -204,6 +219,9 @@ design tokens and repeated values that cross the JS/CSS boundary live in
 [x] consolidate all imports to use $lib barrel (no $lib/.../... paths)
 [x] code quality audit: fix magic strings, deduplicate hero intro images, add SSR guards, fix invalid CSS, inline single-use modules
 [x] shared constants module (src/lib/utils/constants.svelte.js): extracted LG_BREAKPOINT, STAGGER_FAST, BODY_SCROLL_LOCK
+[x] loading module (src/lib/utils/loading.svelte.js): centralized `loadAllImages(onProgress)` with per-image progress tracking
+[x] preloader: percentage display when progress bound, fallback Loading... dots otherwise
+[x] image loading decoupled from hero_entry.svelte.js — preloader phase runs before animation sequence
 
 [ ] projects section
 [ ] about section

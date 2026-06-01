@@ -6,15 +6,17 @@
 		Preloader,
 		Navbar,
 		heroEntrySequence,
+		loadAllImages,
 		BODY_SCROLL_LOCK
 	} from "$lib";
 
 	let preloaderVisible = $state(true);
+	let progress = $state(0);
 
 	/** @type {HTMLDivElement[]} */
 	let introImgs = $state([]);
 	/** @type {HTMLHeadingElement | undefined} */
-	let heroH1;
+	let heroH1 = $state();
 	/** @type {HTMLElement | undefined} */
 	let navEl = $state();
 	/** @type {HTMLButtonElement | undefined} */
@@ -42,13 +44,19 @@
 
 		document.body.classList.add(BODY_SCROLL_LOCK);
 
-		heroEntrySequence({
-			introImages: introImgs.filter(Boolean),
-			heroHeadline: heroH1,
-			navLinks: navEl ? [...navEl.querySelectorAll("a")] : [],
-			themeButton: themeBtn,
-			hamburgerButton: hamburgerBtn
+		loadAllImages((/** @type {number} */ pct) => {
+			if (!mounted) return;
+			progress = pct;
 		})
+			.then(() =>
+				heroEntrySequence({
+					introImages: introImgs.filter(Boolean),
+					heroHeadline: heroH1,
+					navLinks: navEl ? [...navEl.querySelectorAll("a")] : [],
+					themeButton: themeBtn,
+					hamburgerButton: hamburgerBtn
+				})
+			)
 			.then((/** @type {{tl: gsap.core.Timeline}} */ result) => {
 				if (!mounted) {
 					result.tl.kill();
@@ -75,7 +83,7 @@
 
 {#if preloaderVisible}
 	<div transition:fade={{ duration: 500 }}>
-		<Preloader />
+		<Preloader bind:progress />
 	</div>
 {/if}
 

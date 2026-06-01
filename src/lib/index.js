@@ -12,5 +12,6 @@ export * from "./gsap/clips/stagger_wipe.svelte.js";
 
 // utilities
 export * from "./utils/constants.svelte";
+export * from "./utils/loading.svelte";
 export * from "./utils/theme.svelte";
 export * from "./utils/assert.svelte";

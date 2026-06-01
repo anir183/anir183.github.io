@@ -1,5 +1,5 @@
 import { gsap } from "gsap";
-import { LG_BREAKPOINT, STAGGER_FAST } from "$lib";
+import { assert, LG_BREAKPOINT, STAGGER_FAST } from "$lib";
 
 /**
  * @param {{
@@ -10,7 +10,7 @@ import { LG_BREAKPOINT, STAGGER_FAST } from "$lib";
  *   hamburgerButton: HTMLElement | null | undefined,
  *   delay?: number,
  * }} config
- * @returns {Promise<{tl: gsap.core.Timeline, navSplit: *, headlineSplit: *}>}
+ * @returns {Promise<{tl: gsap.core.Timeline}>}
  */
 export async function heroEntrySequence(config) {
 	const {
@@ -26,24 +26,14 @@ export async function heroEntrySequence(config) {
 
 	gsap.registerPlugin(SplitText);
 
-	await Promise.all(
-		Array.from(document.images).map((img) => {
-			if (img.complete) return Promise.resolve();
-			return new Promise((resolve) => {
-				img.onload = resolve;
-				img.onerror = resolve;
-			});
-		})
-	);
-
-	const navSplit = SplitText.create(navLinks, {
+	SplitText.create(navLinks, {
 		type: "lines",
 		linesClass: "line",
 		mask: "lines",
 		autoSplit: true
 	});
 
-	const headlineSplit = SplitText.create(heroHeadline, {
+	SplitText.create(heroHeadline, {
 		type: "lines",
 		linesClass: "line",
 		mask: "lines",
@@ -65,6 +55,7 @@ export async function heroEntrySequence(config) {
 	const introImgGap = 40;
 	const introImgRotations = [-15, 5, -7.5, 10, -2.5];
 
+	assert(introImages.length > 0, "introImages should have at least one image");
 	const introImgWidth = introImages[0].getBoundingClientRect().width;
 	const totalWidth =
 		introImgWidth * introImages.length + introImgGap * (introImages.length - 1);
@@ -191,5 +182,5 @@ export async function heroEntrySequence(config) {
 		"<"
 	);
 
-	return { tl, navSplit, headlineSplit };
+	return { tl };
 }
