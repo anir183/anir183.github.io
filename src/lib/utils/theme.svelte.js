@@ -1,4 +1,4 @@
-import { assert } from "$lib/utils/assert.svelte";
+import { assert } from "$lib";
 
 /** @typedef {"dark" | "light"} ThemeMode */
 

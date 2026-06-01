@@ -43,6 +43,12 @@ will always stay in src/lib/gsap/sequences to not pollute the svelte files. they
 may include related code to the animation sequence like looping through a set of
 elements.
 
+all modules are exported from `src/lib/index.js` and imported via `$lib` (barrel
+import) — not from deeper paths like `$lib/components/...` or `$lib/utils/...`.
+this includes intra-lib imports (files within `src/lib/` import from `$lib` too).
+note: IDE LSP may show false "no exported member" errors for `$lib` barrel imports
+but `svelte-check` and `vite build` resolve them correctly.
+
 modularisation should not be done when
 	- it is a one time use
 	- the code is small and managable
@@ -151,6 +157,7 @@ After completing the code, ask the user if they want a playground link. Only cal
 [x] hero_entry GSAP sequence (full intro animation from hero.bak, minus preloader)
 [x] hero.svelte production rewrite (composing preloader + navbar + images + animation)
 [x] update barrel exports (index.js)
+[x] consolidate all imports to use $lib barrel (no $lib/.../... paths)
 
 [ ] projects section
 [ ] about section
