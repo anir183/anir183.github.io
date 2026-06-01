@@ -10,16 +10,14 @@ import { gsap } from "gsap";
  * @param {number} [opts.delay=0]
  * @returns {gsap.core.Tween}
  */
-export function staggerWipeIn(opts) {
-	const {
-		targets,
-		from = "bottom",
-		stagger = 0.08,
-		duration = 0.6,
-		ease = "power3.out",
-		delay = 0,
-	} = opts;
-
+export function staggerWipeIn({
+	targets,
+	from = "bottom",
+	stagger = 0.08,
+	duration = 0.6,
+	ease = "power3.out",
+	delay = 0
+}) {
 	const els = Array.isArray(targets) ? targets : [targets];
 
 	/** @type {Record<string, string | number>} */
@@ -36,6 +34,6 @@ export function staggerWipeIn(opts) {
 		duration,
 		stagger,
 		ease,
-		delay,
+		delay
 	});
 }

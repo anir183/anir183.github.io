@@ -1,20 +1,18 @@
 <script>
 	import { onMount } from "svelte";
 	import { fade } from "svelte/transition";
-	import { theme, Preloader, Navbar, heroEntrySequence } from "$lib";
+	import {
+		theme,
+		Preloader,
+		Navbar,
+		heroEntrySequence,
+		BODY_SCROLL_LOCK
+	} from "$lib";
 
 	let preloaderVisible = $state(true);
 
-	/** @type {HTMLDivElement | undefined} */
-	let introImg0;
-	/** @type {HTMLDivElement | undefined} */
-	let introImg1;
-	/** @type {HTMLDivElement | undefined} */
-	let introImg2;
-	/** @type {HTMLDivElement | undefined} */
-	let introImg3;
-	/** @type {HTMLDivElement | undefined} */
-	let introImg4;
+	/** @type {HTMLDivElement[]} */
+	let introImgs = $state([]);
 	/** @type {HTMLHeadingElement | undefined} */
 	let heroH1;
 	/** @type {HTMLElement | undefined} */
@@ -27,44 +25,50 @@
 	/** @type {gsap.core.Timeline | undefined} */
 	let tl;
 
+	const imageData = [
+		{ src: "/assets/hero_images/random_0.jpg" },
+		{ src: "/assets/hero_images/random_1.jpg" },
+		{
+			src: "/assets/hero_images/portrait_bg_light.png",
+			portraitDark: "/assets/hero_images/portrait_bg_dark.png",
+			z: "z-1"
+		},
+		{ src: "/assets/hero_images/random_2.jpg" },
+		{ src: "/assets/hero_images/random_3.jpg" }
+	];
+
 	onMount(() => {
 		let mounted = true;
 
-		document.body.classList.add("overflow-hidden");
+		document.body.classList.add(BODY_SCROLL_LOCK);
 
-		(/** @type {(config: any) => Promise<any>} */ (heroEntrySequence))({
-			introImages: [
-				introImg0,
-				introImg1,
-				introImg2,
-				introImg3,
-				introImg4,
-			],
+		heroEntrySequence({
+			introImages: introImgs.filter(Boolean),
 			heroHeadline: heroH1,
 			navLinks: navEl ? [...navEl.querySelectorAll("a")] : [],
 			themeButton: themeBtn,
-			hamburgerButton: hamburgerBtn,
+			hamburgerButton: hamburgerBtn
 		})
-			.then((result) => {
+			.then((/** @type {{tl: gsap.core.Timeline}} */ result) => {
 				if (!mounted) {
 					result.tl.kill();
 					return;
 				}
 				tl = result.tl;
 			})
-			.catch((err) => {
+			.catch((/** @type {Error} */ err) => {
 				console.warn("hero animation failed:", err);
 			})
 			.finally(() => {
 				if (!mounted) return;
 				preloaderVisible = false;
-				document.body.classList.remove("overflow-hidden");
+				document.body.classList.remove(BODY_SCROLL_LOCK);
 			});
 
 		return () => {
 			mounted = false;
 			tl?.kill();
-			document.body.classList.remove("overflow-hidden");
+			document.body.classList.remove(BODY_SCROLL_LOCK);
 		};
 	});
 </script>
@@ -75,74 +79,42 @@
 	</div>
 {/if}
 
-<Navbar bind:navEl={navEl} bind:themeBtn={themeBtn} bind:hamburgerBtn={hamburgerBtn} />
+<Navbar bind:navEl bind:themeBtn bind:hamburgerBtn />
 
 <section class="hero relative h-svh w-full overflow-hidden">
-	<div
-		bind:this={introImg0}
-		class="intro-img absolute top-1/2 left-1/2 z-2 aspect-video w-[20vw] overflow-hidden rounded-4xl will-change-transform max-[1000px]:w-[35vw]"
-	>
-		<img
-			src="/assets/hero_images/random_0.jpg"
-			alt=""
-			class="block h-full w-full object-cover"
-		/>
-	</div>
+	{#each imageData as img, i (img.src)}
+		<div
+			bind:this={introImgs[i]}
+			class="intro-img absolute top-1/2 left-1/2 {img.z ??
+				'z-2'} aspect-video w-[20vw] overflow-hidden rounded-4xl will-change-transform max-intro:w-[35vw]"
+		>
+			{#if img.portraitDark}
+				<img
+					src={img.src}
+					alt=""
+					class="absolute inset-0 block h-full w-full object-cover transition-opacity duration-700 {theme.current ===
+					'light'
+						? 'opacity-100'
+						: 'opacity-0'}"
+				/>
+				<img
+					src={img.portraitDark}
+					alt=""
+					class="absolute inset-0 block h-full w-full object-cover transition-opacity duration-700 {theme.current ===
+					'dark'
+						? 'opacity-100'
+						: 'opacity-0'}"
+				/>
+			{:else}
+				<img src={img.src} alt="" class="block h-full w-full object-cover" />
+			{/if}
+		</div>
+	{/each}
 
 	<div
-		bind:this={introImg1}
-		class="intro-img absolute top-1/2 left-1/2 z-2 aspect-video w-[20vw] overflow-hidden rounded-4xl will-change-transform max-[1000px]:w-[35vw]"
+		class="hero-content absolute bottom-0 left-0 z-10 box-border w-full p-8 max-intro:px-6 max-intro:pb-8"
 	>
-		<img
-			src="/assets/hero_images/random_1.jpg"
-			alt=""
-			class="block h-full w-full object-cover"
-		/>
-	</div>
-
-	<div
-		bind:this={introImg2}
-		class="intro-img absolute top-1/2 left-1/2 z-1 aspect-video w-[20vw] overflow-hidden rounded-4xl will-change-transform max-[1000px]:w-[35vw]"
-	>
-		<img
-			src="/assets/hero_images/portrait_bg_light.png"
-			alt=""
-			class="absolute inset-0 block h-full w-full object-cover transition-opacity duration-700 {theme.current === 'light' ? 'opacity-100' : 'opacity-0'}"
-		/>
-
-		<img
-			src="/assets/hero_images/portrait_bg_dark.png"
-			alt=""
-			class="absolute inset-0 block h-full w-full object-cover transition-opacity duration-700 {theme.current === 'dark' ? 'opacity-100' : 'opacity-0'}"
-		/>
-	</div>
-
-	<div
-		bind:this={introImg3}
-		class="intro-img absolute top-1/2 left-1/2 z-2 aspect-video w-[20vw] overflow-hidden rounded-4xl will-change-transform max-[1000px]:w-[35vw]"
-	>
-		<img
-			src="/assets/hero_images/random_2.jpg"
-			alt=""
-			class="block h-full w-full object-cover"
-		/>
-	</div>
-
-	<div
-		bind:this={introImg4}
-		class="intro-img absolute top-1/2 left-1/2 z-2 aspect-video w-[20vw] overflow-hidden rounded-4xl will-change-transform max-[1000px]:w-[35vw]"
-	>
-		<img
-			src="/assets/hero_images/random_3.jpg"
-			alt=""
-			class="block h-full w-full object-cover"
-		/>
-	</div>
-
-	<div
-		class="hero-content absolute bottom-0 left-0 z-10 box-border w-full p-8 max-[1000px]:px-6 max-[1000px]:pb-8"
-	>
-		<div class="hero-header max-w-[70%] max-[1000px]:max-w-full">
+		<div class="hero-header max-w-[70%] max-intro:max-w-full">
 			<h1
 				bind:this={heroH1}
 				class="
@@ -152,7 +124,7 @@
 					font-black
 					text-c-neutral-0
 					drop-shadow-[0_4px_24px_rgba(0,0,0,0.35)]
-					max-[1000px]:text-[clamp(3rem,14vw,6rem)]
+					max-intro:text-[clamp(3rem,14vw,6rem)]
 				"
 			>
 				Hello!<br />

@@ -26,6 +26,8 @@
 }
 
 @theme {
+	--breakpoint-intro: 1000px;
+
 	--font-c-unbounded: Unbounded, sans-serif;
 	--font-c-bebas: BebasNeue, sans-serif;
 	--font-c-ubuntu: Ubuntu, sans-serif;

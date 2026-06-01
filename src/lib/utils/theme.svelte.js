@@ -20,6 +20,7 @@ export function applyTheme(mode) {
 		`tried to apply invalid theme "${mode}"`
 	);
 
+	if (typeof document === "undefined") return;
 	const root = document.documentElement;
 	root.classList.remove(themes.DARK);
 
@@ -32,10 +33,14 @@ export function applyTheme(mode) {
 export function toggleTheme() {
 	let mode = theme.current !== themes.DARK ? themes.DARK : themes.LIGHT;
 	applyTheme(mode);
-	localStorage.setItem("theme", mode);
+	if (typeof localStorage !== "undefined") {
+		localStorage.setItem("theme", mode);
+	}
 }
 
 export function initTheme() {
+	if (typeof localStorage === "undefined" || typeof window === "undefined")
+		return;
 	const saved = localStorage.getItem("theme");
 	const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 

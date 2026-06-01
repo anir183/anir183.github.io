@@ -1,12 +1,13 @@
 import { gsap } from "gsap";
+import { LG_BREAKPOINT, STAGGER_FAST } from "$lib";
 
 /**
  * @param {{
  *   introImages: HTMLElement[],
- *   heroHeadline: HTMLElement,
+ *   heroHeadline: HTMLElement | null | undefined,
  *   navLinks: HTMLElement[],
- *   themeButton: HTMLElement,
- *   hamburgerButton: HTMLElement,
+ *   themeButton: HTMLElement | null | undefined,
+ *   hamburgerButton: HTMLElement | null | undefined,
  *   delay?: number,
  * }} config
  * @returns {Promise<{tl: gsap.core.Timeline, navSplit: *, headlineSplit: *}>}
@@ -18,7 +19,7 @@ export async function heroEntrySequence(config) {
 		navLinks = [],
 		themeButton = null,
 		hamburgerButton = null,
-		delay = 0.5,
+		delay = 0.5
 	} = config ?? {};
 
 	const { SplitText } = await import("gsap/SplitText");
@@ -39,36 +40,34 @@ export async function heroEntrySequence(config) {
 		type: "lines",
 		linesClass: "line",
 		mask: "lines",
-		autoSplit: true,
+		autoSplit: true
 	});
 
 	const headlineSplit = SplitText.create(heroHeadline, {
 		type: "lines",
 		linesClass: "line",
 		mask: "lines",
-		autoSplit: true,
+		autoSplit: true
 	});
 
-	const navLines = navLinks.flatMap(
-		(a) => [...a.querySelectorAll(".line")]
-	);
+	const navLines = navLinks.flatMap((a) => [...a.querySelectorAll(".line")]);
 	const headlineLines = heroHeadline
 		? [...heroHeadline.querySelectorAll(".line")]
 		: [];
 
 	gsap.set([...navLines, ...headlineLines], {
 		y: "125%",
-		willChange: "true",
+		willChange: "transform"
 	});
 
+	const INTRO_IMG_SPREAD = 1200;
 	const introImgScale = 0.85;
 	const introImgGap = 40;
 	const introImgRotations = [-15, 5, -7.5, 10, -2.5];
 
 	const introImgWidth = introImages[0].getBoundingClientRect().width;
 	const totalWidth =
-		introImgWidth * introImages.length +
-		introImgGap * (introImages.length - 1);
+		introImgWidth * introImages.length + introImgGap * (introImages.length - 1);
 	const startX = -totalWidth / 2 + introImgWidth / 2;
 
 	introImages.forEach((img, i) => {
@@ -82,7 +81,7 @@ export async function heroEntrySequence(config) {
 			x: offScreenX,
 			scale: introImgScale,
 			rotation: introImgRotations[i],
-			borderRadius: "2rem",
+			borderRadius: "2rem"
 		});
 
 		img.dataset.centeredX = centeredX.toString();
@@ -96,7 +95,7 @@ export async function heroEntrySequence(config) {
 			{
 				x: parseFloat(img.dataset.centeredX || "0"),
 				duration: 1.5,
-				ease: "power4.out",
+				ease: "power4.out"
 			},
 			"<0.05"
 		);
@@ -105,9 +104,9 @@ export async function heroEntrySequence(config) {
 	tl.to(
 		[introImages[0], introImages[1]],
 		{
-			x: "-=1200",
+			x: `-=${INTRO_IMG_SPREAD}`,
 			duration: 1.5,
-			ease: "power4.out",
+			ease: "power4.out"
 		},
 		"-=0.5"
 	);
@@ -115,9 +114,9 @@ export async function heroEntrySequence(config) {
 	tl.to(
 		[introImages[3], introImages[4]],
 		{
-			x: "+=1200",
+			x: `+=${INTRO_IMG_SPREAD}`,
 			duration: 1.5,
-			ease: "power4.out",
+			ease: "power4.out"
 		},
 		"<"
 	);
@@ -133,7 +132,7 @@ export async function heroEntrySequence(config) {
 			height: "100svh",
 			borderRadius: 0,
 			duration: 2,
-			ease: "power4.out",
+			ease: "power4.out"
 		},
 		"<"
 	);
@@ -143,8 +142,8 @@ export async function heroEntrySequence(config) {
 		{
 			y: "0%",
 			duration: 1,
-			stagger: 0.1,
-			ease: "power3.out",
+			stagger: STAGGER_FAST,
+			ease: "power3.out"
 		},
 		"<1"
 	);
@@ -153,41 +152,41 @@ export async function heroEntrySequence(config) {
 		themeButton,
 		{
 			opacity: 0,
-			y: 0,
-			scale: 0.8,
+			scale: 0.8
 		},
 		{
 			opacity: 1,
-			y: 0,
 			scale: 1,
-			duration: 1,
-			ease: "power3.out",
+			duration: 0.5,
+			ease: "power3.out"
 		},
 		"<0.2"
 	);
 
-	tl.fromTo(
-		hamburgerButton,
-		{
-			opacity: 0,
-			scale: 0.8,
-		},
-		{
-			opacity: 1,
-			scale: 1,
-			duration: 1,
-			ease: "power3.out",
-		},
-		"<0.2"
-	);
+	if (hamburgerButton && window.innerWidth < LG_BREAKPOINT) {
+		tl.fromTo(
+			hamburgerButton,
+			{
+				opacity: 0,
+				scale: 0.8
+			},
+			{
+				opacity: 1,
+				scale: 1,
+				duration: 1,
+				ease: "power3.out"
+			},
+			"<0.2"
+		);
+	}
 
 	tl.to(
 		headlineLines,
 		{
 			y: "0%",
 			duration: 1,
-			stagger: 0.1,
-			ease: "power3.out",
+			stagger: STAGGER_FAST,
+			ease: "power3.out"
 		},
 		"<"
 	);

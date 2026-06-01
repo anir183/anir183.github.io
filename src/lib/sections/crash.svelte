@@ -2,8 +2,6 @@
 	import { gsap } from "gsap";
 	import { onMount } from "svelte";
 
-	import { fadeUpTitleSubtitle } from "$lib";
-
 	let { error = "unknown error", details = "something went wrong" } = $props();
 
 	/** @type {HTMLHeadingElement} */
@@ -13,11 +11,25 @@
 	let subtitle;
 
 	onMount(() => {
-		const timeline = gsap.timeline();
+		const tl = gsap.timeline();
 
-		fadeUpTitleSubtitle({ title, subtitle, timeline });
+		tl.from(title, {
+			y: 80,
+			opacity: 0,
+			duration: 1,
+			ease: "power3.out"
+		}).from(
+			subtitle,
+			{
+				y: 30,
+				opacity: 0,
+				duration: 0.8,
+				ease: "power2.out"
+			},
+			"-=0.5"
+		);
 
-		return () => timeline.kill();
+		return () => tl.kill();
 	});
 </script>
 

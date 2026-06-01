@@ -1,10 +1,12 @@
 <script>
 	let dots = $state("");
 
+	const DOT_INTERVAL_MS = 500;
+
 	$effect(() => {
 		const interval = setInterval(() => {
 			dots = dots.length >= 3 ? "" : dots + ".";
-		}, 500);
+		}, DOT_INTERVAL_MS);
 
 		return () => clearInterval(interval);
 	});
