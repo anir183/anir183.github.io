@@ -5,6 +5,7 @@
 		Preloader,
 		Navbar,
 		Hero,
+		Projects,
 		heroEntrySequence,
 		loadAllImages,
 		BODY_SCROLL_LOCK
@@ -52,13 +53,14 @@
 					return;
 				}
 				tl = result.tl;
+				preloaderVisible = false;
+				return tl.then(() => {});
 			})
 			.catch((/** @type {Error} */ err) => {
 				console.warn("hero animation failed:", err);
 			})
 			.finally(() => {
 				if (!mounted) return;
-				preloaderVisible = false;
 				document.body.classList.remove(BODY_SCROLL_LOCK);
 			});
 
@@ -78,3 +80,4 @@
 
 <Navbar bind:navEl bind:themeBtn bind:hamburgerBtn />
 <Hero bind:introImgs bind:heroH1 />
+<Projects />

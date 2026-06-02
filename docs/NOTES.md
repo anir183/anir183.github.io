@@ -7,25 +7,28 @@ src/
 ├── app.d.ts
 ├── app.html
 ├── lib
-│   ├── components				[ui compoenents — implemented: preloader, navbar]
+│   ├── components				[ui compoenents]
 │   │   ├── accent_button.svelte       [planned]
 │   │   ├── animated_heading.svelte    [implemented]
+│   │   ├── cube_grid.svelte           [implemented]
 │   │   ├── preloader.svelte           [implemented]
 │   │   └── navbar.svelte              [implemented]
 │   ├── gsap					[all gsap related code lives here]
 │   │   ├── sequences			[full gsap timeline sequences]
+│   │   │   ├── cube_grid.svelte.js    [implemented]
 │   │   │   └── hero_entry.svelte.js   [implemented]
 │   │   └── clips				[reusable GSAP clips/tweens]
 │   │       └── stagger_wipe.svelte.js
 │   ├── index.js
 │   ├── sections				[individual sections]
 │   │   ├── crash.svelte
-│   │   ├── projects.svelte    [planned]
+│   │   ├── projects.svelte    [implemented]
 │   │   ├── about.svelte       [planned]
-│   │   └── hero.svelte        [implemented — production]
+│   │   └── hero.svelte        [implemented]
 │   └── utils					[utility functions]
 │       ├── constants.svelte.js
 │       ├── loading.svelte.js
+│       ├── projects_data.svelte.js
 │       ├── assert.svelte.js
 │       └── theme.svelte.js
 └── routes						[full page compositions]
@@ -33,7 +36,9 @@ src/
 	├── layout.css
 	├── +layout.js
 	├── +layout.svelte
-	└── +page.svelte
+	├── +page.svelte
+	└── projects/
+	    └── +page.svelte
 ```
 
 ### code architecture
@@ -135,6 +140,17 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 
 ### code quality refactors applied
 
+- +page.svelte scroll lock timing: `preloaderVisible = false` moved into the `.then()` before `tl.then()` wait — preloader hides as soon as hero sequence setup finishes (gsap.set positions everything), while timeline plays with its 0.5s delay (preloader fades out over this period); scroll lock still held until timeline completes
+- layout.css: `body.overflow-hidden` hardened with `position: fixed; inset: 0; width: 100%; height: 100%` to prevent any scroll bypass
+- cube_grid.svelte: replaced `bind:this={tileEls[i]}` with `data-tile-index={i}` + `querySelectorAll("[data-tile-index]")` — eliminates Svelte 5 $state proxy quirks with indexed array binding
+- cube_grid.svelte: removed `getImageDimensions()` cache and cover math from `paintFaces` — `new Image().naturalWidth` was often 0 at onMount time (images not loaded yet), caching fallback 1×1 dimensions and corrupting background-position for all subsequent renders; reverted to simple stretch-to-fill (safe for 3:2 placeholder images in 16:9 grid)
+- cube_grid.svelte paintFaces: added aspect-ratio-aware background sizing (cover-style via `new Image().naturalWidth/Height`, computed offset per tile) — images no longer stretch, they fill the grid while maintaining intrinsic aspect
+- cube_grid.svelte: removed `overflow-hidden` from `.cube-grid` to prevent cube corners being clipped during breathing rotation
+- cube_grid.svelte: breathing no longer killed/restarted during tile flips — breathing tweens animate z/rotationZ while flip tweens animate rotationY, different properties so GSAP handles both simultaneously without conflict (avoids jarring snap-to-zero mid-transition)
+- cube_grid.svelte.js staggerRotateTiles: `from: "center"` → `from: "random"`, `amount: 0.5`, `duration: 1.2` → `0.9` — faster, random-order flips
+- projects.svelte: cube grid container changed to 16:9 `aspect-video w-full max-h-[62vh] max-w-[85%] lg:max-w-[90%]` (bigger, rectangle)
+- projects.svelte: "Projects" heading `text-4xl lg:text-5xl` → `text-5xl lg:text-7xl`
+- projects.svelte: project name font `font-c-unbounded` → `font-c-ubuntu`
 - hero.svelte intro images: 5 repeated `<div>` blocks refactored into `{#each}` loop with `imageData` array
 - Tailwind v4 custom breakpoint `--breakpoint-intro: 1000px` replaces all `max-[1000px]` arbitrary values across hero.svelte
 - `fadeUpTitleSubtitle` inlined into crash.svelte (single-use module per modularity rule), file deleted
@@ -150,6 +166,10 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 - loading.svelte.js cached image `onLoad()`: deferred to microtask via `Promise.resolve().then()` to prevent synchronous progress callback during `Promise.all` construction
 - preloader + navbar decoupled from hero.svelte into +page.svelte: hero.svelte is now a pure content section exposing refs via `$bindable()` props (`introImgs`); +page.svelte owns the loading lifecycle, preloader visibility, navbar refs, and GSAP sequence orchestration
 - hero headline extracted into reusable `AnimatedHeading` component with ScrollTrigger character-stagger animation: SplitText characters set to `x: 100, opacity: 0, skewX: 20`, then stagger-revealed on viewport entry; headline animation removed from `hero_entry.svelte.js`
+- cube_grid.svelte: side faces (rotateY ±90°, rotateX ±90°) removed — only front+rear faces kept for image flip; at 1px cube depth, side faces were invisible edges causing dark artifacts during rotation
+- projects.svelte: cube grid container changed from stretch-to-fill to centered fixed square box (`aspect-square` constrained by `min(55vh,55vw)`)
+- navbar.svelte: border flash fix — `border-b` always present, color transitions between `border-transparent` ↔ `border-c-border/20` (prevents 0→1px discontinuity during 500ms transition)
+- layout.css: `body.overflow-hidden` selector hardened with `!important`, `overscroll-behavior: none`, `touch-action: none` — prevents touch/wheel scroll bypass during preloader phase
 
 ### notes
 
@@ -160,7 +180,7 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 - child components expose refs to parent sections via `$bindable()` props (e.g., `<Navbar bind:navEl>`)
 - GSAP easings: use built-in eases only (power2.out, power3.out, power4.out) — no CustomEase
 - SplitText and ScrollTrigger are GSAP bonus/plugins used (dynamically imported)
-- body scroll is locked only during preloader phase via `overflow-hidden` on body
+- body scroll is locked during preloader+hero animation phase via `overflow-hidden` on body (hardened in layout.css with `!important position: fixed inset: 0 width: 100% height: 100% overscroll-behavior: none touch-action: none`); lock is released in `.finally()` only after `tl.then()` resolves (timeline finished playing, not just created)
 - preloader always hides due to `.finally()` chain in +page.svelte
 - timeline has 0.5s delay to let preloader fade-out complete before images animate
 - image loading is decoupled from `heroEntrySequence` — `loadAllImages(onProgress)` runs first,
@@ -170,7 +190,7 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 - mobile hamburger: 3-span → X morph via CSS transitions (top[10→19], middle[opacity 0], bottom[28→19], rotate ±45)
 - mobile menu: fly-in panel (right, 250ms, x:400) + fade backdrop, nav links centered vertically with BebasNeue, close ✕ button top-right
 - mobile menu overlay is a sibling of `<nav>` (NOT inside it) so the GSAP hero sequence doesn't capture mobile links via `navEl.querySelectorAll("a")`
-- navbar starts transparent (no bg/blur/border) in hero, gains glass effect on scroll (scrollY > 0) via scroll listener + conditional classes with 500ms transition
+- navbar starts transparent (no bg/blur/border) in hero, gains glass effect on scroll (scrollY > 10) via scroll listener + conditional classes with 500ms transition; `border-b` always present to prevent border flash (color transitions transparent ↔ visible)
 
 ### hero_entry.svelte.js animation sequence
 
@@ -210,6 +230,18 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 - all refs are passed as a config object to the GSAP sequence function
 - sequence accepts: introImages[], navLinks[], themeButton
 
+### cube grid
+
+- CSS 3D cube grid (`cube_grid.svelte`): `display: grid` with `transform-style: preserve-3d` per tile
+- each tile: front face (image), rear face (flipped image via `rotateY(180deg)`), no side faces (removed to avoid dark edge artifacts at 1px depth)
+- tiles are row-major order (`{#each tileIndices as i (i)}`); `tileMeta` built in `onMount` from `bind:this` refs
+- `paintFaces(image, face)` computes tile dimensions from `getBoundingClientRect()`, sets `background-size/-position` to reconstruct the full image across the grid
+- GSAP stagger: `staggerRotateTiles()` in `cube_grid.svelte.js` uses GSAP stagger grid with `from: "center"`, rotates each tile 180° on `rotationY`, `power4.inOut` easing, 1.2s duration
+- reveal queue: `transitionTo(image)` state machine — if currently animating, queues the image and processes on completion; alternates between painting front/rear face so next image is pre-painted on the hidden face before rotation
+- breathing idle animation: random Z offset (-20 to 60px), random duration (1.5–3s), yoyo repeat, random stagger delay (0–2s) — killed during transitions, restarted on completion
+- container: `aspect-square` box centered in the right panel, constrained by `min(55vh, 55vw)` so it doesn't exceed viewport on either axis
+- project images preloaded via hidden `<img>` elements in `projects.svelte` (picked up by `document.images` in `loadAllImages`)
+
 ### roadmap
 
 <!-- current state of the project, what has been done and what is to be done -->
@@ -230,7 +262,17 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 [x] image loading decoupled from hero_entry.svelte.js — preloader phase runs before animation sequence
 [x] AnimatedHeading component — reusable scroll-triggered character-stagger heading with SplitText + ScrollTrigger (x: 100, opacity: 0, skewX: 20 → stagger-reveal on enter); hero headline migrated to use it
 
-[ ] projects section
+[x] projects section (cube grid with image flip reveal, GSAP stagger, breathing idle animation)
+[x] /projects detail page (card grid layout from projects_data)
+[x] preloader scroll lock hardening (!important, overscroll-behavior, touch-action, position:fixed)
+[x] scroll lock timing: tl.then() waits for hero animation to complete before unlocking
+[x] navbar border flash fix (always-on border-b, color transitions only)
+[x] cube grid: remove side faces (dark edge artifacts at 1px depth)
+[x] cube grid: contained in fixed 16:9 box (aspect-video, max-h-[62vh], ~85-90% width)
+[x] cube grid: breathing calmed (Z -25→50, rotationZ ±0.25), no longer killed during flip transitions
+[x] cube grid: random stagger instead of center wave, shorter duration (0.9s), amount 0.5
+[x] cube grid: pre-allocated tileEls array to fix first-row tile duplication bug
+[x] projects section: heading bigger (5xl→7xl lg), project name font-c-ubuntu
 [ ] about section
 [ ] contact section
 [ ] accent_button component

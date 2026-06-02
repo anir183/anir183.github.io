@@ -75,6 +75,16 @@
 }
 
 @layer base {
+	body.overflow-hidden {
+		overflow: hidden !important;
+		position: fixed;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		overscroll-behavior: none;
+		touch-action: none;
+	}
+
 	::selection {
 		background-color: var(--color-c-accent-0);
 		color: var(--color-c-bg-0);
