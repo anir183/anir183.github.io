@@ -24,11 +24,14 @@ src/
 │   │   ├── crash.svelte
 │   │   ├── projects.svelte    [implemented]
 │   │   ├── about.svelte       [planned]
-│   │   └── hero.svelte        [implemented]
+│   │   ├── hero.svelte        [implemented]
+│   │   └── skills_network.svelte      [implemented]
 │   └── utils					[utility functions]
 │       ├── constants.svelte.js
 │       ├── loading.svelte.js
 │       ├── projects_data.svelte.js
+│       ├── experiences_data.svelte.js [implemented]
+│       ├── skills_data.svelte.js      [implemented]
 │       ├── assert.svelte.js
 │       └── theme.svelte.js
 └── routes						[full page compositions]
@@ -37,6 +40,8 @@ src/
 	├── +layout.js
 	├── +layout.svelte
 	├── +page.svelte
+	├── experiences/
+	│   └── +page.svelte         [implemented]
 	└── projects/
 	    └── +page.svelte
 ```
@@ -183,6 +188,10 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 
 <!-- hero.bak.svelte removed — original proof-of-concept, no longer needed -->
 
+- skills_network tooltip: HTML overlay div positioned with absolute coords inside `flex-1` SVG container (relative), using `SVGPoint.matrixTransform(getScreenCTM())` to convert viewBox → screen → container-relative pixels — handles `preserveAspectRatio` letterboxing automatically; tooltip flips to left side if it would overflow right edge; pointer-events: none for non-interactive display; delays hidden by 150ms when unpinning to prevent flicker during node-to-tooltip transitions
+- skills_network mobile: `featuredSkills` (8 skills) rendered as horizontal snap-scroll cards; tap opens full overlay popover with backdrop blur + scale transition; Escape/overlay-click dismisses; all 16 skills remain visible in desktop SVG
+- skills_network layout: `min-h-screen flex flex-col` with heading `justify-end`, SVG `flex-1 min-h-0`, button `justify-end` — graph fills all space between heading and button
+- /experiences page: vertical timeline with left line + dot per entry + right card; `data-exp-id` attribute used for GSAP target; `ScrollTrigger.batch` with stagger entrance; follows existing route pattern (AnimatedHeading, theme classes)
 - GSAP targets use `bind:this` refs (not CSS selectors) for reliable element capture
 - child components expose refs to parent sections via `$bindable()` props (e.g., `<Navbar bind:navEl>`)
 - GSAP easings: use built-in eases only (power2.out, power3.out, power4.out) — no CustomEase
@@ -293,6 +302,10 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 [x] projects section: heading bigger (5xl→7xl lg), project name font-c-ubuntu
 [x] projects section: mobile gradient changed from to-t (bottom-up) to to-tr (bottom-left→top-right 45°) with higher intensity
 [x] projects section: desktop grid panel lg:pr-16 / list panel lg:pl-16 for balanced spacing
+[x] skills_data.svelte.js: added `featured` boolean field (8 featured skills for mobile) and `featuredSkills` export
+[x] experiences_data.svelte.js: new file with `Experience` typedef + 5 placeholder entries
+[x] skills_network.svelte redesign: single-column layout with `flex-1` SVG filling available space between heading (top-right) and Experiences button (bottom-right); side info panel removed; replaced with floating HTML tooltip overlay positioned via `SVGPoint.matrixTransform(getScreenCTM())` for viewBox→pixel conversion; tooltip flips to left side when near container right edge; node radius increased to 30; mobile shows horizontal snap-scrollable cards with only featured skills, tap-to-popover detail modal
+[x] /experiences route: new full timeline page with vertical line + dots + cards, GSAP ScrollTrigger.batch stagger entrance, matches projects page pattern
 [ ] about section
 [ ] social section
 [ ] accent_button component

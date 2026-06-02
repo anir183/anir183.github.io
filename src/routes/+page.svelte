@@ -6,6 +6,7 @@
 		Navbar,
 		Hero,
 		Projects,
+		SkillsNetwork,
 		heroEntrySequence,
 		loadAllImages,
 		BODY_SCROLL_LOCK
@@ -88,3 +89,4 @@
 <Navbar bind:navEl bind:themeBtn bind:hamburgerBtn />
 <Hero bind:heroH1 />
 <Projects />
+<SkillsNetwork />
