@@ -17,16 +17,18 @@
 	<link rel="icon" type="image/svg+xml" href="/assets/branding/logo_w_bg.svg" />
 	<script>
 		// NOTE: removes theme switch flicker due to delay before onMount
-		const saved = localStorage.getItem("theme");
-		const prefersDark = window.matchMedia(
-			"(prefers-color-scheme: dark)"
-		).matches;
+		if (typeof localStorage !== "undefined" && typeof window !== "undefined") {
+			const saved = localStorage.getItem("theme");
+			const prefersDark = window.matchMedia(
+				"(prefers-color-scheme: dark)"
+			).matches;
 
-		const root = document.documentElement;
-		root.classList.remove("dark");
+			const root = document.documentElement;
+			root.classList.remove("dark");
 
-		if (saved === "dark" || (!saved && prefersDark)) {
-			root.classList.add("dark");
+			if (saved === "dark" || (!saved && prefersDark)) {
+				root.classList.add("dark");
+			}
 		}
 	</script>
 </svelte:head>

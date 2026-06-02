@@ -144,6 +144,9 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 - scrollY threshold raised to 10px in navbar.svelte to avoid elastic-scroll flicker
 - SSE guards (`typeof` checks) added to `theme.svelte.js` for localStorage/window/document access
 - `stagger_wipe.svelte.js` opts destructured in function signature (consistency with prior pattern)
+- hero.svelte portrait theme comparisons: raw `'light'`/`'dark'` strings replaced with `themes.LIGHT`/`themes.DARK` constants (consistency with navbar.svelte)
+- +layout.svelte inline flicker-prevention script: wrapped in `typeof` guards for localStorage/window (SSR-safe consistency with theme.svelte.js)
+- loading.svelte.js cached image `onLoad()`: deferred to microtask via `Promise.resolve().then()` to prevent synchronous progress callback during `Promise.all` construction
 
 ### notes
 

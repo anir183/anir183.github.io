@@ -18,9 +18,9 @@ export async function loadAllImages(onProgress) {
 	await Promise.all(
 		images.map((img) => {
 			if (img.complete) {
-				onLoad();
-				/** @type {Promise<void>} */
-				return Promise.resolve();
+				return Promise.resolve().then(() => {
+					onLoad();
+				});
 			}
 			return new Promise((resolve) => {
 				img.onload = () => {

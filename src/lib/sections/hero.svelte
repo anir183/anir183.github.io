@@ -3,6 +3,7 @@
 	import { fade } from "svelte/transition";
 	import {
 		theme,
+		themes,
 		Preloader,
 		Navbar,
 		heroEntrySequence,
@@ -101,7 +102,7 @@
 					src={img.src}
 					alt=""
 					class="absolute inset-0 block h-full w-full object-cover transition-opacity duration-700 {theme.current ===
-					'light'
+					themes.LIGHT
 						? 'opacity-100'
 						: 'opacity-0'}"
 				/>
@@ -109,7 +110,7 @@
 					src={img.portraitDark}
 					alt=""
 					class="absolute inset-0 block h-full w-full object-cover transition-opacity duration-700 {theme.current ===
-					'dark'
+					themes.DARK
 						? 'opacity-100'
 						: 'opacity-0'}"
 				/>
