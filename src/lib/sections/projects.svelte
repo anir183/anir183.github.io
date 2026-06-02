@@ -1,9 +1,24 @@
 <script>
+	import { onMount } from "svelte";
 	import { resolve } from "$app/paths";
 	import { projects, AnimatedHeading, CubeGrid } from "$lib";
 
 	/** @type {import("$lib/utils/projects_data.svelte.js").Project | null} */
 	let activeProject = $state(projects[0]);
+	let isMobile = $state(false);
+
+	onMount(() => {
+		const mql = window.matchMedia("(max-width: 1023px)");
+		isMobile = mql.matches;
+		const handler = (/** @type {MediaQueryListEvent} */ e) =>
+			(isMobile = e.matches);
+		mql.addEventListener("change", handler);
+		return () => mql.removeEventListener("change", handler);
+	});
+
+	let activeImageSrc = $derived(
+		isMobile && activeProject ? activeProject.imageMobile : activeProject?.image
+	);
 </script>
 
 <section
@@ -43,6 +58,7 @@
 						onclick={() => (activeProject = project)}
 						class="group cursor-pointer text-left transition-colors duration-200 hover:text-c-accent-0"
 						class:text-c-accent-0={activeProject?.id === project.id}
+						aria-pressed={activeProject?.id === project.id}
 					>
 						<span class="font-c-bebas text-sm tracking-widest text-c-neutral-1">
 							{project.tags.join(" · ")}
@@ -77,11 +93,17 @@
 				aria-hidden="true"
 				class="invisible absolute"
 			/>
+			<img
+				src={project.imageMobile}
+				alt=""
+				aria-hidden="true"
+				class="invisible absolute"
+			/>
 		{/each}
 		<div
 			class="aspect-video max-h-[80vh] w-full max-w-[90%] max-lg:aspect-auto max-lg:h-full max-lg:max-h-none max-lg:max-w-none"
 		>
-			<CubeGrid activeImage={activeProject?.image} />
+			<CubeGrid activeImage={activeImageSrc} />
 		</div>
 	</div>
 </section>

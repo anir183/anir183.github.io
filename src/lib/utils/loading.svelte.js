@@ -23,14 +23,22 @@ export async function loadAllImages(onProgress) {
 				});
 			}
 			return new Promise((resolve) => {
-				img.onload = () => {
-					onLoad();
-					resolve(undefined);
-				};
-				img.onerror = () => {
-					onLoad();
-					resolve(undefined);
-				};
+				img.addEventListener(
+					"load",
+					() => {
+						onLoad();
+						resolve(undefined);
+					},
+					{ once: true }
+				);
+				img.addEventListener(
+					"error",
+					() => {
+						onLoad();
+						resolve(undefined);
+					},
+					{ once: true }
+				);
 			});
 		})
 	);

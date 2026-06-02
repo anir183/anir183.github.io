@@ -46,13 +46,7 @@ export function initTheme() {
 
 	if (saved === themes.LIGHT || (!saved && !prefersDark)) {
 		applyTheme(themes.LIGHT);
-		return;
-	}
-
-	if (saved === themes.DARK || (!saved && prefersDark)) {
+	} else {
 		applyTheme(themes.DARK);
-		return;
 	}
-
-	applyTheme(themes.DARK);
 }

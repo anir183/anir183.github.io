@@ -75,20 +75,6 @@
 	});
 </script>
 
-{#if tag === "h1"}
-	<h1 bind:this={el} class={className}>
-		{@render children()}
-	</h1>
-{:else if tag === "h2"}
-	<h2 bind:this={el} class={className}>
-		{@render children()}
-	</h2>
-{:else if tag === "h3"}
-	<h3 bind:this={el} class={className}>
-		{@render children()}
-	</h3>
-{:else if tag === "h4"}
-	<h4 bind:this={el} class={className}>
-		{@render children()}
-	</h4>
-{/if}
+<svelte:element this={tag} bind:this={el} class={className}>
+	{@render children()}
+</svelte:element>

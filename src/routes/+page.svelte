@@ -21,8 +21,6 @@
 	/** @type {HTMLButtonElement | undefined} */
 	let hamburgerBtn = $state();
 
-	/** @type {HTMLDivElement[]} */
-	let introImgs = $state([]);
 	/** @type {HTMLHeadingElement | undefined} */
 	let heroH1 = $state();
 
@@ -38,15 +36,23 @@
 			if (!mounted) return;
 			progress = pct;
 		})
-			.then(() =>
-				heroEntrySequence({
-					introImages: introImgs.filter(Boolean),
+			.then(() => {
+				const introImgEls = /** @type {NodeListOf<HTMLElement>} */ (
+					document.querySelectorAll(".intro-img")
+				);
+				const introImgs = [...introImgEls];
+				const navLinkEls = /** @type {NodeListOf<HTMLElement> | undefined} */ (
+					navEl?.querySelectorAll("a")
+				);
+				const navLinks = navLinkEls ? [...navLinkEls] : [];
+				return heroEntrySequence({
+					introImages: introImgs,
 					heroHeadline: heroH1,
-					navLinks: navEl ? [...navEl.querySelectorAll("a")] : [],
+					navLinks,
 					themeButton: themeBtn,
 					hamburgerButton: hamburgerBtn
-				})
-			)
+				});
+			})
 			.then((/** @type {{tl: gsap.core.Timeline}} */ result) => {
 				if (!mounted) {
 					result.tl.kill();
@@ -54,10 +60,11 @@
 				}
 				tl = result.tl;
 				preloaderVisible = false;
-				return tl.then(() => {});
+				return tl.then();
 			})
 			.catch((/** @type {Error} */ err) => {
 				console.warn("hero animation failed:", err);
+				preloaderVisible = false;
 			})
 			.finally(() => {
 				if (!mounted) return;
@@ -79,5 +86,5 @@
 {/if}
 
 <Navbar bind:navEl bind:themeBtn bind:hamburgerBtn />
-<Hero bind:introImgs bind:heroH1 />
+<Hero bind:heroH1 />
 <Projects />

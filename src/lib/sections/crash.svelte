@@ -4,13 +4,14 @@
 
 	let { error = "unknown error", details = "something went wrong" } = $props();
 
-	/** @type {HTMLHeadingElement} */
-	let title;
+	/** @type {HTMLHeadingElement | undefined} */
+	let title = $state();
 
-	/** @type {HTMLParagraphElement} */
-	let subtitle;
+	/** @type {HTMLParagraphElement | undefined} */
+	let subtitle = $state();
 
 	onMount(() => {
+		if (!title || !subtitle) return;
 		const tl = gsap.timeline();
 
 		tl.from(title, {

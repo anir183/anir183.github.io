@@ -1,7 +1,7 @@
 <script>
 	import { theme, themes } from "$lib";
 
-	let { introImgs = $bindable([]), heroH1 = $bindable() } = $props();
+	let { heroH1 = $bindable() } = $props();
 
 	const imageData = [
 		{ src: "/assets/hero_images/random_0.jpg" },
@@ -17,9 +17,8 @@
 </script>
 
 <section class="hero relative h-svh w-full overflow-hidden">
-	{#each imageData as img, i (img.src)}
+	{#each imageData as img (img.src)}
 		<div
-			bind:this={introImgs[i]}
 			class="intro-img absolute top-1/2 left-1/2 {img.z ??
 				'z-2'} aspect-video w-[20vw] overflow-hidden rounded-4xl will-change-transform max-intro:w-[35vw]"
 		>

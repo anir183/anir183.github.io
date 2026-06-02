@@ -15,8 +15,8 @@ export * from "./gsap/sequences/cube_grid.svelte.js";
 export * from "./gsap/clips/stagger_wipe.svelte.js";
 
 // utilities
-export * from "./utils/constants.svelte";
-export * from "./utils/loading.svelte";
-export * from "./utils/projects_data.svelte";
-export * from "./utils/theme.svelte";
-export * from "./utils/assert.svelte";
+export * from "./utils/constants.svelte.js";
+export * from "./utils/loading.svelte.js";
+export * from "./utils/projects_data.svelte.js";
+export * from "./utils/theme.svelte.js";
+export * from "./utils/assert.svelte.js";

@@ -16,7 +16,15 @@
 		hamburgerBtn = $bindable()
 	} = $props();
 
+	/** @param {string} name */
+	function sectionUrl(name) {
+		if (name === "Projects") return resolve("/#projects");
+		return resolve("/");
+	}
+
 	let mobileMenuOpen = $state(false);
+	/** @type {HTMLElement | undefined} */
+	let mobilePanelEl = $state();
 	/** @type {HTMLElement | undefined} */
 	let mobileLinksEl = $state();
 	let scrolled = $state(false);
@@ -36,10 +44,21 @@
 					duration: 0.5,
 					delay: 0.1
 				});
+				mobilePanelEl?.focus();
 			});
 		} else {
 			mobileTween?.kill();
 			mobileTween = undefined;
+		}
+	});
+
+	$effect(() => {
+		if (mobileMenuOpen) {
+			const handler = (/** @type {KeyboardEvent} */ e) => {
+				if (e.key === "Escape") mobileMenuOpen = false;
+			};
+			window.addEventListener("keydown", handler);
+			return () => window.removeEventListener("keydown", handler);
 		}
 	});
 
@@ -52,7 +71,7 @@
 		return () => window.removeEventListener("scroll", onScroll);
 	});
 
-	const navItems = ["Projects", "Skills", "About", "Contact"];
+	const navItems = ["Projects", "Skills", "About", "Socials"];
 </script>
 
 <nav
@@ -89,7 +108,7 @@
 	<div class="mr-8 ml-auto flex items-center gap-2 max-lg:hidden">
 		{#each navItems as item (item)}
 			<a
-				href={resolve("/")}
+				href={sectionUrl(item)}
 				class="group relative overflow-hidden px-7 py-3 no-underline"
 			>
 				<span
@@ -150,13 +169,14 @@
 		<div
 			class="absolute inset-0 bg-black/40 backdrop-blur-sm"
 			onclick={() => (mobileMenuOpen = false)}
-			onkeydown={(e) => e.key === "Escape" && (mobileMenuOpen = false)}
 			role="presentation"
 			transition:fade={{ duration: 150 }}
 		></div>
 
 		<div
-			class="absolute top-0 right-0 flex h-full w-80 flex-col items-center justify-center bg-c-bg-0 shadow-2xl max-sm:w-full"
+			bind:this={mobilePanelEl}
+			tabindex="-1"
+			class="absolute top-0 right-0 flex h-full w-80 flex-col items-center justify-center bg-c-bg-0 shadow-2xl outline-none max-sm:w-full"
 			transition:fly={{ duration: 250, x: 400 }}
 		>
 			<button
@@ -170,7 +190,7 @@
 			<div bind:this={mobileLinksEl} class="flex flex-col items-center gap-6">
 				{#each navItems as item (item)}
 					<a
-						href={resolve("/")}
+						href={sectionUrl(item)}
 						onclick={() => (mobileMenuOpen = false)}
 						class="group relative px-8 py-4 no-underline"
 					>
