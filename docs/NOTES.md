@@ -8,9 +8,10 @@ src/
 ├── app.html
 ├── lib
 │   ├── components				[ui compoenents — implemented: preloader, navbar]
-│   │   ├── accent_button.svelte     [planned]
-│   │   ├── preloader.svelte         [implemented]
-│   │   └── navbar.svelte            [implemented]
+│   │   ├── accent_button.svelte       [planned]
+│   │   ├── animated_heading.svelte    [implemented]
+│   │   ├── preloader.svelte           [implemented]
+│   │   └── navbar.svelte              [implemented]
 │   ├── gsap					[all gsap related code lives here]
 │   │   ├── sequences			[full gsap timeline sequences]
 │   │   │   └── hero_entry.svelte.js   [implemented]
@@ -147,7 +148,8 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 - hero.svelte portrait theme comparisons: raw `'light'`/`'dark'` strings replaced with `themes.LIGHT`/`themes.DARK` constants (consistency with navbar.svelte)
 - +layout.svelte inline flicker-prevention script: wrapped in `typeof` guards for localStorage/window (SSR-safe consistency with theme.svelte.js)
 - loading.svelte.js cached image `onLoad()`: deferred to microtask via `Promise.resolve().then()` to prevent synchronous progress callback during `Promise.all` construction
-- preloader + navbar decoupled from hero.svelte into +page.svelte: hero.svelte is now a pure content section exposing refs via `$bindable()` props (`introImgs`, `heroH1`); +page.svelte owns the loading lifecycle, preloader visibility, navbar refs, and GSAP sequence orchestration
+- preloader + navbar decoupled from hero.svelte into +page.svelte: hero.svelte is now a pure content section exposing refs via `$bindable()` props (`introImgs`); +page.svelte owns the loading lifecycle, preloader visibility, navbar refs, and GSAP sequence orchestration
+- hero headline extracted into reusable `AnimatedHeading` component with ScrollTrigger character-stagger animation: SplitText characters set to `x: 100, opacity: 0, skewX: 20`, then stagger-revealed on viewport entry; headline animation removed from `hero_entry.svelte.js`
 
 ### notes
 
@@ -157,7 +159,7 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 - GSAP targets use `bind:this` refs (not CSS selectors) for reliable element capture
 - child components expose refs to parent sections via `$bindable()` props (e.g., `<Navbar bind:navEl>`)
 - GSAP easings: use built-in eases only (power2.out, power3.out, power4.out) — no CustomEase
-- SplitText is the only GSAP bonus plugin used (dynamically imported)
+- SplitText and ScrollTrigger are GSAP bonus/plugins used (dynamically imported)
 - body scroll is locked only during preloader phase via `overflow-hidden` on body
 - preloader always hides due to `.finally()` chain in +page.svelte
 - timeline has 0.5s delay to let preloader fade-out complete before images animate
@@ -173,16 +175,16 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 ### hero_entry.svelte.js animation sequence
 
 1. dynamic import of SplitText plugin
-2. apply SplitText to nav links + hero headline (lines + mask)
+2. apply SplitText to nav links (lines + mask)
 3. collect `.line` elements from refs (no global CSS selectors)
 4. set initial off-screen positions for all 5 intro images
-5. timeline:
+5. set nav lines off-screen (y: 125%)
+6. timeline:
    - all images slide into centered fan layout (power4.out, staggered)
    - left 2 images spread left, right 2 spread right (power4.out)
    - center portrait expands to full viewport (power4.out)
    - nav lines stagger-reveal upward (power3.out)
    - theme toggle button fades in (power3.out)
-   - hero headline lines stagger-reveal upward (power3.out)
 
 ### preloader
 
@@ -206,7 +208,7 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 - section components (e.g., Hero) use `$bindable()` to expose their internal DOM refs upward to the page
 - +page.svelte owns all refs and orchestration — calls `loadAllImages()`, then `heroEntrySequence()`, manages preloader
 - all refs are passed as a config object to the GSAP sequence function
-- sequence accepts: introImages[], heroHeadline, navLinks[], themeButton
+- sequence accepts: introImages[], navLinks[], themeButton
 
 ### roadmap
 
@@ -226,6 +228,7 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 [x] loading module (src/lib/utils/loading.svelte.js): centralized `loadAllImages(onProgress)` with per-image progress tracking
 [x] preloader: percentage display when progress bound, fallback Loading... dots otherwise
 [x] image loading decoupled from hero_entry.svelte.js — preloader phase runs before animation sequence
+[x] AnimatedHeading component — reusable scroll-triggered character-stagger heading with SplitText + ScrollTrigger (x: 100, opacity: 0, skewX: 20 → stagger-reveal on enter); hero headline migrated to use it
 
 [ ] projects section
 [ ] about section
