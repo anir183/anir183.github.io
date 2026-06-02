@@ -189,8 +189,18 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 <!-- hero.bak.svelte removed — original proof-of-concept, no longer needed -->
 
 - skills_network tooltip: HTML overlay div positioned with absolute coords inside `flex-1` SVG container (relative), using `SVGPoint.matrixTransform(getScreenCTM())` to convert viewBox → screen → container-relative pixels — handles `preserveAspectRatio` letterboxing automatically; tooltip flips to left side if it would overflow right edge; pointer-events: none for non-interactive display; delays hidden by 150ms when unpinning to prevent flicker during node-to-tooltip transitions
-- skills_network mobile: `featuredSkills` (8 skills) rendered as horizontal snap-scroll cards; tap opens full overlay popover with backdrop blur + scale transition; Escape/overlay-click dismisses; all 16 skills remain visible in desktop SVG
 - skills_network layout: `min-h-screen flex flex-col` with heading `justify-end`, SVG `flex-1 min-h-0`, button `justify-end` — graph fills all space between heading and button
+- skills_network mobile: all 16 skills shown in horizontal snap-scroll cards (removed `featured` field from data); tap opens full overlay popover with backdrop blur + scale transition; Escape/overlay-click dismisses
+- skills_network graph container: `max-lg:min-h-[45vh] max-lg:flex-1 max-lg:max-h-[75vh]` — flexible height on mobile instead of fixed `max-lg:h-[55vh]`
+- skills_network horizontal padding: `px-4 lg:px-8` on the graph panel
+- skills_network tooltip/popover sizing: desktop tooltip `w-80` (up from `w-72`) with larger font (`text-sm` → `text-base` title, `text-xs` → `text-sm` description); mobile popover `max-w-lg` (up from `max-w-md`) with larger font
+- node positions: hardcoded `position` fields removed from all 16 skill objects — now computed at module load by `computePositions(skills)` which groups by category (Frontend ~0.20y, Backend ~0.50y, Tools ~0.78y), spreads evenly along x with ±0.03 deterministic jitter via `hashStr()` seeded from skill `id`
+- JSDoc type fix: `Skill` typedef keeps `position: {x,y}` required; initial array typed as `Omit<Skill, 'position'>[]` (internal `_skills`), cast to `Skill[]` after `computePositions` mutates it in place — keeps LSP happy without bloating literals
+- packet animation: density reduced to always 1 (`count = 1 + Math.floor(Math.random() * 1)`), `packetDelay = Math.random() * 10` for sparse appearance
+- packet flash fix: initial `cx`/`cy` set to source position before appending `<circle>` element (was 0,0 causing visible teleport at origin)
+- packet fade-in: starts at `opacity: 0`, GSAP `fromTo` fades to 0.7 on start and on each repeat — no more pop-in
+- placeholder paragraph: expanded description text for the graph area
+- GSAP hover wipe effect: reactive edge/node styling removed from template; `animateToActive(id)` draws dash from source node outward using `edgePathLengths` + `edgePosDat` lookup, `animateToRest()` clears; reversed edge paths for correct direction; `prefers-reduced-motion` media query respected (no animation, just class toggles)
 - /experiences page: vertical timeline with left line + dot per entry + right card; `data-exp-id` attribute used for GSAP target; `ScrollTrigger.batch` with stagger entrance; follows existing route pattern (AnimatedHeading, theme classes)
 - GSAP targets use `bind:this` refs (not CSS selectors) for reliable element capture
 - child components expose refs to parent sections via `$bindable()` props (e.g., `<Navbar bind:navEl>`)
@@ -306,6 +316,11 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 [x] experiences_data.svelte.js: new file with `Experience` typedef + 5 placeholder entries
 [x] skills_network.svelte redesign: single-column layout with `flex-1` SVG filling available space between heading (top-right) and Experiences button (bottom-right); side info panel removed; replaced with floating HTML tooltip overlay positioned via `SVGPoint.matrixTransform(getScreenCTM())` for viewBox→pixel conversion; tooltip flips to left side when near container right edge; node radius increased to 30; mobile shows horizontal snap-scrollable cards with only featured skills, tap-to-popover detail modal
 [x] /experiences route: new full timeline page with vertical line + dots + cards, GSAP ScrollTrigger.batch stagger entrance, matches projects page pattern
+[x] skills_data.svelte.js: hardcoded positions removed, dynamic computePositions with 3 category bands + deterministic jitter
+[x] skills_network: all 16 skills on mobile (featured/export removed), flexible graph container, px-4 lg:px-8 padding, larger tooltip/popover
+[x] skills_network: packet density reduced, init flash fix, fade-in opacity
+[x] skills_network: GSAP hover wipe effect (animateToActive/animateToRest, edge dash-draw, reduced-motion support)
+[x] skills_network: placeholder paragraph expanded
 [ ] about section
 [ ] social section
 [ ] accent_button component

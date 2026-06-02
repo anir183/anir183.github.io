@@ -5,9 +5,7 @@
 	import { resolve } from "$app/paths";
 	import {
 		skills,
-		featuredSkills,
 		skillConnections,
-		featuredConnections,
 		AnimatedHeading,
 		LG_BREAKPOINT
 	} from "$lib";
@@ -31,8 +29,13 @@
 		/** @type {import("gsap/ScrollTrigger").ScrollTrigger | null} */ (null);
 	let packetEls = /** @type {SVGCircleElement[]} */ ([]);
 
-	let displaySkills = $derived(isMobile ? featuredSkills : skills);
-	let displayEdges = $derived(isMobile ? featuredConnections : skillConnections);
+	let edgePathLengths = /** @type {number[]} */ ([]);
+	let edgeTweens = /** @type {gsap.core.Tween[]} */ ([]);
+	let nodeTweens = /** @type {gsap.core.Tween[]} */ ([]);
+	let edgePositions = /** @type {{ from: { x: number, y: number }, to: { x: number, y: number }, cx: number, cy: number }[]} */ ([]);
+
+	let displaySkills = $derived(skills);
+	let displayEdges = $derived(skillConnections);
 
 	let activeSkill = $derived(
 		displaySkills.find((s) => s.id === (selectedId ?? hoveredId)) ?? null
@@ -73,48 +76,26 @@
 			if (!a || !b) return "";
 			const mx = (a.x + b.x) / 2;
 			const my = (a.y + b.y) / 2;
-			return `M ${a.x} ${a.y} Q ${mx} ${my + 20} ${b.x} ${b.y}`;
+			const cx = mx;
+			const cy = my + 20;
+			return `M ${a.x} ${a.y} Q ${cx} ${cy} ${b.x} ${b.y}`;
 		})
 	);
 
-	/**
-	 * @param {string} id
-	 * @returns {number}
-	 */
-	function getNodeOpacity(id) {
-		const active = hoveredId ?? selectedId;
-		if (!active) return 1;
-		if (id === active) return 1;
-		const connected = displayEdges.some(
-			(e) =>
-				(e[0] === active && e[1] === id) || (e[0] === id && e[1] === active)
-		);
-		return connected ? 1 : 0.35;
-	}
-
-	/**
-	 * @param {number} i
-	 * @returns {number}
-	 */
-	function getEdgeOpacity(i) {
-		const active = hoveredId ?? selectedId;
-		if (!active) return 0.3;
-		return displayEdges[i][0] === active || displayEdges[i][1] === active
-			? 0.7
-			: 0.1;
-	}
-
-	/**
-	 * @param {number} i
-	 * @returns {string}
-	 */
-	function getEdgeColor(i) {
-		const active = hoveredId ?? selectedId;
-		if (!active) return "var(--color-c-border)";
-		return displayEdges[i][0] === active || displayEdges[i][1] === active
-			? "var(--color-c-accent-0)"
-			: "var(--color-c-border)";
-	}
+	let edgePosDat = $derived(
+		displayEdges.map((pair) => {
+			const [from, to] = pair;
+			const fi = skillIndex.get(from);
+			const ti = skillIndex.get(to);
+			if (fi === undefined || ti === undefined) return null;
+			const a = effectivePositions[fi];
+			const b = effectivePositions[ti];
+			if (!a || !b) return null;
+			const mx = (a.x + b.x) / 2;
+			const my = (a.y + b.y) / 2;
+			return { from: a, to: b, cx: mx, cy: my + 20 };
+		})
+	);
 
 	/** @returns {{ x: number, y: number } | null} */
 	function getTooltipPos() {
@@ -135,7 +116,7 @@
 		const ry = screenPt.y - containerRect.top;
 		const cw = containerRect.width;
 
-		const tooltipW = 256;
+		const tooltipW = 320;
 		const gap = 20;
 		const flip = rx + gap + tooltipW > cw - 16;
 
@@ -159,11 +140,13 @@
 	function onNodeEnter(id) {
 		if (isMobile || selectedId) return;
 		hoveredId = id;
+		if (!reducedMotion) animateToActive(id);
 	}
 
 	function onNodeLeave() {
 		if (isMobile || selectedId) return;
 		hoveredId = null;
+		if (!reducedMotion) animateToRest();
 	}
 
 	/**
@@ -175,8 +158,13 @@
 			if (skill) mobileDetailSkill = skill;
 			return;
 		}
-		if (selectedId === id) selectedId = null;
-		else selectedId = id;
+		if (selectedId === id) {
+			selectedId = null;
+			if (!reducedMotion) animateToRest();
+		} else {
+			selectedId = id;
+			if (!reducedMotion) animateToActive(id);
+		}
 		if (selectedId !== id) return;
 		updateTooltip();
 	}
@@ -185,6 +173,7 @@
 		if (isMobile) return;
 		selectedId = null;
 		hoveredId = null;
+		if (!reducedMotion) animateToRest();
 	}
 
 	function closeMobileDetail() {
@@ -226,26 +215,33 @@
 			if (!path) return;
 
 			const len = path.getTotalLength();
-			const count = 1 + Math.floor(Math.random() * 2);
+			const count = 1 + Math.floor(Math.random() * 1);
 
 			for (let j = 0; j < count; j++) {
+				const initialT = Math.random();
+				const initPt = path.getPointAtLength(initialT * len);
+
 				/* eslint-disable svelte/no-dom-manipulating */
 				const circle = document.createElementNS(
 					"http://www.w3.org/2000/svg",
 					"circle"
 				);
+				circle.setAttribute("cx", String(initPt.x));
+				circle.setAttribute("cy", String(initPt.y));
 				circle.setAttribute("r", "2.5");
 				circle.classList.add("fill-c-accent-0");
-				circle.style.opacity = "0.5";
+				circle.style.opacity = "0";
 				circle.style.pointerEvents = "none";
 				circle.dataset.packetEdge = String(i);
 				svgEl.appendChild(circle);
 				/* eslint-enable svelte/no-dom-manipulating */
 				packetEls.push(circle);
 
+				const packetDelay = Math.random() * 10;
+
 				/** @type {{ t: number, path: SVGPathElement, len: number, el: SVGCircleElement }} */
 				const data = {
-					t: Math.random(),
+					t: initialT,
 					path,
 					len,
 					el: circle
@@ -256,15 +252,147 @@
 					duration: 4 + Math.random() * 4,
 					repeat: -1,
 					ease: "none",
-					delay: Math.random() * 5,
+					delay: packetDelay,
 					onUpdate: function () {
 						const pt = data.path.getPointAtLength(data.t * data.len);
 						data.el.setAttribute("cx", String(pt.x));
 						data.el.setAttribute("cy", String(pt.y));
+					},
+					onRepeat: function () {
+						gsap.fromTo(
+							circle,
+							{ opacity: 0 },
+							{ opacity: 0.7, duration: 1, ease: "power2.out", overwrite: true }
+						);
 					}
 				});
 				packetTweens.push(tween);
+
+				gsap.to(circle, {
+					opacity: 0.7,
+					duration: 1,
+					delay: packetDelay,
+					ease: "power2.out",
+					overwrite: true
+				});
 			}
+		});
+	}
+
+	/**
+	 * @param {string} id
+	 */
+	function animateToActive(id) {
+		if (!svgEl) return;
+		edgeTweens.forEach((t) => t.kill());
+		edgeTweens = [];
+		nodeTweens.forEach((t) => t.kill());
+		nodeTweens = [];
+
+		const set = reducedMotion ? gsap.set : gsap.to;
+		const dur = reducedMotion ? 0 : 0.45;
+
+		displayEdges.forEach((edge, i) => {
+			const pathEl = svgEl.querySelector(`[data-edge="${i}"]`);
+			if (!pathEl) return;
+
+			const connected = edge[0] === id || edge[1] === id;
+			const len = edgePathLengths[i] || 1;
+
+			if (connected) {
+				const sourceFirst = edge[0] === id;
+				const rev = edgePosDat[i];
+				const d = rev
+					? sourceFirst
+						? `M ${rev.from.x} ${rev.from.y} Q ${rev.cx} ${rev.cy} ${rev.to.x} ${rev.to.y}`
+						: `M ${rev.to.x} ${rev.to.y} Q ${rev.cx} ${rev.cy} ${rev.from.x} ${rev.from.y}`
+					: "";
+
+				const tween = gsap.fromTo(
+					pathEl,
+					{ strokeDasharray: len + 2, strokeDashoffset: len, stroke: "var(--color-c-border)", opacity: 0.3, attr: { d: pathEl.getAttribute("d") } },
+					{
+						strokeDashoffset: 0,
+						stroke: "var(--color-c-accent-0)",
+						opacity: 0.7,
+						duration: dur,
+						ease: "power2.out",
+						attr: { d }
+					}
+				);
+				edgeTweens.push(tween);
+			} else {
+				const tween = set(pathEl, {
+					opacity: 0.1,
+					stroke: "var(--color-c-border)",
+					duration: dur,
+					ease: "power2.out"
+				});
+				edgeTweens.push(tween);
+			}
+		});
+
+		displaySkills.forEach((skill) => {
+			const circle = svgEl.querySelector(`[data-node-id="${skill.id}"] circle:first-child`);
+			if (!circle) return;
+
+			if (skill.id === id) {
+				const tween = set(circle, {
+					stroke: "var(--color-c-accent-0)",
+					duration: dur,
+					ease: "power2.out"
+				});
+				nodeTweens.push(tween);
+			} else {
+				const connected = displayEdges.some(
+					(e) =>
+						(e[0] === id && e[1] === skill.id) ||
+						(e[0] === skill.id && e[1] === id)
+				);
+				const tween = set(circle, {
+					opacity: connected ? 1 : 0.35,
+					stroke: "var(--color-c-border)",
+					duration: dur,
+					ease: "power2.out"
+				});
+				nodeTweens.push(tween);
+			}
+		});
+	}
+
+	function animateToRest() {
+		if (!svgEl) return;
+		edgeTweens.forEach((t) => t.kill());
+		edgeTweens = [];
+		nodeTweens.forEach((t) => t.kill());
+		nodeTweens = [];
+
+		const set = reducedMotion ? gsap.set : gsap.to;
+		const dur = reducedMotion ? 0 : 0.35;
+
+		displayEdges.forEach((_edge, i) => {
+			const pathEl = svgEl.querySelector(`[data-edge="${i}"]`);
+			if (!pathEl) return;
+			const tween = set(pathEl, {
+				strokeDasharray: "none",
+				stroke: "var(--color-c-border)",
+				opacity: 0.3,
+				duration: dur,
+				ease: "power2.out"
+			});
+			edgeTweens.push(tween);
+		});
+
+		displaySkills.forEach((skill) => {
+			const circle = svgEl.querySelector(`[data-node-id="${skill.id}"] circle:first-child`);
+			if (!circle) return;
+			const tween = set(circle, {
+				opacity: 1,
+				stroke: "var(--color-c-border)",
+				duration: dur,
+				ease: "power2.out"
+			});
+			nodeTweens.push(tween);
 		});
 	}
 
@@ -303,6 +431,11 @@
 		const nodeEls = sectionEl.querySelectorAll("[data-node-id]");
 		const pathEls = svgEl.querySelectorAll("[data-edge]");
 
+		edgePathLengths = displayEdges.map((_, i) => {
+			const p = pathEls[i];
+			return p ? p.getTotalLength() : 1;
+		});
+
 		gsap.set(nodeEls, { scale: 0, opacity: 0 });
 		pathEls.forEach(
 			/** @param {SVGPathElement} p */ (p) => {
@@ -339,6 +472,14 @@
 							}
 						}
 					);
+					pathEls.forEach(
+						/** @param {Element} p */ (p) => {
+							if (p instanceof SVGPathElement) {
+								p.style.removeProperty("strokeDasharray");
+								p.style.removeProperty("strokeDashoffset");
+							}
+						}
+					);
 				}
 			},
 			"-=0.3"
@@ -367,14 +508,19 @@
 		if (!active) {
 			pulseTween?.kill();
 			pulseTween = null;
+			svgEl?.querySelectorAll(`[data-pulse]`).forEach(
+				/** @param {Element} el */ (el) => gsap.set(el, { scale: 1, opacity: 0 })
+			);
 			return;
 		}
+
+		pulseTween?.kill();
+		svgEl?.querySelectorAll(`[data-pulse]`).forEach(/** @param {Element} el */ (el) => gsap.set(el, { scale: 1, opacity: 0 }));
 
 		tick().then(() => {
 			const ring = svgEl?.querySelector(`[data-pulse="${active}"]`);
 			if (!ring) return;
 
-			pulseTween?.kill();
 			gsap.set(ring, { scale: 1, opacity: 0.5 });
 			pulseTween = gsap.to(ring, {
 				scale: 1.3,
@@ -421,7 +567,7 @@
 >
 	<!-- SVG graph panel (left on desktop, top on mobile) -->
 	<div
-		class="flex w-full items-center justify-center px-4 max-lg:h-[55vh] lg:sticky lg:top-0 lg:h-screen lg:w-3/5 lg:px-8"
+		class="flex w-full items-center justify-center px-4 max-lg:min-h-[45vh] max-lg:flex-1 max-lg:max-h-[75vh] lg:sticky lg:top-0 lg:h-screen lg:w-3/5 lg:px-8"
 	>
 		<div
 			bind:this={svgContainerEl}
@@ -440,16 +586,16 @@
 					if (e.key === "Escape") onSvgBgClick();
 				}}
 			>
-				{#each edgePaths as d, i (i)}
-					<path
-						{d}
-						data-edge={i}
-						fill="none"
-						stroke-linecap="round"
-						stroke="currentColor"
-						stroke-width="1.5"
-						style="color: {getEdgeColor(i)}; opacity: {getEdgeOpacity(i)}"
-					/>
+			{#each edgePaths as d, i (i)}
+				<path
+					{d}
+					data-edge={i}
+					fill="none"
+					stroke-linecap="round"
+					stroke="var(--color-c-border)"
+					stroke-width="1.5"
+					opacity="0.3"
+				/>
 				{/each}
 
 				{#each displaySkills as skill, i (skill.id)}
@@ -457,7 +603,6 @@
 						transform="translate({effectivePositions[i]
 							.x}, {effectivePositions[i].y})"
 						data-node-id={skill.id}
-						style:opacity={getNodeOpacity(skill.id)}
 						class="cursor-pointer"
 						role="button"
 						tabindex="0"
@@ -482,11 +627,7 @@
 							r={isMobile ? 36 : 30}
 							class="fill-c-bg-2/50"
 							stroke-width="1.5"
-							stroke="currentColor"
-							style="transition: color 0.3s; color: {selectedId ===
-								skill.id || hoveredId === skill.id
-								? 'var(--color-c-accent-0)'
-								: 'var(--color-c-border)'}"
+							stroke="var(--color-c-border)"
 						/>
 						{#if !isMobile}
 							<circle
@@ -517,42 +658,42 @@
 					style="left: {tooltipX}px; top: {tooltipY}px; transform: translateY(-50%);"
 					transition:fade={{ duration: 120 }}
 				>
-					<div
-						class="w-64 rounded-2xl border border-c-border/40 bg-c-bg-2/90 px-5 py-4 backdrop-blur-xl shadow-lg"
-					>
-						<div class="flex items-center gap-3">
-							<span class="text-2xl">{activeSkill.icon}</span>
-							<div>
-								<p class="font-c-unbounded text-sm font-bold text-c-neutral-0">
-									{activeSkill.name}
-								</p>
-								<span
-									class="font-c-bebas text-xs tracking-widest text-c-neutral-1 uppercase"
-								>
-									{activeSkill.category}
-								</span>
-							</div>
-						</div>
-						<p class="mt-3 font-c-ubuntu text-xs leading-relaxed text-c-neutral-1">
-							{activeSkill.description}
-						</p>
-						<div class="mt-3">
-							<span class="font-c-bebas text-xs tracking-widest text-c-neutral-1 uppercase">
-								{activeSkill.experience}
+				<div
+					class="w-80 rounded-2xl border border-c-border/40 bg-c-bg-2/90 px-6 py-5 backdrop-blur-xl shadow-lg"
+				>
+					<div class="flex items-center gap-3">
+						<span class="text-4xl">{activeSkill.icon}</span>
+						<div>
+							<p class="font-c-unbounded text-lg font-bold text-c-neutral-0">
+								{activeSkill.name}
+							</p>
+							<span
+								class="font-c-bebas text-sm tracking-widest text-c-neutral-1 uppercase"
+							>
+								{activeSkill.category}
 							</span>
 						</div>
-						{#if activeSkill.relatedTechnologies.length > 0}
-							<div class="mt-3 flex flex-wrap gap-1.5">
-								{#each activeSkill.relatedTechnologies as tech (tech)}
-									<span
-										class="rounded-full border border-c-border/30 px-2.5 py-0.5 font-c-ubuntu text-[11px] text-c-neutral-0"
-									>
-										{tech}
-									</span>
-								{/each}
-							</div>
-						{/if}
 					</div>
+					<p class="mt-3 font-c-ubuntu text-base leading-relaxed text-c-neutral-1">
+						{activeSkill.description}
+					</p>
+					<div class="mt-3">
+						<span class="font-c-bebas text-sm tracking-widest text-c-neutral-1 uppercase">
+							{activeSkill.experience}
+						</span>
+					</div>
+					{#if activeSkill.relatedTechnologies.length > 0}
+						<div class="mt-3 flex flex-wrap gap-1.5">
+							{#each activeSkill.relatedTechnologies as tech (tech)}
+								<span
+									class="rounded-full border border-c-border/30 px-2.5 py-0.5 font-c-ubuntu text-sm text-c-neutral-0"
+								>
+									{tech}
+								</span>
+							{/each}
+						</div>
+					{/if}
+				</div>
 				</div>
 			{/if}
 		</div>
@@ -602,45 +743,45 @@
 	>
 		<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 		<div
-			class="w-full max-w-sm rounded-2xl border border-c-border/40 bg-c-bg-0 p-6 backdrop-blur-xl shadow-xl"
+			class="w-full max-w-lg rounded-2xl border border-c-border/40 bg-c-bg-0 p-10 backdrop-blur-xl shadow-xl"
 			role="document"
 			onclick={(e) => e.stopPropagation()}
 			onkeydown={() => {}}
 			transition:scale={{ start: 0.92, duration: 150 }}
 		>
-			<div class="flex items-center gap-3">
-				<span class="text-3xl">{mobileDetailSkill.icon}</span>
+			<div class="flex items-center gap-4">
+				<span class="text-5xl">{mobileDetailSkill.icon}</span>
 				<div>
-					<h3 class="font-c-unbounded text-lg text-c-neutral-0">
+					<h3 class="font-c-unbounded text-2xl text-c-neutral-0">
 						{mobileDetailSkill.name}
 					</h3>
 					<span
-						class="font-c-bebas text-xs tracking-widest text-c-neutral-1 uppercase"
+						class="font-c-bebas text-base tracking-widest text-c-neutral-1 uppercase"
 					>
 						{mobileDetailSkill.category}
 					</span>
 				</div>
 			</div>
-			<p class="mt-4 font-c-ubuntu text-sm leading-relaxed text-c-neutral-1">
+			<p class="mt-4 font-c-ubuntu text-lg leading-relaxed text-c-neutral-1">
 				{mobileDetailSkill.description}
 			</p>
 			<div class="mt-4">
-				<span class="font-c-bebas text-xs tracking-widest text-c-neutral-1 uppercase">
+				<span class="font-c-bebas text-base tracking-widest text-c-neutral-1 uppercase">
 					Experience
 				</span>
-				<p class="font-c-ubuntu text-sm text-c-neutral-0">
+				<p class="font-c-ubuntu text-lg text-c-neutral-0">
 					{mobileDetailSkill.experience}
 				</p>
 			</div>
 			{#if mobileDetailSkill.relatedTechnologies.length > 0}
 				<div class="mt-4">
-					<span class="font-c-bebas text-xs tracking-widest text-c-neutral-1 uppercase">
+					<span class="font-c-bebas text-base tracking-widest text-c-neutral-1 uppercase">
 						Related
 					</span>
 					<div class="mt-2 flex flex-wrap gap-2">
 						{#each mobileDetailSkill.relatedTechnologies as tech (tech)}
 							<span
-								class="rounded-full border border-c-border/30 px-3 py-1 font-c-ubuntu text-xs text-c-neutral-0"
+								class="rounded-full border border-c-border/30 px-3 py-1 font-c-ubuntu text-base text-c-neutral-0"
 							>
 								{tech}
 							</span>
