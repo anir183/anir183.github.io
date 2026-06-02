@@ -1,12 +1,15 @@
 <script>
-	import { onMount } from "svelte";
+	import { onMount, tick } from "svelte";
 	import { gsap } from "gsap";
-	import { staggerRotateTiles, GRID_COLS, GRID_ROWS } from "$lib";
+	import { staggerRotateTiles } from "$lib";
 
-	let { activeImage = null, cols = GRID_COLS, rows = GRID_ROWS } = $props();
+	let { activeImage = null } = $props();
 
 	/** @type {HTMLDivElement | undefined} */
 	let gridEl = $state();
+
+	let cols = $state(12);
+	let rows = $state(9);
 
 	let revealCount = 0;
 	let isAnimating = false;
@@ -23,10 +26,58 @@
 
 	let tileIndices = $derived(Array.from({ length: rows * cols }, (_, i) => i));
 
+	function computeGridDimensions() {
+		if (!gridEl) return;
+		const w = gridEl.clientWidth;
+		const h = gridEl.clientHeight;
+		if (!w || !h) return;
+		const aspect = w / h;
+		const targetN = 144;
+		cols = Math.max(Math.round(Math.sqrt(targetN * aspect)), 4);
+		rows = Math.max(Math.round(Math.sqrt(targetN / aspect)), 3);
+	}
+
 	function getTileDimensions() {
 		if (!gridEl) return { w: 0, h: 0 };
 		const rect = gridEl.getBoundingClientRect();
 		return { w: rect.width / cols, h: rect.height / rows };
+	}
+
+	/**
+	 * @param {string} src
+	 * @returns {HTMLImageElement | null}
+	 */
+	function findImageElement(src) {
+		for (const img of document.querySelectorAll("img")) {
+			if (img.getAttribute("src") === src) return img;
+		}
+		return null;
+	}
+
+	/**
+	 * @param {string} src
+	 * @returns {Promise<boolean>}
+	 */
+	function ensureImageLoaded(src) {
+		const el = findImageElement(src);
+		if (!el) return Promise.resolve(false);
+		if (el.complete) return Promise.resolve(el.naturalWidth > 0);
+		return new Promise((resolve) => {
+			el.addEventListener("load", () => resolve(true), { once: true });
+			el.addEventListener("error", () => resolve(false), { once: true });
+		});
+	}
+
+	/**
+	 * @param {string} src
+	 * @returns {{ w: number, h: number } | null}
+	 */
+	function getImageDimensions(src) {
+		const el = findImageElement(src);
+		if (el && el.complete && el.naturalWidth) {
+			return { w: el.naturalWidth, h: el.naturalHeight };
+		}
+		return null;
 	}
 
 	/**
@@ -39,12 +90,31 @@
 		const fullW = cols * w;
 		const fullH = rows * h;
 
+		const dims = getImageDimensions(image);
+		if (!dims) return;
+		const imgAspect = dims.w / dims.h;
+		const gridAspect = fullW / fullH;
+
+		let bgW, bgH, offsetX, offsetY;
+
+		if (imgAspect > gridAspect) {
+			bgH = fullH;
+			bgW = bgH * imgAspect;
+			offsetX = (bgW - fullW) / 2;
+			offsetY = 0;
+		} else {
+			bgW = fullW;
+			bgH = bgW / imgAspect;
+			offsetX = 0;
+			offsetY = (bgH - fullH) / 2;
+		}
+
 		tileMeta.forEach((t) => {
 			const target = face === "front" ? t.front : t.rear;
 			if (!target) return;
 			target.style.backgroundImage = `url("${image}")`;
-			target.style.backgroundSize = `${fullW}px ${fullH}px`;
-			target.style.backgroundPosition = `-${t.col * w}px -${t.row * h}px`;
+			target.style.backgroundSize = `${bgW}px ${bgH}px`;
+			target.style.backgroundPosition = `-${t.col * w + offsetX}px -${t.row * h + offsetY}px`;
 		});
 	}
 
@@ -93,10 +163,13 @@
 		staggerRotateTiles(cubes, cols, rows, onTransitionComplete);
 	}
 
-	onMount(() => {
-		const els = /** @type {HTMLDivElement[]} */ (
-			[...(gridEl?.querySelectorAll("[data-tile-index]") ?? [])]
-		);
+	onMount(async () => {
+		computeGridDimensions();
+		await tick();
+
+		const els = /** @type {HTMLDivElement[]} */ ([
+			...(gridEl?.querySelectorAll("[data-tile-index]") ?? [])
+		]);
 		tileMeta = els.map((el, i) => {
 			const col = i % cols;
 			const row = Math.floor(i / cols);
@@ -109,11 +182,14 @@
 			};
 		});
 
-		if (activeImage) {
-			paintFaces(activeImage, "front");
-		}
-
 		startBreathing();
+
+		if (activeImage) {
+			const loaded = await ensureImageLoaded(activeImage);
+			if (loaded) {
+				paintFaces(activeImage, "front");
+			}
+		}
 	});
 
 	$effect(() => {

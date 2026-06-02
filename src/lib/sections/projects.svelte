@@ -1,12 +1,6 @@
 <script>
 	import { resolve } from "$app/paths";
-	import {
-		projects,
-		AnimatedHeading,
-		CubeGrid,
-		GRID_COLS,
-		GRID_ROWS
-	} from "$lib";
+	import { projects, AnimatedHeading, CubeGrid } from "$lib";
 
 	/** @type {import("$lib/utils/projects_data.svelte.js").Project | null} */
 	let activeProject = $state(projects[0]);
@@ -17,15 +11,29 @@
 	id="projects"
 >
 	<div
-		class="flex w-full flex-col justify-center px-8 py-16 lg:w-2/5 lg:px-12 lg:py-24"
+		class="max-lg:absolute max-lg:top-0 max-lg:left-0 max-lg:z-20 max-lg:w-full max-lg:bg-gradient-to-b max-lg:from-c-bg-0/90 max-lg:via-c-bg-0/60 max-lg:to-transparent max-lg:px-6 max-lg:pt-8 max-lg:pb-12 lg:hidden"
 	>
 		<AnimatedHeading
 			tag="h2"
 			start={true}
-			class="font-c-unbounded text-5xl font-black text-c-neutral-0 lg:text-7xl"
+			class="font-c-unbounded text-5xl font-black text-c-neutral-0"
 		>
 			Projects
 		</AnimatedHeading>
+	</div>
+
+	<div
+		class="flex w-full flex-col justify-center px-8 py-16 max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:z-10 max-lg:w-full max-lg:justify-end max-lg:bg-gradient-to-tr max-lg:from-c-bg-0/95 max-lg:via-c-bg-0/75 max-lg:to-c-bg-0/0 max-lg:px-6 max-lg:pt-32 max-lg:pb-8 lg:w-2/5 lg:px-12 lg:py-24"
+	>
+		<div class="max-lg:hidden">
+			<AnimatedHeading
+				tag="h2"
+				start={true}
+				class="font-c-unbounded text-5xl font-black text-c-neutral-0 lg:text-7xl"
+			>
+				Projects
+			</AnimatedHeading>
+		</div>
 
 		<ul class="mt-12 flex flex-col gap-4">
 			{#each projects as project (project.id)}
@@ -49,7 +57,7 @@
 
 		<a
 			href={resolve("/projects")}
-			class="group relative mt-12 inline-flex w-fit items-center gap-3 overflow-hidden rounded-full border border-c-border/40 bg-c-bg-2/30 px-8 py-4 font-c-ubuntu text-base text-c-neutral-0 backdrop-blur-xl transition-all duration-300 hover:border-c-border hover:bg-c-bg-2/50"
+			class="group relative mt-12 inline-flex w-fit items-center gap-3 overflow-hidden rounded-full border border-c-border/40 bg-c-bg-2/30 px-8 py-4 font-c-ubuntu text-base text-c-neutral-0 backdrop-blur-xl transition-all duration-300 hover:border-c-border hover:bg-c-bg-2/50 max-lg:absolute max-lg:right-6 max-lg:bottom-8 max-lg:mt-0"
 		>
 			<span class="relative z-10">View All Projects</span>
 			<span
@@ -60,7 +68,7 @@
 	</div>
 
 	<div
-		class="sticky bottom-0 flex h-[50vh] w-full items-center justify-center lg:top-0 lg:h-screen lg:w-3/5"
+		class="sticky bottom-0 flex h-[50vh] w-full items-center justify-center max-lg:static max-lg:h-screen max-lg:p-12 lg:top-0 lg:h-screen lg:w-3/5"
 	>
 		{#each projects as project (project.id)}
 			<img
@@ -70,12 +78,10 @@
 				class="invisible absolute"
 			/>
 		{/each}
-		<div class="aspect-video max-h-[62vh] w-full max-w-[80%]">
-			<CubeGrid
-				cols={GRID_COLS}
-				rows={GRID_ROWS}
-				activeImage={activeProject?.image}
-			/>
+		<div
+			class="aspect-video max-h-[62vh] w-full max-w-[80%] max-lg:aspect-auto max-lg:h-full max-lg:max-h-none max-lg:max-w-none"
+		>
+			<CubeGrid activeImage={activeProject?.image} />
 		</div>
 	</div>
 </section>

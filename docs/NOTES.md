@@ -147,6 +147,9 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 - cube_grid.svelte paintFaces: added aspect-ratio-aware background sizing (cover-style via `new Image().naturalWidth/Height`, computed offset per tile) — images no longer stretch, they fill the grid while maintaining intrinsic aspect
 - cube_grid.svelte: removed `overflow-hidden` from `.cube-grid` to prevent cube corners being clipped during breathing rotation
 - cube_grid.svelte: breathing no longer killed/restarted during tile flips — breathing tweens animate z/rotationZ while flip tweens animate rotationY, different properties so GSAP handles both simultaneously without conflict (avoids jarring snap-to-zero mid-transition)
+- cube_grid.svelte: dynamic square tile computation — removed `cols`/`rows` props, internal `$state` computed from container dimensions via `computeGridDimensions()` (target ~144 tiles, `sqrt(N * aspect)` formula to keep each tile square). `onMount` → `computeGridDimensions()` → `await tick()` → build `tileMeta`. Uses `GRID_COLS`/`GRID_ROWS` constants no longer (constants remain in projects_data for export compat)
+- cube_grid.svelte: paintFaces cover math restored — reads image dimensions from preloaded `<img>` elements via `findImageElement()` (iterates `document.querySelectorAll("img")`, compares `getAttribute("src")`). Computes cover-style `bgW`/`bgH` with centered offset per tile. No more image stretching
+- cube_grid.svelte: initial paint race condition fix — `getImageDimensions()` returns `null` (not `{w:1,h:1}`) when image not loaded. `onMount` calls `ensureImageLoaded(activeImage)` (awaits `load` event on preloaded `<img>`) before painting. `startBreathing()` runs immediately (doesn't need images). `transitionTo` path unaffected (images guaranteed loaded by user interaction time)
 - cube_grid.svelte.js staggerRotateTiles: `from: "center"` → `from: "random"`, `amount: 0.5`, `duration: 1.2` → `0.9` — faster, random-order flips
 - projects.svelte: cube grid container changed to 16:9 `aspect-video w-full max-h-[62vh] max-w-[85%] lg:max-w-[90%]` (bigger, rectangle)
 - projects.svelte: "Projects" heading `text-4xl lg:text-5xl` → `text-5xl lg:text-7xl`
@@ -168,6 +171,8 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 - hero headline extracted into reusable `AnimatedHeading` component with ScrollTrigger character-stagger animation: SplitText characters set to `x: 100, opacity: 0, skewX: 20`, then stagger-revealed on viewport entry; headline animation removed from `hero_entry.svelte.js`
 - cube_grid.svelte: side faces (rotateY ±90°, rotateX ±90°) removed — only front+rear faces kept for image flip; at 1px cube depth, side faces were invisible edges causing dark artifacts during rotation
 - projects.svelte: cube grid container changed from stretch-to-fill to centered fixed square box (`aspect-square` constrained by `min(55vh,55vw)`)
+- projects.svelte mobile overlay: uses `max-lg:` variants on single DOM structure — zero desktop class changes. Grid panel `max-lg:static max-lg:h-screen` (overrides `sticky bottom-0 h-[50vh]`). List panel `max-lg:absolute bottom-0 left-0 z-10 ...` (overlays bottom-left with `c-bg-0` gradient). CubeGrid container `max-lg:h-full max-lg:aspect-auto max-lg:max-h-none max-lg:max-w-none` (fills viewport). All `lg:` classes untouched.
+- projects.svelte mobile: heading moved to `top-0 left-0` with `bg-gradient-to-b from-c-bg-0/90 via-c-bg-0/60 to-transparent` for readability. CTA moved to `bottom-8 right-6` with `max-lg:absolute`. Desktop AnimatedHeading wrapped in `max-lg:hidden`. Grid panel padding increased `p-4` → `p-8`. Removed `GRID_COLS`/`GRID_ROWS` import and CubeGrid props (CubeGrid computes dynamically internally).
 - navbar.svelte: border flash fix — `border-b` always present, color transitions between `border-transparent` ↔ `border-c-border/20` (prevents 0→1px discontinuity during 500ms transition)
 - layout.css: `body.overflow-hidden` selector hardened with `!important`, `overscroll-behavior: none`, `touch-action: none` — prevents touch/wheel scroll bypass during preloader phase
 
@@ -235,11 +240,12 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 - CSS 3D cube grid (`cube_grid.svelte`): `display: grid` with `transform-style: preserve-3d` per tile
 - each tile: front face (image), rear face (flipped image via `rotateY(180deg)`), no side faces (removed to avoid dark edge artifacts at 1px depth)
 - tiles are row-major order (`{#each tileIndices as i (i)}`); `tileMeta` built in `onMount` from `bind:this` refs
-- `paintFaces(image, face)` computes tile dimensions from `getBoundingClientRect()`, sets `background-size/-position` to reconstruct the full image across the grid
+- `paintFaces(image, face)` computes tile dimensions from `getBoundingClientRect()`, sets `background-size/-position` to reconstruct the full image across the grid with cover math (reads image dimensions from preloaded `<img>` elements, constrains by narrower axis, centers the overflow)
 - GSAP stagger: `staggerRotateTiles()` in `cube_grid.svelte.js` uses GSAP stagger grid with `from: "center"`, rotates each tile 180° on `rotationY`, `power4.inOut` easing, 1.2s duration
 - reveal queue: `transitionTo(image)` state machine — if currently animating, queues the image and processes on completion; alternates between painting front/rear face so next image is pre-painted on the hidden face before rotation
 - breathing idle animation: random Z offset (-20 to 60px), random duration (1.5–3s), yoyo repeat, random stagger delay (0–2s) — killed during transitions, restarted on completion
-- container: `aspect-square` box centered in the right panel, constrained by `min(55vh, 55vw)` so it doesn't exceed viewport on either axis
+- dynamic square tiles: `computeGridDimensions()` measures container, solves `cols/rows = aspect` with target ~144 tiles so each cell is always square regardless of viewport shape. No longer uses `GRID_COLS`/`GRID_ROWS` constants. Runs in `onMount` before building `tileMeta`
+- container: mobile — `h-full w-full p-8` (fills viewport, 2rem inset); desktop — `aspect-video max-h-[62vh] max-w-[80%]` centered in right panel
 - project images preloaded via hidden `<img>` elements in `projects.svelte` (picked up by `document.images` in `loadAllImages`)
 
 ### roadmap
@@ -272,6 +278,9 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 [x] cube grid: breathing calmed (Z -25→50, rotationZ ±0.25), no longer killed during flip transitions
 [x] cube grid: random stagger instead of center wave, shorter duration (0.9s), amount 0.5
 [x] cube grid: pre-allocated tileEls array to fix first-row tile duplication bug
+[x] cube grid: dynamic square tiles (cols/rows computed from container aspect ratio, ~144 target, always square)
+[x] cube grid: cover math restored (images zoom+crop instead of stretch, read from preloaded img elements)
+[x] projects section: mobile overlay improvements — heading top-left with gradient, CTA bottom-right, grid padding increased to p-8
 [x] projects section: heading bigger (5xl→7xl lg), project name font-c-ubuntu
 [ ] about section
 [ ] contact section

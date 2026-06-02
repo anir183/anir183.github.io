@@ -57,7 +57,7 @@
 
 <nav
 	bind:this={navEl}
-	class="fixed top-0 left-0 z-20 flex w-full items-center justify-between border-b px-8 py-4 transition-all duration-500 max-lg:px-6 max-lg:py-3 {scrolled
+	class="fixed top-0 left-0 z-30 flex w-full items-center justify-between border-b px-8 py-4 transition-all duration-500 max-lg:px-6 max-lg:py-3 {scrolled
 		? 'border-c-border/20 bg-c-bg-0/70 backdrop-blur-xl'
 		: 'border-transparent'}"
 >
@@ -146,7 +146,7 @@
 </nav>
 
 {#if mobileMenuOpen}
-	<div class="fixed inset-0 z-30">
+	<div class="fixed inset-0 z-40">
 		<div
 			class="absolute inset-0 bg-black/40 backdrop-blur-sm"
 			onclick={() => (mobileMenuOpen = false)}
