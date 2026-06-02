@@ -193,12 +193,13 @@
 	});
 
 	$effect(() => {
-		if (activeImage && tileMeta.length > 0) {
-			if (firstEffectRun) {
-				firstEffectRun = false;
-				return;
-			}
-			transitionTo(activeImage);
+		const img = activeImage;
+		if (firstEffectRun) {
+			firstEffectRun = false;
+			return;
+		}
+		if (img && tileMeta.length > 0) {
+			transitionTo(img);
 		}
 	});
 

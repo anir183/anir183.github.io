@@ -23,7 +23,7 @@
 	</div>
 
 	<div
-		class="flex w-full flex-col justify-center px-8 py-16 max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:z-10 max-lg:w-full max-lg:justify-end max-lg:bg-gradient-to-tr max-lg:from-c-bg-0/95 max-lg:via-c-bg-0/75 max-lg:to-c-bg-0/0 max-lg:px-6 max-lg:pt-32 max-lg:pb-8 lg:w-2/5 lg:px-12 lg:py-24"
+		class="flex w-full flex-col justify-center px-8 py-16 max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:z-10 max-lg:w-full max-lg:justify-end max-lg:bg-gradient-to-tr max-lg:from-c-bg-0/95 max-lg:via-c-bg-0/75 max-lg:to-c-bg-0/0 max-lg:px-6 max-lg:pt-32 max-lg:pb-8 lg:w-2/5 lg:px-12 lg:py-24 lg:pl-16"
 	>
 		<div class="max-lg:hidden">
 			<AnimatedHeading
@@ -68,7 +68,7 @@
 	</div>
 
 	<div
-		class="sticky bottom-0 flex h-[50vh] w-full items-center justify-center max-lg:static max-lg:h-screen max-lg:p-12 lg:top-0 lg:h-screen lg:w-3/5"
+		class="sticky bottom-0 flex h-[50vh] w-full items-center justify-center max-lg:static max-lg:h-screen max-lg:p-12 lg:top-0 lg:h-screen lg:w-3/5 lg:pr-16"
 	>
 		{#each projects as project (project.id)}
 			<img
@@ -79,7 +79,7 @@
 			/>
 		{/each}
 		<div
-			class="aspect-video max-h-[62vh] w-full max-w-[80%] max-lg:aspect-auto max-lg:h-full max-lg:max-h-none max-lg:max-w-none"
+			class="aspect-video max-h-[80vh] w-full max-w-[90%] max-lg:aspect-auto max-lg:h-full max-lg:max-h-none max-lg:max-w-none"
 		>
 			<CubeGrid activeImage={activeProject?.image} />
 		</div>
