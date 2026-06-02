@@ -147,6 +147,7 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 - hero.svelte portrait theme comparisons: raw `'light'`/`'dark'` strings replaced with `themes.LIGHT`/`themes.DARK` constants (consistency with navbar.svelte)
 - +layout.svelte inline flicker-prevention script: wrapped in `typeof` guards for localStorage/window (SSR-safe consistency with theme.svelte.js)
 - loading.svelte.js cached image `onLoad()`: deferred to microtask via `Promise.resolve().then()` to prevent synchronous progress callback during `Promise.all` construction
+- preloader + navbar decoupled from hero.svelte into +page.svelte: hero.svelte is now a pure content section exposing refs via `$bindable()` props (`introImgs`, `heroH1`); +page.svelte owns the loading lifecycle, preloader visibility, navbar refs, and GSAP sequence orchestration
 
 ### notes
 
@@ -158,7 +159,7 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 - GSAP easings: use built-in eases only (power2.out, power3.out, power4.out) — no CustomEase
 - SplitText is the only GSAP bonus plugin used (dynamically imported)
 - body scroll is locked only during preloader phase via `overflow-hidden` on body
-- preloader always hides due to `.finally()` chain in hero.svelte
+- preloader always hides due to `.finally()` chain in +page.svelte
 - timeline has 0.5s delay to let preloader fade-out complete before images animate
 - image loading is decoupled from `heroEntrySequence` — `loadAllImages(onProgress)` runs first,
   tracks per-image progress, then hero sequence starts (images already cached)
@@ -190,7 +191,7 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
   - when defined: shows `{Math.round(progress * 100)}%`
   - when undefined: shows "Loading..." with animated dots (fallback)
 - dots animation via `setInterval` in `$effect` — only runs when progress is undefined
-- controlled from hero.svelte:
+- controlled from +page.svelte:
   1. `loadAllImages(onProgress)` tracks per-image load, calls back with progress fraction
   2. preloader shows percentage in real-time as images load
   3. when all images loaded → `heroEntrySequence` starts → `.finally()` sets `preloaderVisible = false`
@@ -200,10 +201,10 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 
 ### ref pattern (bind:this + $bindable)
 
-- hero.svelte declares `let el = $state()` for each animated element
 - `bind:this={el}` on the DOM element captures the ref
 - child components (e.g., Navbar) use `$bindable()` to expose internal refs
-- parent reads child refs via `bind:prop={parentVar}`
+- section components (e.g., Hero) use `$bindable()` to expose their internal DOM refs upward to the page
+- +page.svelte owns all refs and orchestration — calls `loadAllImages()`, then `heroEntrySequence()`, manages preloader
 - all refs are passed as a config object to the GSAP sequence function
 - sequence accepts: introImages[], heroHeadline, navLinks[], themeButton
 
@@ -217,7 +218,7 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 [x] navbar — responsive: lg+ inline nav links, <lg hamburger with animated fly-in panel
 [x] navbar — font-c-bebas for nav links, glass-effect backdrop-blur, accent hover
 [x] hero_entry GSAP sequence (full intro animation from hero.bak, minus preloader)
-[x] hero.svelte production rewrite (composing preloader + navbar + images + animation)
+[x] hero.svelte production rewrite (pure content section with $bindable() refs, preloader/navbar orchestration moved to +page.svelte)
 [x] update barrel exports (index.js)
 [x] consolidate all imports to use $lib barrel (no $lib/.../... paths)
 [x] code quality audit: fix magic strings, deduplicate hero intro images, add SSR guards, fix invalid CSS, inline single-use modules
