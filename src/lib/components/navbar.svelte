@@ -19,6 +19,7 @@
 	/** @param {string} name */
 	function sectionUrl(name) {
 		if (name === "Projects") return resolve("/#projects");
+		if (name === "Skills") return resolve("/#skills");
 		return resolve("/");
 	}
 

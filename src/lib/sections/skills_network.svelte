@@ -624,7 +624,7 @@
 						onmouseleave={onNodeLeave}
 					>
 						<circle
-							r={isMobile ? 36 : 30}
+							r={isMobile ? 46 : 26}
 							class="fill-c-bg-2/50"
 							stroke-width="1.5"
 							stroke="var(--color-c-border)"
@@ -643,7 +643,7 @@
 						<text
 							text-anchor="middle"
 							dominant-baseline="central"
-							class="pointer-events-none fill-c-neutral-0 text-xl select-none"
+							class="pointer-events-none fill-c-neutral-0 max-lg:text-3xl text-base select-none"
 						>
 							{skill.icon}
 						</text>

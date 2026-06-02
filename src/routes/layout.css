@@ -86,9 +86,17 @@
 		animation-iteration-count: 1 !important;
 		transition-duration: 0.01ms !important;
 	}
+
+	html {
+		scroll-behavior: auto;
+	}
 }
 
 @layer base {
+	html {
+		scroll-behavior: smooth;
+	}
+
 	body.overflow-hidden {
 		overflow: hidden !important;
 		position: fixed;
