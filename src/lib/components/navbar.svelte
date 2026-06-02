@@ -64,14 +64,26 @@
 	<a
 		href={resolve("/")}
 		class="flex shrink-0 items-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)]"
+		aria-label="anir183"
 	>
-		<img
-			src={theme.current === themes.DARK
-				? "/assets/branding/logo_light.svg"
-				: "/assets/branding/logo_dark.svg"}
-			alt="anir183"
-			class="h-10 w-10 translate-y-[1px] max-lg:h-9 max-lg:w-9"
-		/>
+		<div class="relative h-10 w-10 translate-y-[1px] max-lg:h-9 max-lg:w-9">
+			<img
+				src="/assets/branding/logo_light.svg"
+				alt=""
+				class="absolute inset-0 block h-full w-full transition-opacity duration-700 {theme.current ===
+				themes.DARK
+					? 'opacity-100'
+					: 'opacity-0'}"
+			/>
+			<img
+				src="/assets/branding/logo_dark.svg"
+				alt=""
+				class="absolute inset-0 block h-full w-full transition-opacity duration-700 {theme.current ===
+				themes.LIGHT
+					? 'opacity-100'
+					: 'opacity-0'}"
+			/>
+		</div>
 	</a>
 
 	<div class="mr-8 ml-auto flex items-center gap-2 max-lg:hidden">
