@@ -24,6 +24,15 @@
 
 	let firstEffectRun = true;
 
+	// proximity dimming
+	const DIM_FAR = 100;
+	const DIM_STRENGTH = 0.15;
+
+	/** @type {number[]} */
+	let tileApplied = [];
+	/** @type {boolean[]} */
+	let tileWasNear = [];
+
 	let tileIndices = $derived(Array.from({ length: rows * cols }, (_, i) => i));
 
 	function computeGridDimensions() {
@@ -118,6 +127,74 @@
 		});
 	}
 
+	/**
+	 * @param {number} i
+	 * @param {DOMRect} gridRect
+	 */
+	function tileCenter(i, gridRect) {
+		const tw = gridRect.width / cols;
+		const th = gridRect.height / rows;
+		const col = i % cols;
+		const row = Math.floor(i / cols);
+		return {
+			x: gridRect.left + col * tw + tw / 2,
+			y: gridRect.top + row * th + th / 2
+		};
+	}
+
+	/** @param {MouseEvent} e */
+	function onGridMove(e) {
+		if (!gridEl) return;
+		const gridRect = gridEl.getBoundingClientRect();
+
+		for (let i = 0; i < tileMeta.length; i++) {
+			const c = tileCenter(i, gridRect);
+			const dist = Math.hypot(e.clientX - c.x, e.clientY - c.y);
+
+			if (dist < DIM_FAR) {
+				tileWasNear[i] = true;
+				if (tileApplied[i] !== DIM_STRENGTH) {
+					tileApplied[i] = DIM_STRENGTH;
+					const t = tileMeta[i];
+					gsap.killTweensOf([t.front, t.rear], "opacity");
+					gsap.set([t.front, t.rear], { opacity: DIM_STRENGTH });
+				}
+			} else if (tileWasNear[i]) {
+				tileWasNear[i] = false;
+				tileApplied[i] = 1;
+				const t = tileMeta[i];
+				gsap.to([t.front, t.rear], {
+					opacity: 1,
+					duration: 3,
+					ease: "power2.out"
+				});
+			}
+		}
+	}
+
+	function onGridLeave() {
+		for (let i = 0; i < tileMeta.length; i++) {
+			if (tileApplied[i] < 1) {
+				tileWasNear[i] = false;
+				tileApplied[i] = 1;
+				const t = tileMeta[i];
+				gsap.to([t.front, t.rear], {
+					opacity: 1,
+					duration: 3,
+					ease: "power2.out"
+				});
+			}
+		}
+	}
+
+	function initProximityDim() {
+		if (!gridEl || tileMeta.length === 0) return;
+		tileApplied = new Array(tileMeta.length).fill(1);
+		tileWasNear = new Array(tileMeta.length).fill(false);
+		gridEl.addEventListener("mousemove", onGridMove);
+		gridEl.addEventListener("mouseleave", onGridLeave);
+	}
+
 	function startBreathing() {
 		tileMeta.forEach((t) => {
 			const tw = gsap.to(t.el, {
@@ -183,6 +260,7 @@
 		});
 
 		startBreathing();
+		initProximityDim();
 
 		if (activeImage) {
 			const loaded = await ensureImageLoaded(activeImage);
