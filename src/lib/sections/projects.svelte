@@ -66,7 +66,7 @@
 	id="projects"
 >
 	<div
-		class="max-lg:absolute max-lg:top-0 max-lg:left-0 max-lg:z-20 max-lg:w-full max-lg:bg-gradient-to-b max-lg:from-c-bg-0/90 max-lg:via-c-bg-0/60 max-lg:to-transparent max-lg:px-6 max-lg:pt-8 max-lg:pb-12 lg:hidden"
+		class="max-lg:absolute max-lg:top-0 max-lg:left-0 max-lg:z-20 max-lg:w-full max-lg:bg-gradient-to-b max-lg:from-c-bg-0/90 max-lg:via-c-bg-0/60 max-lg:to-transparent max-lg:px-6 max-lg:pt-24 max-lg:pb-12 lg:hidden"
 	>
 		<AnimatedHeading
 			tag="h2"
@@ -78,7 +78,7 @@
 	</div>
 
 	<div
-		class="flex w-full flex-col justify-center px-8 py-16 max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:z-10 max-lg:w-full max-lg:justify-end max-lg:bg-gradient-to-tr max-lg:from-c-bg-0/95 max-lg:via-c-bg-0/75 max-lg:to-c-bg-0/0 max-lg:px-6 max-lg:pt-32 max-lg:pb-8 lg:w-2/5 lg:px-12 lg:py-24 lg:pl-16"
+		class="flex w-full flex-col justify-center px-8 py-16 max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:z-10 max-lg:w-full max-lg:justify-end max-lg:bg-[linear-gradient(45deg,color-mix(in_oklch,var(--color-c-bg-0)_95%,transparent)_0%,color-mix(in_oklch,var(--color-c-bg-0)_95%,transparent)_25%,transparent_70%)] max-lg:px-6 max-lg:pt-72 max-lg:pb-8 max-lg:pointer-events-none lg:w-2/5 lg:px-12 lg:py-24 lg:pl-16"
 	>
 		<div class="max-lg:hidden">
 			<AnimatedHeading
@@ -90,7 +90,7 @@
 			</AnimatedHeading>
 		</div>
 
-		<ul bind:this={projectListEl} class="mt-12 flex flex-col gap-4">
+		<ul bind:this={projectListEl} class="mt-12 flex flex-col gap-4 max-lg:pointer-events-auto">
 			{#each projects as project (project.id)}
 				<li>
 					<button
@@ -100,7 +100,7 @@
 						class:text-c-accent-0={activeProject?.id === project.id}
 						aria-pressed={activeProject?.id === project.id}
 					>
-						<span class="font-c-bebas text-sm tracking-widest text-c-neutral-1">
+						<span class="font-c-bebas text-sm font-bold tracking-widest text-c-neutral-1">
 							{project.tags.join(" · ")}
 						</span>
 						<h3 class="mt-1 font-c-ubuntu text-2xl font-bold lg:text-3xl">
@@ -114,7 +114,7 @@
 		<a
 			bind:this={ctaEl}
 			href={resolve("/projects")}
-			class="group relative mt-12 inline-flex w-fit items-center gap-3 overflow-hidden rounded-full border border-c-border/40 bg-c-bg-2/30 px-8 py-4 font-c-ubuntu text-base text-c-neutral-0 backdrop-blur-xl transition-all duration-300 hover:border-c-border hover:bg-c-bg-2/50 max-lg:absolute max-lg:right-6 max-lg:bottom-8 max-lg:mt-0"
+			class="group relative mt-12 inline-flex w-fit items-center gap-3 overflow-hidden rounded-full border border-c-border/40 bg-c-bg-2/30 px-8 py-4 font-c-ubuntu text-base text-c-neutral-0 backdrop-blur-xl transition-all duration-300 hover:border-c-border hover:bg-c-bg-2/50 max-lg:absolute max-lg:right-6 max-lg:bottom-8 max-lg:mt-0 max-lg:pointer-events-auto"
 		>
 			<span class="relative z-10">View All Projects</span>
 			<span

@@ -623,6 +623,17 @@
 	<div
 		class="flex w-full items-center justify-center px-4 max-lg:max-h-[75vh] max-lg:min-h-[45vh] max-lg:flex-1 lg:sticky lg:top-0 lg:h-screen lg:w-3/5 lg:px-8"
 	>
+		<!-- mobile heading above graph -->
+		<div
+			class="absolute top-0 left-0 z-10 w-full bg-gradient-to-b from-c-bg-0/90 via-c-bg-0/60 to-transparent px-6 pt-24 pb-12 lg:hidden"
+		>
+			<AnimatedHeading
+				tag="h2"
+				class="font-c-unbounded text-5xl font-black text-c-neutral-0"
+			>
+				Skills
+			</AnimatedHeading>
+		</div>
 		<div bind:this={svgContainerEl} class="relative h-full w-full">
 			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 			<svg
@@ -757,19 +768,19 @@
 
 	<!-- content panel (right on desktop, bottom on mobile) -->
 	<div
-		class="flex w-full flex-col justify-center gap-6 px-6 pb-12 lg:w-2/5 lg:px-12 lg:pb-24 lg:pl-16"
+		class="flex w-full flex-col justify-center gap-6 px-6 pb-12 max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:z-10 max-lg:w-full max-lg:justify-end max-lg:bg-gradient-to-tr max-lg:from-c-bg-0/95 max-lg:via-c-bg-0/75 max-lg:to-c-bg-0/0 max-lg:px-6 max-lg:pt-32 max-lg:pb-8 lg:w-2/5 lg:px-12 lg:pb-24 lg:pl-16"
 	>
 		<AnimatedHeading
 			tag="h2"
 			start={!isMobile}
-			class="font-c-unbounded text-4xl font-black text-c-neutral-0 lg:text-6xl"
+			class="font-c-unbounded text-4xl font-black text-c-neutral-0 max-lg:hidden lg:text-7xl"
 		>
 			Skills
 		</AnimatedHeading>
 
 		<p
 			bind:this={paraEl}
-			class="font-c-ubuntu text-base leading-relaxed text-c-neutral-1"
+			class="font-c-ubuntu text-lg leading-relaxed text-c-neutral-1 lg:text-2xl"
 		>
 			A collection of technologies and tools I've worked with across frontend
 			and backend development, cloud infrastructure, and design. Each node

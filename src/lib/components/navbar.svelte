@@ -113,7 +113,7 @@
 				class="group relative overflow-hidden px-7 py-3 no-underline"
 			>
 				<span
-					class="relative inline-flex items-center overflow-hidden font-c-bebas text-lg tracking-widest text-c-neutral-0 transition-colors duration-200 group-hover:text-c-bg-0"
+					class="relative inline-flex items-center overflow-hidden font-c-bebas text-lg font-bold tracking-widest text-c-neutral-0 transition-colors duration-200 group-hover:text-c-bg-0"
 				>
 					<span
 						class="absolute inset-0 translate-y-full -skew-x-6 bg-c-accent-0 transition-transform duration-[400ms] ease-out group-hover:translate-y-0"
@@ -196,7 +196,7 @@
 						class="group relative px-8 py-4 no-underline"
 					>
 						<span
-							class="relative inline-flex items-center overflow-hidden font-c-unbounded text-4xl tracking-wide text-c-neutral-0 transition-colors duration-200 group-hover:text-c-bg-0"
+							class="relative inline-flex items-center overflow-hidden font-c-unbounded text-4xl font-black tracking-wide text-c-neutral-0 transition-colors duration-200 group-hover:text-c-bg-0"
 						>
 							<span
 								class="absolute inset-0 translate-y-full -skew-x-6 bg-c-accent-0 transition-transform duration-[400ms] ease-out group-hover:translate-y-0"
