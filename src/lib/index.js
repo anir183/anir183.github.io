@@ -9,6 +9,7 @@ export { default as Preloader } from "./components/preloader.svelte";
 export { default as Navbar } from "./components/navbar.svelte";
 export { default as AnimatedHeading } from "./components/animated_heading.svelte";
 export { default as CubeGrid } from "./components/cube_grid.svelte";
+export { default as AccentLink } from "./components/accent_link.svelte";
 
 // animations
 export * from "./gsap/sequences/hero_entry.svelte.js";

@@ -5,6 +5,7 @@
 		projects,
 		AnimatedHeading,
 		CubeGrid,
+		AccentLink,
 		projectsEntrySequence
 	} from "$lib";
 
@@ -78,7 +79,7 @@
 	</div>
 
 	<div
-		class="flex w-full flex-col justify-center px-8 py-16 max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:z-10 max-lg:w-full max-lg:justify-end max-lg:bg-[linear-gradient(45deg,color-mix(in_oklch,var(--color-c-bg-0)_95%,transparent)_0%,color-mix(in_oklch,var(--color-c-bg-0)_95%,transparent)_25%,transparent_70%)] max-lg:px-6 max-lg:pt-72 max-lg:pb-8 max-lg:pointer-events-none lg:w-2/5 lg:px-12 lg:py-24 lg:pl-16"
+		class="flex w-full flex-col justify-center px-8 py-16 max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:z-10 max-lg:w-full max-lg:justify-end max-lg:bg-[linear-gradient(45deg,color-mix(in_oklch,var(--color-c-bg-0)_95%,transparent)_0%,color-mix(in_oklch,var(--color-c-bg-0)_95%,transparent)_25%,transparent_70%)] max-lg:px-6 max-lg:pt-72 max-lg:pb-8 max-lg:pointer-events-none lg:w-2/5 lg:px-12 lg:py-24 lg:pl-16 lg:gap-10"
 	>
 		<div class="max-lg:hidden">
 			<AnimatedHeading
@@ -111,17 +112,13 @@
 			{/each}
 		</ul>
 
-		<a
-			bind:this={ctaEl}
+		<AccentLink
 			href={resolve("/projects")}
-			class="group relative mt-12 inline-flex w-fit items-center gap-3 overflow-hidden rounded-full border border-c-border/40 bg-c-bg-2/30 px-8 py-4 font-c-ubuntu text-base text-c-neutral-0 backdrop-blur-xl transition-all duration-300 hover:border-c-border hover:bg-c-bg-2/50 max-lg:absolute max-lg:right-6 max-lg:bottom-8 max-lg:mt-0 max-lg:pointer-events-auto"
+			class="-translate-x-3 translate-y-0.5 px-4 py-1.5 font-c-unbounded font-bold text-lg max-lg:absolute max-lg:right-6 max-lg:bottom-8 max-lg:mt-0 max-lg:pointer-events-auto"
+			bind:el={ctaEl}
 		>
-			<span class="relative z-10">View All Projects</span>
-			<span
-				class="relative z-10 text-lg transition-transform duration-300 group-hover:translate-x-1"
-				>→</span
-			>
-		</a>
+			More Projects
+		</AccentLink>
 	</div>
 
 	<div

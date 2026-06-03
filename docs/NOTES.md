@@ -9,6 +9,7 @@ src/
 ├── lib
 │   ├── components				[ui compoenents]
 │   │   ├── accent_button.svelte       [planned]
+│   │   ├── accent_link.svelte         [implemented]
 │   │   ├── animated_heading.svelte    [implemented]
 │   │   ├── cube_grid.svelte           [implemented]
 │   │   ├── preloader.svelte           [implemented]
@@ -323,6 +324,7 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 [x] skills_network: placeholder paragraph expanded
 [ ] about section
 [ ] social section
+[x] accent_link component (div wrapper + a, bg wipes from left, hard corners, font-c-unbounded)
 [ ] accent_button component
 [ ] route structure for navigation
 [ ] content / data files

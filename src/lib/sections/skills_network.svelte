@@ -7,6 +7,7 @@
 		skills,
 		skillConnections,
 		AnimatedHeading,
+		AccentLink,
 		LG_BREAKPOINT
 	} from "$lib";
 
@@ -768,7 +769,7 @@
 
 	<!-- content panel (right on desktop, bottom on mobile) -->
 	<div
-		class="flex w-full flex-col justify-center gap-6 px-6 pb-12 max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:z-10 max-lg:w-full max-lg:justify-end max-lg:bg-gradient-to-tr max-lg:from-c-bg-0/95 max-lg:via-c-bg-0/75 max-lg:to-c-bg-0/0 max-lg:px-6 max-lg:pt-32 max-lg:pb-8 lg:w-2/5 lg:px-12 lg:pb-24 lg:pl-16"
+		class="flex w-full flex-col justify-center gap-6 px-6 pb-12 max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:z-10 max-lg:w-full max-lg:justify-end max-lg:bg-gradient-to-tr max-lg:from-c-bg-0/95 max-lg:via-c-bg-0/75 max-lg:to-c-bg-0/0 max-lg:px-6 max-lg:pt-32 max-lg:pb-8 lg:w-2/5 lg:px-12 lg:pb-24 lg:pl-16 lg:gap-10"
 	>
 		<AnimatedHeading
 			tag="h2"
@@ -787,17 +788,13 @@
 			represents a skill — hover to see details, or click to pin the info open.
 		</p>
 
-		<a
-			bind:this={buttonEl}
+		<AccentLink
 			href={resolve("/experiences")}
-			class="group inline-flex w-fit items-center gap-3 rounded-full border border-c-border/40 bg-c-bg-2/30 px-8 py-3 font-c-ubuntu text-sm text-c-neutral-0 backdrop-blur-xl transition-all duration-300 hover:border-c-border hover:bg-c-bg-2/50 lg:px-8 lg:py-4 lg:text-base"
+			class="-translate-x-3 px-4 py-1.5 font-c-unbounded font-bold text-base lg:text-lg"
+			bind:el={buttonEl}
 		>
-			<span>Experiences</span>
-			<span
-				class="text-lg transition-transform duration-300 group-hover:translate-x-1"
-				>→</span
-			>
-		</a>
+			Experiences
+		</AccentLink>
 	</div>
 </section>
 
