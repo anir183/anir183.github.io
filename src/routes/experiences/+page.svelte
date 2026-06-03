@@ -53,13 +53,15 @@
 
 	<div class="relative mx-auto mt-16 max-w-3xl lg:mt-24">
 		<!-- timeline line -->
-		<div class="absolute left-6 top-2 bottom-2 w-px bg-c-border/20 lg:left-8"></div>
+		<div
+			class="absolute top-2 bottom-2 left-6 w-px bg-c-border/20 lg:left-8"
+		></div>
 
 		{#each experiences as exp (exp.id)}
 			<div class="relative pb-16 pl-16 last:pb-0 lg:pl-20" data-exp-id={exp.id}>
 				<!-- timeline dot -->
 				<div
-					class="absolute left-3 top-1.5 h-3 w-3 rounded-full border-4 border-c-bg-0 bg-c-accent-0 lg:left-4 lg:h-4 lg:w-4"
+					class="absolute top-1.5 left-3 h-3 w-3 rounded-full border-4 border-c-bg-0 bg-c-accent-0 lg:left-4 lg:h-4 lg:w-4"
 				></div>
 
 				<div
@@ -67,7 +69,9 @@
 				>
 					<div class="flex flex-wrap items-start justify-between gap-2">
 						<div>
-							<h2 class="font-c-unbounded text-lg font-bold text-c-neutral-0 lg:text-xl">
+							<h2
+								class="font-c-unbounded text-lg font-bold text-c-neutral-0 lg:text-xl"
+							>
 								{exp.role}
 							</h2>
 							<span class="font-c-ubuntu text-sm text-c-accent-0">
@@ -80,7 +84,9 @@
 							{exp.period}
 						</span>
 					</div>
-					<p class="mt-3 font-c-ubuntu text-sm leading-relaxed text-c-neutral-1">
+					<p
+						class="mt-3 font-c-ubuntu text-sm leading-relaxed text-c-neutral-1"
+					>
 						{exp.description}
 					</p>
 					{#if exp.tags.length > 0}

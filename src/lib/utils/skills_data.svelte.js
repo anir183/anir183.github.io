@@ -20,63 +20,61 @@ const _skills = [
 		category: "Frontend",
 		description: "Reactive component framework compiling to vanilla JS",
 		experience: "2 years",
-		relatedTechnologies: ["typescript", "vite"],
+		relatedTechnologies: ["typescript", "vite"]
 	},
 	{
 		id: "react",
 		name: "React",
 		icon: "⚛️",
 		category: "Frontend",
-				description: "Declarative UI library with a vast ecosystem",
+		description: "Declarative UI library with a vast ecosystem",
 		experience: "3 years",
-		relatedTechnologies: ["typescript", "tailwind"],
+		relatedTechnologies: ["typescript", "tailwind"]
 	},
 	{
 		id: "typescript",
 		name: "TypeScript",
 		icon: "📘",
 		category: "Frontend",
-				description: "Typed superset of JavaScript for scalable apps",
+		description: "Typed superset of JavaScript for scalable apps",
 		experience: "3 years",
-		relatedTechnologies: ["react", "node"],
-
+		relatedTechnologies: ["react", "node"]
 	},
 	{
 		id: "tailwind",
 		name: "Tailwind",
 		icon: "🎨",
 		category: "Frontend",
-				description: "Utility-first CSS framework for rapid UI development",
+		description: "Utility-first CSS framework for rapid UI development",
 		experience: "2 years",
-		relatedTechnologies: ["react", "figma"],
+		relatedTechnologies: ["react", "figma"]
 	},
 	{
 		id: "gsap",
 		name: "GSAP",
 		icon: "⚡",
 		category: "Frontend",
-				description: "High-performance animation library for the web",
+		description: "High-performance animation library for the web",
 		experience: "1 year",
-		relatedTechnologies: ["threejs", "svelte"],
+		relatedTechnologies: ["threejs", "svelte"]
 	},
 	{
 		id: "node",
 		name: "Node.js",
 		icon: "🟢",
 		category: "Backend",
-				description: "JavaScript runtime built on Chrome's V8 engine",
+		description: "JavaScript runtime built on Chrome's V8 engine",
 		experience: "3 years",
-		relatedTechnologies: ["typescript", "postgres"],
-
+		relatedTechnologies: ["typescript", "postgres"]
 	},
 	{
 		id: "python",
 		name: "Python",
 		icon: "🐍",
 		category: "Backend",
-				description: "Versatile language for automation, data, and APIs",
+		description: "Versatile language for automation, data, and APIs",
 		experience: "4 years",
-		relatedTechnologies: ["postgres", "go"],
+		relatedTechnologies: ["postgres", "go"]
 	},
 	{
 		id: "go",
@@ -85,16 +83,16 @@ const _skills = [
 		category: "Backend",
 		description: "Statically typed compiled language for performant services",
 		experience: "1 year",
-		relatedTechnologies: ["docker", "python"],
+		relatedTechnologies: ["docker", "python"]
 	},
 	{
 		id: "postgres",
 		name: "PostgreSQL",
 		icon: "🐘",
 		category: "Backend",
-				description: "Advanced relational database with strong ACID compliance",
+		description: "Advanced relational database with strong ACID compliance",
 		experience: "3 years",
-		relatedTechnologies: ["node", "redis"],
+		relatedTechnologies: ["node", "redis"]
 	},
 	{
 		id: "redis",
@@ -103,43 +101,43 @@ const _skills = [
 		category: "Backend",
 		description: "In-memory data store for caching and real-time workloads",
 		experience: "2 years",
-		relatedTechnologies: ["node", "postgres"],
+		relatedTechnologies: ["node", "postgres"]
 	},
 	{
 		id: "docker",
 		name: "Docker",
 		icon: "🐳",
 		category: "Backend",
-				description: "Container platform for reproducible deployment",
+		description: "Container platform for reproducible deployment",
 		experience: "3 years",
-		relatedTechnologies: ["go", "aws"],
+		relatedTechnologies: ["go", "aws"]
 	},
 	{
 		id: "git",
 		name: "Git",
 		icon: "🔀",
 		category: "Tools",
-				description: "Distributed version control for collaborative development",
+		description: "Distributed version control for collaborative development",
 		experience: "4 years",
-		relatedTechnologies: ["docker", "vite"],
+		relatedTechnologies: ["docker", "vite"]
 	},
 	{
 		id: "vite",
 		name: "Vite",
 		icon: "📦",
 		category: "Tools",
-				description: "Next-generation build tool with instant HMR",
+		description: "Next-generation build tool with instant HMR",
 		experience: "2 years",
-		relatedTechnologies: ["svelte", "node"],
+		relatedTechnologies: ["svelte", "node"]
 	},
 	{
 		id: "aws",
 		name: "AWS",
 		icon: "☁️",
 		category: "Tools",
-				description: "Cloud platform for scalable infrastructure and services",
+		description: "Cloud platform for scalable infrastructure and services",
 		experience: "2 years",
-		relatedTechnologies: ["docker", "node"],
+		relatedTechnologies: ["docker", "node"]
 	},
 	{
 		id: "figma",
@@ -148,7 +146,7 @@ const _skills = [
 		category: "Tools",
 		description: "Collaborative design tool for UI/UX prototyping",
 		experience: "2 years",
-		relatedTechnologies: ["tailwind", "react"],
+		relatedTechnologies: ["tailwind", "react"]
 	},
 	{
 		id: "threejs",
@@ -157,7 +155,7 @@ const _skills = [
 		category: "Tools",
 		description: "3D graphics library for browser-based rendering",
 		experience: "1 year",
-		relatedTechnologies: ["gsap", "svelte"],
+		relatedTechnologies: ["gsap", "svelte"]
 	}
 ];
 

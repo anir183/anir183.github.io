@@ -1,11 +1,26 @@
 <script>
-	import { onMount } from "svelte";
+	import { onMount, tick } from "svelte";
 	import { resolve } from "$app/paths";
-	import { projects, AnimatedHeading, CubeGrid } from "$lib";
+	import {
+		projects,
+		AnimatedHeading,
+		CubeGrid,
+		projectsEntrySequence
+	} from "$lib";
 
 	/** @type {import("$lib/utils/projects_data.svelte.js").Project | null} */
 	let activeProject = $state(projects[0]);
 	let isMobile = $state(false);
+	let reducedMotion = $state(false);
+
+	/** @type {HTMLElement | undefined} */
+	let sectionEl = $state();
+	/** @type {HTMLUListElement | undefined} */
+	let projectListEl = $state();
+	/** @type {HTMLAnchorElement | undefined} */
+	let ctaEl = $state();
+	/** @type {HTMLDivElement | undefined} */
+	let gridContainerEl = $state();
 
 	onMount(() => {
 		const mql = window.matchMedia("(max-width: 1023px)");
@@ -13,15 +28,40 @@
 		const handler = (/** @type {MediaQueryListEvent} */ e) =>
 			(isMobile = e.matches);
 		mql.addEventListener("change", handler);
+
+		reducedMotion = window.matchMedia(
+			"(prefers-reduced-motion: reduce)"
+		).matches;
+
 		return () => mql.removeEventListener("change", handler);
 	});
 
 	let activeImageSrc = $derived(
 		isMobile && activeProject ? activeProject.imageMobile : activeProject?.image
 	);
+
+	$effect(() => {
+		if (isMobile) return;
+		if (!sectionEl || !projectListEl) return;
+
+		const list = projectListEl;
+
+		tick().then(() => {
+			if (!list) return;
+			const items = [...list.querySelectorAll("button")];
+			projectsEntrySequence({
+				projectItems: items,
+				ctaButton: ctaEl,
+				gridContainer: gridContainerEl,
+				sectionEl,
+				reducedMotion
+			});
+		});
+	});
 </script>
 
 <section
+	bind:this={sectionEl}
 	class="relative flex min-h-screen w-full flex-col lg:flex-row"
 	id="projects"
 >
@@ -50,7 +90,7 @@
 			</AnimatedHeading>
 		</div>
 
-		<ul class="mt-12 flex flex-col gap-4">
+		<ul bind:this={projectListEl} class="mt-12 flex flex-col gap-4">
 			{#each projects as project (project.id)}
 				<li>
 					<button
@@ -72,6 +112,7 @@
 		</ul>
 
 		<a
+			bind:this={ctaEl}
 			href={resolve("/projects")}
 			class="group relative mt-12 inline-flex w-fit items-center gap-3 overflow-hidden rounded-full border border-c-border/40 bg-c-bg-2/30 px-8 py-4 font-c-ubuntu text-base text-c-neutral-0 backdrop-blur-xl transition-all duration-300 hover:border-c-border hover:bg-c-bg-2/50 max-lg:absolute max-lg:right-6 max-lg:bottom-8 max-lg:mt-0"
 		>
@@ -84,6 +125,7 @@
 	</div>
 
 	<div
+		bind:this={gridContainerEl}
 		class="sticky bottom-0 flex h-[50vh] w-full items-center justify-center max-lg:static max-lg:h-screen max-lg:p-12 lg:top-0 lg:h-screen lg:w-3/5 lg:pr-16"
 	>
 		{#each projects as project (project.id)}

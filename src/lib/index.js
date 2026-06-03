@@ -13,6 +13,7 @@ export { default as CubeGrid } from "./components/cube_grid.svelte";
 // animations
 export * from "./gsap/sequences/hero_entry.svelte.js";
 export * from "./gsap/sequences/cube_grid.svelte.js";
+export * from "./gsap/sequences/projects_entry.svelte.js";
 export * from "./gsap/clips/stagger_wipe.svelte.js";
 
 // utilities

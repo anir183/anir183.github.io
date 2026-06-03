@@ -13,14 +13,21 @@
 	let sectionEl = $state();
 	let svgEl = $state();
 	let svgContainerEl = $state();
+	/** @type {HTMLParagraphElement | undefined} */
+	let paraEl = $state();
+	/** @type {HTMLAnchorElement | undefined} */
+	let buttonEl = $state();
 	let isMobile = $state(false);
 	let reducedMotion = $state(false);
 	let selectedId = $state(/** @type {string | null} */ (null));
 	let hoveredId = $state(/** @type {string | null} */ (null));
 	let tooltipX = $state(0);
 	let tooltipY = $state(0);
-	let mobileDetailSkill =
-		$state(/** @type {import("$lib/utils/skills_data.svelte.js").Skill | null} */ (null));
+	let mobileDetailSkill = $state(
+		/** @type {import("$lib/utils/skills_data.svelte.js").Skill | null} */ (
+			null
+		)
+	);
 
 	let floatTweens = /** @type {gsap.core.Tween[]} */ ([]);
 	let packetTweens = /** @type {gsap.core.Tween[]} */ ([]);
@@ -32,7 +39,8 @@
 	let edgePathLengths = /** @type {number[]} */ ([]);
 	let edgeTweens = /** @type {gsap.core.Tween[]} */ ([]);
 	let nodeTweens = /** @type {gsap.core.Tween[]} */ ([]);
-	let edgePositions = /** @type {{ from: { x: number, y: number }, to: { x: number, y: number }, cx: number, cy: number }[]} */ ([]);
+	let edgePositions =
+		/** @type {{ from: { x: number, y: number }, to: { x: number, y: number }, cx: number, cy: number }[]} */ ([]);
 
 	let displaySkills = $derived(skills);
 	let displayEdges = $derived(skillConnections);
@@ -54,16 +62,17 @@
 
 	let effectivePositions = $derived(
 		nodePositions.map(
-			(/** @type {{ x: number, y: number }} */ bp, /** @type {number} */ i) => ({
+			(
+				/** @type {{ x: number, y: number }} */ bp,
+				/** @type {number} */ i
+			) => ({
 				x: bp.x + floatOffsets[i].x,
 				y: bp.y + floatOffsets[i].y
 			})
 		)
 	);
 
-	let skillIndex = $derived(
-		new Map(displaySkills.map((s, i) => [s.id, i]))
-	);
+	let skillIndex = $derived(new Map(displaySkills.map((s, i) => [s.id, i])));
 
 	let edgePaths = $derived(
 		displayEdges.map((pair) => {
@@ -310,7 +319,13 @@
 
 				const tween = gsap.fromTo(
 					pathEl,
-					{ strokeDasharray: len + 2, strokeDashoffset: len, stroke: "var(--color-c-border)", opacity: 0.3, attr: { d: pathEl.getAttribute("d") } },
+					{
+						strokeDasharray: len + 2,
+						strokeDashoffset: len,
+						stroke: "var(--color-c-border)",
+						opacity: 0.3,
+						attr: { d: pathEl.getAttribute("d") }
+					},
 					{
 						strokeDashoffset: 0,
 						stroke: "var(--color-c-accent-0)",
@@ -333,7 +348,9 @@
 		});
 
 		displaySkills.forEach((skill) => {
-			const circle = svgEl.querySelector(`[data-node-id="${skill.id}"] circle:first-child`);
+			const circle = svgEl.querySelector(
+				`[data-node-id="${skill.id}"] circle:first-child`
+			);
 			if (!circle) return;
 
 			if (skill.id === id) {
@@ -384,7 +401,9 @@
 		});
 
 		displaySkills.forEach((skill) => {
-			const circle = svgEl.querySelector(`[data-node-id="${skill.id}"] circle:first-child`);
+			const circle = svgEl.querySelector(
+				`[data-node-id="${skill.id}"] circle:first-child`
+			);
 			if (!circle) return;
 			const tween = set(circle, {
 				opacity: 1,
@@ -406,7 +425,6 @@
 			const isConnected = active
 				? edge[0] === active || edge[1] === active
 				: true;
-			el.style.opacity = isConnected ? "0.7" : "0.12";
 			el.setAttribute("r", isConnected ? "3" : "2");
 		});
 	}
@@ -445,7 +463,35 @@
 			}
 		);
 
+		const dur = reducedMotion ? 0 : undefined;
+
+		if (paraEl) gsap.set(paraEl, { y: 40, opacity: 0, scale: 0.97 });
+		if (buttonEl) gsap.set(buttonEl, { y: 20, opacity: 0 });
+
 		const tl = gsap.timeline();
+
+		if (paraEl) {
+			tl.to(paraEl, {
+				y: 0,
+				opacity: 1,
+				scale: 1,
+				duration: dur ?? 0.8,
+				ease: "power3.out"
+			});
+		}
+
+		if (buttonEl) {
+			tl.to(
+				buttonEl,
+				{
+					y: 0,
+					opacity: 1,
+					duration: dur ?? 0.5,
+					ease: "power3.out"
+				},
+				"-=0.2"
+			);
+		}
 
 		tl.to(pathEls, {
 			strokeDashoffset: 0,
@@ -493,8 +539,8 @@
 		});
 
 		scrollTrigger = ScrollTrigger.create({
-			trigger: sectionEl,
-			start: "top 85%",
+			trigger: paraEl ?? sectionEl,
+			start: "top 60%",
 			once: true,
 			animation: tl
 		});
@@ -508,14 +554,22 @@
 		if (!active) {
 			pulseTween?.kill();
 			pulseTween = null;
-			svgEl?.querySelectorAll(`[data-pulse]`).forEach(
-				/** @param {Element} el */ (el) => gsap.set(el, { scale: 1, opacity: 0 })
-			);
+			svgEl
+				?.querySelectorAll(`[data-pulse]`)
+				.forEach(
+					/** @param {Element} el */ (el) =>
+						gsap.set(el, { scale: 1, opacity: 0 })
+				);
 			return;
 		}
 
 		pulseTween?.kill();
-		svgEl?.querySelectorAll(`[data-pulse]`).forEach(/** @param {Element} el */ (el) => gsap.set(el, { scale: 1, opacity: 0 }));
+		svgEl
+			?.querySelectorAll(`[data-pulse]`)
+			.forEach(
+				/** @param {Element} el */ (el) =>
+					gsap.set(el, { scale: 1, opacity: 0 })
+			);
 
 		tick().then(() => {
 			const ring = svgEl?.querySelector(`[data-pulse="${active}"]`);
@@ -567,12 +621,9 @@
 >
 	<!-- SVG graph panel (left on desktop, top on mobile) -->
 	<div
-		class="flex w-full items-center justify-center px-4 max-lg:min-h-[45vh] max-lg:flex-1 max-lg:max-h-[75vh] lg:sticky lg:top-0 lg:h-screen lg:w-3/5 lg:px-8"
+		class="flex w-full items-center justify-center px-4 max-lg:max-h-[75vh] max-lg:min-h-[45vh] max-lg:flex-1 lg:sticky lg:top-0 lg:h-screen lg:w-3/5 lg:px-8"
 	>
-		<div
-			bind:this={svgContainerEl}
-			class="relative h-full w-full"
-		>
+		<div bind:this={svgContainerEl} class="relative h-full w-full">
 			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 			<svg
 				bind:this={svgEl}
@@ -586,22 +637,23 @@
 					if (e.key === "Escape") onSvgBgClick();
 				}}
 			>
-			{#each edgePaths as d, i (i)}
-				<path
-					{d}
-					data-edge={i}
-					fill="none"
-					stroke-linecap="round"
-					stroke="var(--color-c-border)"
-					stroke-width="1.5"
-					opacity="0.3"
-				/>
+				{#each edgePaths as d, i (i)}
+					<path
+						{d}
+						data-edge={i}
+						fill="none"
+						stroke-linecap="round"
+						stroke="var(--color-c-border)"
+						stroke-width="1.5"
+						opacity="0.3"
+					/>
 				{/each}
 
 				{#each displaySkills as skill, i (skill.id)}
 					<g
-						transform="translate({effectivePositions[i]
-							.x}, {effectivePositions[i].y})"
+						transform="translate({effectivePositions[i].x}, {effectivePositions[
+							i
+						].y})"
 						data-node-id={skill.id}
 						class="cursor-pointer"
 						role="button"
@@ -643,7 +695,7 @@
 						<text
 							text-anchor="middle"
 							dominant-baseline="central"
-							class="pointer-events-none fill-c-neutral-0 max-lg:text-3xl text-base select-none"
+							class="pointer-events-none fill-c-neutral-0 text-base select-none max-lg:text-3xl"
 						>
 							{skill.icon}
 						</text>
@@ -654,46 +706,50 @@
 			<!-- desktop tooltip overlay -->
 			{#if !isMobile && activeSkill && (hoveredId || selectedId)}
 				<div
-					class="absolute pointer-events-none z-10"
+					class="pointer-events-none absolute z-10"
 					style="left: {tooltipX}px; top: {tooltipY}px; transform: translateY(-50%);"
 					transition:fade={{ duration: 120 }}
 				>
-				<div
-					class="w-80 rounded-2xl border border-c-border/40 bg-c-bg-2/90 px-6 py-5 backdrop-blur-xl shadow-lg"
-				>
-					<div class="flex items-center gap-3">
-						<span class="text-4xl">{activeSkill.icon}</span>
-						<div>
-							<p class="font-c-unbounded text-lg font-bold text-c-neutral-0">
-								{activeSkill.name}
-							</p>
+					<div
+						class="w-80 rounded-2xl border border-c-border/40 bg-c-bg-2/90 px-6 py-5 shadow-lg backdrop-blur-xl"
+					>
+						<div class="flex items-center gap-3">
+							<span class="text-4xl">{activeSkill.icon}</span>
+							<div>
+								<p class="font-c-unbounded text-lg font-bold text-c-neutral-0">
+									{activeSkill.name}
+								</p>
+								<span
+									class="font-c-bebas text-sm tracking-widest text-c-neutral-1 uppercase"
+								>
+									{activeSkill.category}
+								</span>
+							</div>
+						</div>
+						<p
+							class="mt-3 font-c-ubuntu text-base leading-relaxed text-c-neutral-1"
+						>
+							{activeSkill.description}
+						</p>
+						<div class="mt-3">
 							<span
 								class="font-c-bebas text-sm tracking-widest text-c-neutral-1 uppercase"
 							>
-								{activeSkill.category}
+								{activeSkill.experience}
 							</span>
 						</div>
+						{#if activeSkill.relatedTechnologies.length > 0}
+							<div class="mt-3 flex flex-wrap gap-1.5">
+								{#each activeSkill.relatedTechnologies as tech (tech)}
+									<span
+										class="rounded-full border border-c-border/30 px-2.5 py-0.5 font-c-ubuntu text-sm text-c-neutral-0"
+									>
+										{tech}
+									</span>
+								{/each}
+							</div>
+						{/if}
 					</div>
-					<p class="mt-3 font-c-ubuntu text-base leading-relaxed text-c-neutral-1">
-						{activeSkill.description}
-					</p>
-					<div class="mt-3">
-						<span class="font-c-bebas text-sm tracking-widest text-c-neutral-1 uppercase">
-							{activeSkill.experience}
-						</span>
-					</div>
-					{#if activeSkill.relatedTechnologies.length > 0}
-						<div class="mt-3 flex flex-wrap gap-1.5">
-							{#each activeSkill.relatedTechnologies as tech (tech)}
-								<span
-									class="rounded-full border border-c-border/30 px-2.5 py-0.5 font-c-ubuntu text-sm text-c-neutral-0"
-								>
-									{tech}
-								</span>
-							{/each}
-						</div>
-					{/if}
-				</div>
 				</div>
 			{/if}
 		</div>
@@ -711,13 +767,17 @@
 			Skills
 		</AnimatedHeading>
 
-		<p class="font-c-ubuntu text-base leading-relaxed text-c-neutral-1">
+		<p
+			bind:this={paraEl}
+			class="font-c-ubuntu text-base leading-relaxed text-c-neutral-1"
+		>
 			A collection of technologies and tools I've worked with across frontend
 			and backend development, cloud infrastructure, and design. Each node
 			represents a skill — hover to see details, or click to pin the info open.
 		</p>
 
 		<a
+			bind:this={buttonEl}
 			href={resolve("/experiences")}
 			class="group inline-flex w-fit items-center gap-3 rounded-full border border-c-border/40 bg-c-bg-2/30 px-8 py-3 font-c-ubuntu text-sm text-c-neutral-0 backdrop-blur-xl transition-all duration-300 hover:border-c-border hover:bg-c-bg-2/50 lg:px-8 lg:py-4 lg:text-base"
 		>
@@ -743,7 +803,7 @@
 	>
 		<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 		<div
-			class="w-full max-w-lg rounded-2xl border border-c-border/40 bg-c-bg-0 p-10 backdrop-blur-xl shadow-xl"
+			class="w-full max-w-lg rounded-2xl border border-c-border/40 bg-c-bg-0 p-10 shadow-xl backdrop-blur-xl"
 			role="document"
 			onclick={(e) => e.stopPropagation()}
 			onkeydown={() => {}}
@@ -766,7 +826,9 @@
 				{mobileDetailSkill.description}
 			</p>
 			<div class="mt-4">
-				<span class="font-c-bebas text-base tracking-widest text-c-neutral-1 uppercase">
+				<span
+					class="font-c-bebas text-base tracking-widest text-c-neutral-1 uppercase"
+				>
 					Experience
 				</span>
 				<p class="font-c-ubuntu text-lg text-c-neutral-0">
@@ -775,7 +837,9 @@
 			</div>
 			{#if mobileDetailSkill.relatedTechnologies.length > 0}
 				<div class="mt-4">
-					<span class="font-c-bebas text-base tracking-widest text-c-neutral-1 uppercase">
+					<span
+						class="font-c-bebas text-base tracking-widest text-c-neutral-1 uppercase"
+					>
 						Related
 					</span>
 					<div class="mt-2 flex flex-wrap gap-2">
