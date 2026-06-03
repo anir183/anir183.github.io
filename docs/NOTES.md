@@ -7,7 +7,8 @@ src/
 ├── app.d.ts
 ├── app.html
 ├── lib
-│   ├── components				[ui compoenents]
+│   ├── components				[ui components]
+│   │   ├── about_scene.svelte          [implemented]
 │   │   ├── accent_button.svelte       [planned]
 │   │   ├── accent_link.svelte         [implemented]
 │   │   ├── animated_heading.svelte    [implemented]
@@ -16,16 +17,19 @@ src/
 │   │   └── navbar.svelte              [implemented]
 │   ├── gsap					[all gsap related code lives here]
 │   │   ├── sequences			[full gsap timeline sequences]
+│   │   │   ├── about_intro.svelte.js  [implemented]
 │   │   │   ├── cube_grid.svelte.js    [implemented]
-│   │   │   └── hero_entry.svelte.js   [implemented]
+│   │   │   ├── hero_entry.svelte.js   [implemented]
+│   │   │   └── projects_entry.svelte.js
 │   │   └── clips				[reusable GSAP clips/tweens]
+│   │       ├── about_parallax.svelte.js
 │   │       └── stagger_wipe.svelte.js
 │   ├── index.js
 │   ├── sections				[individual sections]
+│   │   ├── about.svelte       [implemented]
 │   │   ├── crash.svelte
-│   │   ├── projects.svelte    [implemented]
-│   │   ├── about.svelte       [planned]
 │   │   ├── hero.svelte        [implemented]
+│   │   ├── projects.svelte    [implemented]
 │   │   └── skills_network.svelte      [implemented]
 │   └── utils					[utility functions]
 │       ├── constants.svelte.js
@@ -182,6 +186,7 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 - navbar.svelte: border flash fix — `border-b` always present, color transitions between `border-transparent` ↔ `border-c-border/20` (prevents 0→1px discontinuity during 500ms transition)
 - layout.css: `body.overflow-hidden` selector hardened with `!important`, `overscroll-behavior: none`, `touch-action: none` — prevents touch/wheel scroll bypass during preloader phase
 - full codebase audit (batch 1): removed unused static assets (pfp_cutout.png, sun_dark.svg, moon_light.svg, logo_light.png, logo_dark.png); removed dead `GRID_COLS`/`GRID_ROWS` exports; fixed barrel import extensions (.svelte → .svelte.js); replaced animated_heading if-chain with `<svelte:element>`; fixed loading.svelte.js img.onload → addEventListener({ once: true }); simplified theme.svelte.js initTheme conditionals; fixed crash.svelte $state refs; disabled `svelte/no-navigation-without-resolve` eslint rule (cannot validate hash-link concatenation); added `prefers-reduced-motion` query in layout.css; added `role="status"` + `aria-live="polite"` on preloader; changed `aria-selected`→`aria-pressed` on project buttons (buttons don't support aria-selected); added "← Go Home" link on error page
+- about section: new layered portrait section with parallax (`about_scene.svelte`, `about_parallax.svelte.js`, `about_intro.svelte.js`). Uses `gsap.quickTo` for jank-free parallax (no rAF, no manual lerp). Layer translation only (no rotation) to avoid 3D intersection artifacts. Pointer listener scoped to scene container. Procedural halo + 3 PFP layers from `/assets/pfp/`. Content left, scene right 2-col layout matching existing section patterns. Disabled on touch devices and `prefers-reduced-motion`. Follows `data-layer-role` attribute pattern for ref collection.
 
 ### notes
 
@@ -275,6 +280,56 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 - `paintFaces` sign fix: `background-position` formula uses `-(col*w + offsetX)` (not `-(col*w - offsetX)`) — col 0 correctly shows `-offsetX` (image shifted left) instead of `+offsetX` (wrong crop direction)
 - project images preloaded via hidden `<img>` elements in `projects.svelte` (picked up by `document.images` in `loadAllImages`)
 
+### about section
+
+New about section implemented with layered parallax portrait and clean 2-col layout.
+
+**Architecture:**
+
+```
+about.svelte (composer)
+├── about_scene.svelte (renders layers with data-layer-role attrs)
+├── about_parallax.svelte.js (reusable GSAP quickTo-based parallax)
+└── about_intro.svelte.js (entry timeline)
+```
+
+**Scene layers (back to front):**
+
+- `data-layer-role="halo"` — procedural CSS radial gradient glow (no asset)
+- `data-layer-role="bg"` → `/assets/pfp/pfp-layer-3.png` — background
+- `data-layer-role="subject"` → `/assets/pfp/pfp-layer-2.png` — subject/table
+- `data-layer-role="fg"` → `/assets/pfp/pfp-layer-1.png` — foreground portrait
+
+All three PNG images are 2160×2668 (identical canvas) so layers stack perfectly with `object-contain`.
+
+**Parallax implementation (`about_parallax.svelte.js`):**
+
+Uses `gsap.quickTo(el, "x", vars)` and `gsap.quickTo(el, "y", vars)` per layer — returns a setter function that GSAP interpolates internally. No `requestAnimationFrame` loop, no manual lerp, no CSS string building.
+
+- Pointer listener scoped to scene container only (not `window`)
+- Normalizes coords to `[-1, 1]` relative to container center
+- Maps to per-layer strength (px): halo=4, bg=6, subject=10, fg=14
+- `pointerleave` resets all layers to origin
+- Returns cleanup function that removes listeners and resets tweens
+- Disabled on touch devices (`(pointer: coarse)`) and `prefers-reduced-motion`
+
+**Key fixes vs old implementation:**
+
+- **No layer rotation** — only `x`/`y` translation; zero `rotateX`/`rotateY` per layer, so no 3D intersection artifacts
+- **No rAF loop** — `quickTo` tweens settle when pointer stops; GSAP internal ticker handles interpolation
+- **No global listener** — scoped to scene container element
+- **No inline transforms in template** — GSAP owns all transform manipulation
+- **SSR-safe** — all DOM work in `onMount`, no `$effect` that runs during SSR
+
+**Float animation:** Simple GSAP `y: "+=6"` yoyo on scene container (4s, sine.inOut). Inlined in about.svelte (small, single-use). Killed in cleanup.
+
+**Responsive layout:**
+
+- Desktop (lg+): side-by-side, content `w-2/5` left, scene `sticky lg:h-screen w-3/5` right
+- Mobile (<lg): stacked, content + scene below, scene `max-h-[50vh]`
+- Scene container has `perspective: 1200px` for subtle depth hint (no aggressive 3D transforms)
+- Images use `object-contain` — no distortion at any viewport size
+
 ### roadmap
 
 <!-- current state of the project, what has been done and what is to be done -->
@@ -322,7 +377,7 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 [x] skills_network: packet density reduced, init flash fix, fade-in opacity
 [x] skills_network: GSAP hover wipe effect (animateToActive/animateToRest, edge dash-draw, reduced-motion support)
 [x] skills_network: placeholder paragraph expanded
-[ ] about section
+[x] about section (parallax layered portrait + procedural halo, 2-col layout, GSAP quickTo parallax, no rAF/rotation)
 [ ] social section
 [x] accent_link component (div wrapper + a, bg wipes from left, hard corners, font-c-unbounded)
 [ ] accent_button component

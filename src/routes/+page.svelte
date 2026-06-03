@@ -5,6 +5,7 @@
 		Preloader,
 		Navbar,
 		Hero,
+		About,
 		Projects,
 		SkillsNetwork,
 		heroEntrySequence,
@@ -90,3 +91,4 @@
 <Hero bind:heroH1 />
 <Projects />
 <SkillsNetwork />
+<About />
