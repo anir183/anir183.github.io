@@ -490,7 +490,7 @@
 					duration: dur ?? 0.5,
 					ease: "power3.out"
 				},
-				"-=0.2"
+				"-=0.1"
 			);
 		}
 

@@ -25,7 +25,13 @@ export async function projectsEntrySequence(config) {
 
 	gsap.set(projectItems, { y: 30, x: -15, opacity: 0 });
 	if (ctaButton) gsap.set(ctaButton, { y: 20, opacity: 0 });
-	if (gridContainer) gsap.set(gridContainer, { scale: 0.93, opacity: 0 });
+
+	/** @type {HTMLElement[]} */
+	let tiles = [];
+	if (gridContainer) {
+		tiles = /** @type {HTMLElement[]} */ ([...gridContainer.querySelectorAll("[data-tile-index]")]);
+		gsap.set(tiles, { rotationY: 180 });
+	}
 
 	const dur = reducedMotion ? 0 : undefined;
 
@@ -47,22 +53,22 @@ export async function projectsEntrySequence(config) {
 				y: 0,
 				opacity: 1,
 				duration: dur ?? 0.5,
-				ease: "power3.out"
+				ease: "power4.out"
 			},
 			"-=0.15"
 		);
 	}
 
-	if (gridContainer) {
+	if (tiles.length) {
 		tl.to(
-			gridContainer,
+			tiles,
 			{
-				scale: 1,
-				opacity: 1,
-				duration: dur ?? 0.8,
-				ease: "power3.out"
+				rotationY: 0,
+				duration: dur ?? 2,
+				ease: "power4.out",
+				stagger: reducedMotion ? 0 : { amount: 0.5, from: "random" }
 			},
-			"<"
+			"-=0.2"
 		);
 	}
 

@@ -14,7 +14,7 @@
 		<div
 			data-layer-role="halo"
 			class="pointer-events-none absolute inset-0"
-			style="transform: perspective(1200px) translateX(calc(var(--px,0)*1px)) translateY(calc(var(--py,0)*1px)) rotateX(calc(var(--rx,0)*1deg)) rotateY(calc(var(--ry,0)*1deg))"
+			style="transform: perspective(1200px) translateX(calc(var(--px,0)*1px)) translateY(calc(var(--py,0)*1px)) rotateX(calc(var(--rx,0)*1deg)) rotateY(calc(var(--ry,0)*1deg)) scale(calc(var(--entry-scale, 1)))"
 		>
 			<!-- bloom — large soft ambient glow -->
 			<div
@@ -56,7 +56,7 @@
 			alt=""
 			class="pointer-events-none absolute inset-0 z-[1] h-full w-full select-none object-cover will-change-transform"
 			draggable="false"
-			style="transform: perspective(1200px) translateX(calc(var(--px,0)*1px)) translateY(calc(var(--py,0)*1px)) rotateX(calc(var(--rx,0)*1deg)) rotateY(calc(var(--ry,0)*1deg))"
+			style="transform: perspective(1200px) translateX(calc(var(--px,0)*1px)) translateY(calc(var(--py,0)*1px)) rotateX(calc(var(--rx,0)*1deg)) rotateY(calc(var(--ry,0)*1deg)) scale(calc(var(--entry-scale, 1)))"
 		/>
 
 		<!-- foreground layer -->
@@ -66,7 +66,7 @@
 			alt=""
 			class="pointer-events-none absolute inset-0 z-[2] h-full w-full select-none object-cover will-change-transform"
 			draggable="false"
-			style="transform: perspective(1200px) translateX(calc(var(--px,0)*1px)) translateY(calc(var(--py,0)*1px)) rotateX(calc(var(--rx,0)*1deg)) rotateY(calc(var(--ry,0)*1deg))"
+			style="transform: perspective(1200px) translateX(calc(var(--px,0)*1px)) translateY(calc(var(--py,0)*1px)) rotateX(calc(var(--rx,0)*1deg)) rotateY(calc(var(--ry,0)*1deg)) scale(calc(var(--entry-scale, 1)))"
 		/>
 	</div>
 </div>

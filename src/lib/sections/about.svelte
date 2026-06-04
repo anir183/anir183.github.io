@@ -35,11 +35,18 @@
 
 		const sceneEl = sceneContainer;
 
+		const layerEls = sceneEl
+			? [...sceneEl.querySelectorAll("[data-layer-role]")]
+			: [];
+		const layers = /** @type {HTMLElement[]} */ (["fg", "subject", "halo"]
+			.map((role) => layerEls.find((el) => el.getAttribute("data-layer-role") === role))
+			.filter((el) => el != null));
+
 		if (!reducedMotion) {
 			gsap.registerPlugin(ScrollTrigger);
 
 			const tl = aboutEntrySequence({
-				sceneContainer: sceneEl,
+				layers,
 				subtitle: paraEl,
 				ctaGroup: ctaEl,
 				reducedMotion
@@ -54,10 +61,6 @@
 				});
 			}
 		}
-
-		const layers = sceneEl
-			? [...sceneEl.querySelectorAll("[data-layer-role]")]
-			: [];
 
 		const strengthMap = /** @type {Record<string, number>} */ ({
 			halo: 8,
