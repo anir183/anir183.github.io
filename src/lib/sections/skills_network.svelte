@@ -781,7 +781,7 @@
 
 		<p
 			bind:this={paraEl}
-			class="font-c-ubuntu text-lg leading-relaxed text-c-neutral-1 lg:text-2xl"
+			class="font-c-ubuntu text-xl leading-relaxed text-c-neutral-1 lg:text-2xl"
 		>
 			A collection of technologies and tools I've worked with across frontend
 			and backend development, cloud infrastructure, and design. Each node

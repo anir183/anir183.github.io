@@ -2,10 +2,10 @@ import { gsap } from "gsap";
 
 /**
  * @param {{
- *   sceneContainer: HTMLElement | null | undefined,
- *   headline: HTMLElement | null | undefined,
- *   subtitle: HTMLElement | null | undefined,
- *   ctaGroup: HTMLElement | null | undefined,
+ *   sceneContainer?: HTMLElement | null | undefined,
+ *   headline?: HTMLElement | null | undefined,
+ *   subtitle?: HTMLElement | null | undefined,
+ *   ctaGroup?: HTMLElement | null | undefined,
  *   reducedMotion?: boolean
  * }} config
  * @returns {gsap.core.Timeline | null}
