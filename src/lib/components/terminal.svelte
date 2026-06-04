@@ -12,11 +12,17 @@
 		{ cmd: "help", desc: "Show available commands" },
 		{ cmd: "whoami", desc: "Display the current user" },
 		{ cmd: "date", desc: "Show current date and time" },
-		{ cmd: "skills", desc: "List my technical skills" },
+		{ cmd: "ls", desc: "List directory contents" },
+		{ cmd: "cd", desc: "Change directory" },
+		{ cmd: "pwd", desc: "Print working directory" },
+		{ cmd: "cat", desc: "Display file contents" },
+		{ cmd: "grep", desc: "Search file contents" },
+		{ cmd: "git", desc: "Version control simulation" },
 		{ cmd: "echo", desc: "Echo back the input" },
 		{ cmd: "ascii", desc: "Show a random ASCII art" },
 		{ cmd: "clear", desc: "Clear the terminal" },
 		{ cmd: "sudo", desc: "Are you sure?" },
+		{ cmd: "exit", desc: "Exit the terminal" },
 		...socials.map((s) => ({
 			cmd: s.id,
 			desc: `Open ${s.name}`,
@@ -27,7 +33,7 @@
 
 	let cmdMap = $derived(new Map(commandDefs.map((c) => [c.cmd, c])));
 
-	/** @type {Array<{ id: number, type: string, text?: string, cls?: string, commands?: { cmd: string, desc: string }[], rows?: { name: string, skills: string }[] }>} */
+	/** @type {Array<{ id: number, type: string, text?: string, cls?: string, commands?: { cmd: string, desc: string }[] }>} */
 	let lines = $state([]);
 
 	const asciiArts = [
@@ -227,12 +233,287 @@
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⣿⣿⣿⣿⡇⢸⣿⣿⣿⣿⣿⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⡇⢸⣿⣿⣿⣿⣿⣧⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿`
 	];
+
+	/** @type {{ [path: string]: { type: string, children?: string[], content?: string } }} */
+	const fs = {
+		"/": { type: "dir", children: ["home"] },
+		"/home": { type: "dir", children: ["guest"] },
+		"/home/guest": {
+			type: "dir",
+			children: [
+				"skills", "projects", "about", "memes", "secrets", "quotes",
+				"easter", ".bashrc", "diary"
+			]
+		},
+		"/home/guest/skills": {
+			type: "file",
+			content:
+				"Languages: JavaScript, TypeScript, Python, Rust, C/C++\nFrontend: Svelte, React, Tailwind CSS, GSAP\nBackend: Node.js, Express, PostgreSQL, Redis\nDevOps: Docker, Linux, CI/CD, Cloudflare"
+		},
+		"/home/guest/projects": {
+			type: "file",
+			content: "More projects coming soon..."
+		},
+		"/home/guest/about": {
+			type: "file",
+			content: "A passionate developer building things for the web."
+		},
+		"/home/guest/diary": {
+			type: "file",
+			content:
+				"Day 1: They said learn web dev they said.\nDay 2: spent 6 hours debugging a missing semicolon.\nDay 32: finally understand closures. or do i.\nDay 69: why does npm install take 47 years.\nDay 100: i am become developer, destroyer of prod."
+		},
+		"/home/guest/.bashrc": {
+			type: "file",
+			content: [
+				"alias ls='ls --color=auto'",
+				"alias ll='ls -alF'",
+				"alias la='ls -A'",
+				"alias l='ls -CF'",
+				"alias grep='grep --color=auto'",
+				"alias g='git'",
+				"alias gs='git status'",
+				"alias gc='git commit'",
+				"alias gp='git push'",
+				"alias gl='git log --oneline --graph'",
+
+				"alias please='sudo !!'",
+				"alias ..='cd ..'",
+				"alias ...='cd ../..'"
+			].join("\n")
+		},
+		"/home/guest/memes": {
+			type: "dir",
+			children: ["programming", "anime", "67" ]
+		},
+		"/home/guest/memes/programming": {
+			type: "file",
+			content: [
+				"Me: writes 100 lines of code",
+				"Also me: it works, dont touch it",
+				"",
+				"",
+				"Q: How many programmers does it take to change a light bulb?",
+				"A: None, thats a hardware issue.",
+				"",
+				"",
+				"I dont always test my code, but when I do, I do it in production.",
+				"",
+				"",
+				"There are two hard things in programming - Naming Variables, Cache Validation and Off-by-one Errors.",
+			].join("\n")
+		},
+		"/home/guest/memes/67": {
+			type: "file",
+			content: [
+				"*sighs* i need help."
+			].join("\n")
+		},
+		"/home/guest/memes/anime": {
+			type: "file",
+			content: [
+				"\"People die if they are killed\" - Shirou",
+				"",
+				"",
+				"\“You didn't take me to the moon, but you were there with me.\” - Lucy",
+				"",
+				"",
+				"\"Its only a mere 10 year journey.\" - Frieren",
+				"",
+				"",
+				"\"Maybe there's only a dark road up ahead. But you still have to believe and keep going.\" - Kaori",
+				"",
+				"",
+				"\"What someone likes is nobody else's business.\" - Marin",
+				"",
+				"",
+				"\"Look, Mom. I'm at the top of Arasaka Tower.\" - David",
+			].join("\n")
+		},
+		"/home/guest/secrets": {
+			type: "dir",
+			children: ["sudoers", "fourofour", "conspiracy"]
+		},
+		"/home/guest/secrets/sudoers": {
+			type: "file",
+			content: [
+				"# This file must be edited with the visudo command",
+				"#",
+				"# As it turns out, guest is in fact NOT in the sudoers list.",
+				"# Shocking, I know.",
+				"#",
+				"# root    ALL=(ALL:ALL) ALL",
+				"# guest   ALL=(ALL:ALL) NOPASSWD: ALL   <-- lol nice try"
+			].join("\n")
+		},
+		"/home/guest/secrets/fourofour": {
+			type: "file",
+			content: [
+				"You found it! 🎉",
+				"",
+				"This file does not actually exist. Or does it?",
+				"",
+				"Error 404: Meaning of life not found.",
+				"",
+				"But seriously, the answer is 42.",
+				"",
+				"Also, never gonna give you up, never gonna let you down."
+			].join("\n")
+		},
+		"/home/guest/secrets/conspiracy": {
+			type: "file",
+			content: [
+				"THE TRUTH IS OUT THERE.",
+				"",
+				"- JavaScript was created in 10 days and we are all still paying for it.",
+				"- CSS was designed by chaos itself.",
+				"- \"It works on my machine\" is the most dangerous phrase in tech.",
+				"- Half of the internet is held together by duct tape and Stack Overflow.",
+				"- The bug is always in the last place you look... because you stop after finding it.",
+				"- Tabs are actually superior to spaces (but dont tell anyone I said that)."
+			].join("\n")
+		},
+		"/home/guest/quotes": {
+			type: "dir",
+			children: ["tech", "movies", "anime"]
+		},
+
+		"/home/guest/quotes/tech": {
+			type: "file",
+			content: [
+				'"Any fool can write code that a computer can understand. Good programmers write code that humans can understand."',
+				"— Martin Fowler",
+				"",
+				'"First solve the problem, then write the code." — John Johnson',
+				"",
+				'"Talk is cheap. Show me the code." — Linus Torvalds',
+				"",
+				'"It is not a bug — it is an undocumented feature." — Every dev ever',
+				"",
+				'"I have a dream that one day my code will work on the first try." — MLK, probably'
+			].join("\n")
+		},
+		"/home/guest/quotes/movies": {
+			type: "file",
+			content: [
+				'"I will be back" — The Terminator (after a segfault)',
+				"",
+				'"May the Force be with you" — Every dev before deploying on Friday',
+				"",
+				'"Life is like a box of chocolates, you never know what you are gonna get" — Me reading legacy code',
+				"",
+				'"To infinity and beyond!" — My array index',
+				"",
+				'"Why so serious?" — The linter',
+				"",
+				'"There is no spoon" — The /dev/null'
+			].join("\n")
+		},
+		"/home/guest/quotes/anime": {
+			type: "file",
+			content: [
+				'"People die if they are killed." — Shirou Emiya (Fate/stay night)',
+				"",
+				'"Believe in the me that believes in you!" — Kamina (Gurren Lagann)',
+				"",
+				'"I am not running away anymore. I will not look away. I will not run away again. Never." — Levi (AoT)',
+				"",
+				'"A lesson without pain is meaningless." — Edward Elric (Fullmetal Alchemist)',
+				"",
+				'"The world is not perfect. But it is there for us, doing the best it can." — (Fruits Basket)',
+				"",
+				'"It is not like I wanted to compile your code, baka!" — Tsundere Compiler'
+			].join("\n")
+		},
+		"/home/guest/easter": {
+			type: "dir",
+			children: ["snake", "whatisthis", "matrix"]
+		},
+		"/home/guest/easter/snake": {
+			type: "file",
+			content: [
+				"🐍 SSSSSSSSSS",
+				"",
+				"Sorry, this is not the game. The real Snake game is in a terminal somewhere else.",
+				"",
+				"But here is a snake: ~🐍~",
+				"",
+				"Also, Python is named after Monty Python, not the snake.",
+				"The snake is just a bonus."
+			].join("\n")
+		},
+		"/home/guest/easter/whatisthis": {
+			type: "file",
+			content: [
+				"We are no strangers to code",
+				"You know the rules and so do I",
+				"A full commit is what I am thinking of",
+				"You would not get this from any other guy",
+				"",
+				"I just wanna tell you how I am feeling",
+				"Gotta make you understand",
+				"",
+				"Never gonna give you up",
+				"Never gonna let you down",
+				"Never gonna run around and desert you",
+				"Never gonna make you cry",
+				"Never gonna say goodbye",
+				"Never gonna tell a lie and hurt you"
+			].join("\n")
+		},
+		"/home/guest/easter/matrix": {
+			type: "file",
+			content:
+				"Wake up, Neo...\n\nThe Matrix has you...\n\nFollow the white rabbit.\n\nKnock, knock, Neo.\n\nYou take the blue pill — the story ends, you wake up in your bed and believe whatever you want to believe.\nYou take the red pill — you stay in Wonderland and I show you how deep the rabbit hole goes."
+		}
+	};
+
+	const home = "/home/guest";
+
+	/** @type {Record<string, { name: string, hash: string }>} */
+	const symlinks = {
+		"/home/guest/about": { name: "About", hash: "#about" },
+		"/home/guest/projects": { name: "Projects", hash: "#projects" },
+		"/home/guest/skills": { name: "Skills", hash: "#skills" }
+	};
+
+	const aliases = new Map();
+	const aliasRegex = /alias\s+([\w.]+)\s*=\s*'([^']*)'/g;
+	const bashrc = fs["/home/guest/.bashrc"];
+	if (bashrc && bashrc.type === "file" && typeof bashrc.content === "string") {
+		let m;
+		while ((m = aliasRegex.exec(bashrc.content)) !== null) {
+			aliases.set(m[1], m[2]);
+		}
+	}
+
+	/** @param {string} p */
+	function resolvePath(p) {
+		if (p === "~") return home;
+		if (p.startsWith("~/")) p = home + p.slice(1);
+		const parts = (p.startsWith("/") ? [] : cwd.split("/").filter(Boolean))
+			.concat(p.split("/").filter(Boolean));
+		const resolved = [];
+		for (const part of parts) {
+			if (part === "." || part === "") continue;
+			if (part === "..") { resolved.pop(); continue; }
+			resolved.push(part);
+		}
+		return "/" + resolved.join("/");
+	}
+
+	let cwd = $state(home);
+
+	let promptDir = $derived(cwd === home ? "~" : cwd === "/" ? "/" : cwd.replace(/\/$/, "").split("/").pop() ?? "");
+
 	let currentInput = $state("");
 	/** @type {string[]} */
 	let history = $state([]);
 	let historyIndex = $state(-1);
 	let executing = $state(false);
 	let nextId = $state(0);
+	let aliasDepth = 0;
+	let awaitingConfirm = $state(false);
 	let focused = $state(false);
 
 	/** @type {HTMLDivElement | undefined} */
@@ -242,7 +523,7 @@
 
 	/**
 	 * @param {string} type
-	 * @param {string | { cmd: string, desc: string }[] | { name: string, skills: string }[]} content
+	 * @param {string | { cmd: string, desc: string }[]} content
 	 * @param {string} [cls]
 	 */
 	function addLine(type, content, cls) {
@@ -254,15 +535,6 @@
 					id,
 					type,
 					commands: /** @type {{ cmd: string, desc: string }[]} */ (content)
-				}
-			];
-		} else if (type === "skills") {
-			lines = [
-				...lines,
-				{
-					id,
-					type,
-					rows: /** @type {any} */ (content)
 				}
 			];
 		} else {
@@ -281,9 +553,21 @@
 		});
 	}
 
-	/** @param {string} cmd */
-	function execCmd(cmd) {
+	/** @param {string} cmd @param {string} [raw] */
+		function execCmd(cmd, raw) {
 		if (executing) return;
+
+		if (aliases.has(cmd) && aliasDepth === 0) {
+			aliasDepth = 1;
+			const expanded = aliases.get(cmd);
+			const rest = (raw ?? currentInput).slice(cmd.length);
+			const newRaw = expanded + rest;
+			const newCmd = expanded.split(/\s+/)[0];
+			execCmd(newCmd, newRaw);
+			aliasDepth = 0;
+			return;
+		}
+
 		const def = cmdMap.get(cmd);
 
 		if (cmd === "help") {
@@ -334,16 +618,89 @@
 			return;
 		}
 
-		if (cmd === "skills") {
-			addLine("skills", [
-				{
-					name: "Languages",
-					skills: "JavaScript, TypeScript, Python, Rust, C/C++"
-				},
-				{ name: "Frontend", skills: "Svelte, React, Tailwind CSS, GSAP" },
-				{ name: "Backend", skills: "Node.js, Express, PostgreSQL, Redis" },
-				{ name: "DevOps", skills: "Docker, Linux, CI/CD, Cloudflare" }
-			]);
+		if (cmd === "ls") {
+			const args = ((raw ?? currentInput).slice(3).trim() || "").split(/\s+/).filter(Boolean);
+			const shortFlags = args.filter(a => /^-[a-zA-Z]+$/.test(a)).flatMap(a => a.slice(1).split(""));
+			const paths = args.filter(a => !a.startsWith("-"));
+			const showAll = shortFlags.includes("a") || shortFlags.includes("A");
+			const longFormat = shortFlags.includes("l");
+			const classify = shortFlags.includes("F");
+			const target = paths.length ? resolvePath(paths[0]) : cwd;
+			const node = fs[target];
+			if (!node) {
+				addLine("text", `ls: cannot access '${paths[0]}': No such file or directory`, "text-c-error");
+			} else if (node.type !== "dir") {
+				addLine("text", target.split("/").filter(Boolean).pop() ?? "", "text-c-accent-1");
+			} else {
+				let children = node.children ? [...node.children] : [];
+				if (!showAll) children = children.filter(c => !c.startsWith("."));
+				if (children.length === 0) return;
+				if (longFormat) {
+					for (const c of children) {
+						const childPath = target === "/" ? "/" + c : target + "/" + c;
+						const childNode = fs[childPath];
+						const suffix = classify && childNode?.type === "dir" ? "/" : "";
+						const type = childNode?.type === "dir" ? "d" : "-";
+						addLine("text", `${type}rw-r--r--  guest guest  ${type === "d" ? "4.0K" : "2.3K"}  ${c}${suffix}`, "text-c-accent-1");
+					}
+				} else {
+					let display = children;
+					if (classify) {
+						display = children.map(c => {
+							const childPath = target === "/" ? "/" + c : target + "/" + c;
+							return fs[childPath]?.type === "dir" ? c + "/" : c;
+						});
+					}
+					addLine("text", display.join("    "), "text-c-accent-1");
+				}
+			}
+			return;
+		}
+
+		if (cmd === "pwd") {
+			addLine("text", cwd, "text-c-accent-1");
+			return;
+		}
+
+		if (cmd === "cd") {
+			const arg = (raw ?? currentInput).slice(3).trim() || "~";
+			const target = resolvePath(arg);
+			const node = fs[target];
+			if (!node) {
+				addLine("text", `cd: ${arg}: No such directory`, "text-c-error");
+			} else if (node.type !== "dir") {
+				addLine("text", `cd: ${arg}: Not a directory`, "text-c-error");
+			} else {
+				cwd = target;
+			}
+			return;
+		}
+
+		if (cmd === "cat") {
+			const args = ((raw ?? currentInput).slice(4).trim() || "").split(/\s+/);
+			if (args.length === 0 || !args[0]) {
+				addLine("text", "cat: missing operand", "text-c-error");
+				return;
+			}
+			for (const arg of args) {
+				const target = resolvePath(arg);
+				const sl = symlinks[target];
+				if (sl) {
+					addLine("text", `Navigating to ${sl.name}...`, "text-c-success");
+					gsap.delayedCall(0.4, () => {
+						window.location.hash = sl.hash;
+					});
+					continue;
+				}
+				const node = fs[target];
+				if (!node) {
+					addLine("text", `cat: ${arg}: No such file`, "text-c-error");
+				} else if (node.type !== "file") {
+					addLine("text", `cat: ${arg}: Is a directory`, "text-c-error");
+				} else {
+					addLine("text", node.content ?? "", "text-c-accent-1");
+				}
+			}
 			return;
 		}
 
@@ -354,17 +711,78 @@
 		}
 
 		if (cmd === "echo") {
-			const rest = currentInput.slice(5).trim();
+			const rest = (raw ?? currentInput).slice(5).trim();
 			addLine("text", rest || "", "text-c-warning");
 			return;
 		}
 
+		if (cmd === "grep") {
+			const args = ((raw ?? currentInput).slice(5).trim() || "").split(/\s+/).filter(Boolean);
+			const pattern = args.find(a => !a.startsWith("-") && a !== "--color=auto");
+			const files = args.filter(a => !a.startsWith("-") && a !== pattern && a !== "--color=auto");
+			if (!pattern) {
+				addLine("text", "usage: grep [pattern] [file...]", "text-c-error");
+				return;
+			}
+			const targets = files.length
+				? files.map(f => resolvePath(f)).filter(p => fs[p]?.type === "file")
+				: Object.keys(fs).filter(p => {
+						const node = fs[p];
+						return node.type === "file" && p.startsWith(home + "/");
+				  });
+			let found = false;
+			for (const fp of targets) {
+				const name = fp.split("/").pop();
+				const content = fs[fp].content ?? "";
+				const lines = content.split("\n");
+				for (const line of lines) {
+					if (line.toLowerCase().includes(pattern.toLowerCase())) {
+						found = true;
+						addLine("text", targets.length > 1 ? `${name}:${line}` : line, "text-c-accent-1");
+					}
+				}
+			}
+			if (!found) addLine("text", "", "text-c-neutral-1");
+			return;
+		}
+
+		if (cmd === "git") {
+			const args = ((raw ?? currentInput).slice(4).trim() || "").split(/\s+/).filter(Boolean);
+			const sub = args[0];
+			if (sub === "status") {
+				addLine("text", "On branch main\nYour branch is up to date with 'origin/main'.\n\nnothing to commit, working tree clean", "text-c-accent-1");
+			} else if (sub === "commit") {
+				const rest = args.slice(1).join(" ");
+				const m = rest.match(/-m\s+['\"](.+)['\"]/);
+				addLine("text", `[main ${Math.random().toString(36).slice(2, 8)}] ${m ? m[1] : "commit"}\n 1 file changed, 1 insertion(+)`, "text-c-accent-1");
+			} else if (sub === "push") {
+				addLine("text", "Everything up-to-date", "text-c-success");
+			} else if (sub === "log") {
+				const rest = args.slice(1).join(" ");
+				if (rest.includes("--oneline") && rest.includes("--graph")) {
+					addLine("text", ["* a1b2c3d feat: add new feature", "* e4f5g6h fix: resolve critical bug", "* i7j8k9l chore: update dependencies", "* m0n1o2p refactor: clean up code", "* q3r4s5t docs: update readme"].join("\n"), "text-c-accent-1");
+				} else {
+					addLine("text", "commit a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t\nAuthor: Guest <guest@portfolio-183>\nDate:   today\n\n    feat: add new feature", "text-c-accent-1");
+				}
+			} else {
+				addLine("text", "usage: git <command> [<args>]\n\nAvailable commands:\n  status   Show working tree status\n  commit   Record changes\n  push     Push to remote\n  log      Show commit logs", "text-c-accent-1");
+			}
+			return;
+		}
+
+		if (cmd === "visudo") {
+			addLine("text", "want to use sudo now, do you?", "text-c-error");
+			return;
+		}
+
 		if (cmd === "sudo") {
-			addLine(
-				"text",
-				"sudo: guest is not allowed to perform 'rm -rf /' as root on this system.",
-				"text-c-error"
-			);
+			addLine("text", "guest is not in the sudoers list", "text-c-error");
+			return;
+		}
+
+		if (cmd === "exit") {
+			awaitingConfirm = true;
+			addLine("text", "Are you sure you want to exit? ", "text-c-warning");
 			return;
 		}
 
@@ -386,14 +804,50 @@
 		const input = raw.trim().toLowerCase();
 		if (!input) return;
 
-		addLine("prompt", `guest@portfolio-183:~$ ${raw}`);
+		if (awaitingConfirm) {
+			if (lines.length > 0) {
+				const updated = [...lines];
+				const last = { ...updated[updated.length - 1] };
+				last.text += raw;
+				updated[updated.length - 1] = last;
+				lines = updated;
+			}
+			if (input === "y") {
+				awaitingConfirm = false;
+				addLine("text", "Goodbye.", "text-c-info");
+				gsap.delayedCall(1, () => {
+					document.body.style.background = "var(--color-c-bg-0)";
+					document.body.style.color = "var(--color-c-neutral-1)";
+					document.body.style.display = "flex";
+					document.body.style.alignItems = "center";
+					document.body.style.justifyContent = "center";
+					document.body.style.height = "100vh";
+					document.body.style.margin = "0";
+					document.body.style.fontFamily = "var(--font-c-jetbrains)";
+					document.body.style.fontSize = "14px";
+					document.body.style.whiteSpace = "pre-wrap";
+					document.body.style.textAlign = "center";
+					document.body.innerHTML = "System halted.\n\nYou may now close this tab.";
+					window.close();
+				});
+			} else {
+				awaitingConfirm = false;
+				addLine("text", "Cancelled.", "text-c-info");
+			}
+			history = [...history, raw];
+			historyIndex = -1;
+			currentInput = "";
+			return;
+		}
+
+		addLine("prompt", `guest@portfolio-183:${promptDir}$ ${raw}`);
 
 		const cmd = input.split(/\s+/)[0];
 
 		history = [...history, raw];
 		historyIndex = -1;
 		currentInput = "";
-		execCmd(cmd);
+		execCmd(cmd, raw);
 	}
 
 	/** @param {KeyboardEvent} e */
@@ -425,6 +879,10 @@
 				historyIndex = newIdx;
 				currentInput = history[historyIndex];
 			}
+		} else if (e.key === "Tab") {
+			e.preventDefault();
+			if (historyIndex !== -1) historyIndex = -1;
+			currentInput += "\t";
 		} else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
 			if (historyIndex !== -1) historyIndex = -1;
 			currentInput += e.key;
@@ -446,7 +904,7 @@
 		if (btn) {
 			const cmd = btn.getAttribute("data-cmd");
 			if (cmd) {
-				addLine("prompt", `guest@portfolio-183:~$ ${cmd}`);
+				addLine("prompt", `guest@portfolio-183:${promptDir}$ ${cmd}`);
 				execCmd(cmd);
 				terminalEl?.focus();
 			}
@@ -554,42 +1012,6 @@
 						╚══════════════════════════════════════════════════════════╝
 					</div>
 				</div>
-			{:else if line.type === "skills"}
-				<div class="w-fit max-w-full font-c-jetbrains text-sm max-lg:text-xs">
-					<div class="text-c-neutral-1">
-						╔════════════╤════════════════════════════════════════════════════╗
-					</div>
-					<div class="flex text-c-neutral-1">
-						<span class="shrink-0" style="margin-right:2ch">║</span>
-						<span class="shrink-0" style="min-width:12ch">Category</span>
-						<span class="shrink-0 text-c-neutral-1" style="margin-inline:2ch"
-							>│</span
-						>
-						<span>Skills</span>
-						<span class="min-w-0 flex-1"></span>
-						<span class="shrink-0" style="margin-left:2ch">║</span>
-					</div>
-					<div class="text-c-neutral-1">
-						╠════════════╪════════════════════════════════════════════════════╣
-					</div>
-					{#each line.rows as row (row.name)}
-						<div class="flex text-c-neutral-1">
-							<span class="shrink-0" style="margin-right:2ch">║</span>
-							<span class="shrink-0 text-c-accent-1" style="min-width:12ch"
-								>{row.name}</span
-							>
-							<span class="shrink-0 text-c-neutral-1" style="margin-inline:2ch"
-								>│</span
-							>
-							<span class="text-c-accent-1">{row.skills}</span>
-							<span class="min-w-0 flex-1"></span>
-							<span class="shrink-0" style="margin-left:2ch">║</span>
-						</div>
-					{/each}
-					<div class="text-c-neutral-1">
-						╚════════════╧════════════════════════════════════════════════════╝
-					</div>
-				</div>
 			{:else if line.type === "pre"}
 				<div
 					class="font-c-jetbrains text-sm leading-relaxed whitespace-pre max-lg:text-xs {line.cls}"
@@ -599,19 +1021,25 @@
 			{:else if line.type === "prompt"}
 				<div class="mt-4 text-c-neutral-1/60">{line.text}</div>
 			{:else if line.cls}
-				<div class={line.cls}>{line.text}</div>
+				<div class="whitespace-pre {line.cls}">{line.text}</div>
 			{:else}
-				<div class="text-c-neutral-1">{line.text}</div>
+				<div class="whitespace-pre text-c-neutral-1">{line.text}</div>
 			{/if}
 		{/each}
 		<div class="mt-4 flex items-center gap-2 text-sm max-lg:text-xs">
-			<span class="shrink-0 text-c-accent-0">guest@portfolio-183:~$</span>
-			<span class="text-c-neutral-0">{currentInput}</span>
-			<span
-				class="font-bold"
-				class:cursor-blink={focused}
-				class:opacity-0={!focused && currentInput === ""}>█</span
-			>
+			{#if awaitingConfirm}
+				<span class="text-c-warning">(y/N): </span>
+			{:else}
+				<span class="shrink-0 text-c-accent-0">guest@portfolio-183:{promptDir}$</span>
+			{/if}
+			<span class="flex items-center">
+				<span class="whitespace-pre text-c-neutral-0">{currentInput}</span>
+				<span
+					class="font-bold -ml-[1px]"
+					class:cursor-blink={focused}
+					class:opacity-0={!focused && currentInput === ""}>█</span
+				>
+			</span>
 		</div>
 	</div>
 </div>
