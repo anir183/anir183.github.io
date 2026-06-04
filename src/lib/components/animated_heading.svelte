@@ -33,8 +33,11 @@
 		if (!el) return;
 
 		split = new SplitTextPlugin(el, {
-			type: "chars",
-			charsClass: "char"
+			type: "chars,words",
+			charsClass: "char",
+			charsTag: "span",
+			wordsClass: "word",
+			wordsTag: "span"
 		});
 
 		const chars = split.chars;
@@ -78,3 +81,9 @@
 <svelte:element this={tag} bind:this={el} class={className}>
 	{@render children()}
 </svelte:element>
+
+<style>
+	:global(.word) {
+		white-space: nowrap;
+	}
+</style>

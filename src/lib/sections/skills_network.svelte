@@ -499,7 +499,7 @@
 			duration: 1.2,
 			stagger: 0.02,
 			ease: "power3.inOut"
-		});
+		}, "-=0.6");
 
 		tl.to(
 			nodeEls,
@@ -625,9 +625,9 @@
 		>
 			<AnimatedHeading
 				tag="h2"
-				class="font-c-unbounded text-5xl font-black text-c-neutral-0"
+				class="font-c-unbounded text-4xl font-black text-c-neutral-0"
 			>
-				Skills
+				Some <span class="text-c-accent-0">skills</span> I have honed.
 			</AnimatedHeading>
 		</div>
 		<div bind:this={svgContainerEl} class="relative h-full w-full">
@@ -769,9 +769,9 @@
 		<AnimatedHeading
 			tag="h2"
 			start={!isMobile}
-			class="font-c-unbounded text-4xl font-black text-c-neutral-0 max-lg:hidden lg:text-7xl"
+			class="font-c-unbounded text-3xl font-black text-c-neutral-0 max-lg:hidden lg:text-6xl"
 		>
-			Skills
+			Some <span class="text-c-accent-0">skills</span> I have honed.
 		</AnimatedHeading>
 
 		<p

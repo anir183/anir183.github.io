@@ -71,9 +71,9 @@
 		<AnimatedHeading
 			tag="h2"
 			start={true}
-			class="font-c-unbounded text-5xl font-black text-c-neutral-0"
+			class="font-c-unbounded text-4xl font-black text-c-neutral-0"
 		>
-			Projects
+			<span class="text-c-accent-0">Projects</span> I have built.
 		</AnimatedHeading>
 	</div>
 
@@ -84,9 +84,9 @@
 			<AnimatedHeading
 				tag="h2"
 				start={true}
-				class="font-c-unbounded text-5xl font-black text-c-neutral-0 lg:text-7xl"
+				class="font-c-unbounded text-4xl font-black text-c-neutral-0 lg:text-6xl"
 			>
-				Projects
+				<span class="text-c-accent-0">Projects</span> I have built.
 			</AnimatedHeading>
 		</div>
 

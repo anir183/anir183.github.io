@@ -111,6 +111,7 @@
 
 <section
 	bind:this={sectionEl}
+	id="about"
 	class="relative flex min-h-screen w-full flex-col lg:flex-row"
 >
 	<!-- mobile heading overlay -->
@@ -119,15 +120,15 @@
 	>
 		<AnimatedHeading
 			tag="h2"
-			class="font-c-unbounded text-5xl font-black text-c-neutral-0"
+			class="font-c-unbounded text-4xl font-black text-c-neutral-0"
 		>
-			About Me
+			A little bit about <span class="text-c-accent-0">me</span>.
 		</AnimatedHeading>
 	</div>
 
 	<!-- scene panel (middle on mobile, sticky right on desktop) -->
 	<div
-		class="flex w-full items-center justify-center px-4 max-lg:h-[50vh] max-lg:mt-[12.5rem] lg:sticky lg:top-0 lg:h-screen lg:w-1/2 lg:px-8 lg:order-2"
+		class="flex w-full items-center justify-center px-4 max-lg:h-[50vh] max-lg:mt-[14rem] lg:sticky lg:top-0 lg:h-screen lg:w-1/2 lg:px-8 lg:order-2"
 	>
 		<div class="h-full max-h-[55vh] w-full max-w-[60%] lg:max-h-[70vh]">
 			<AboutScene bind:sceneEl={sceneContainer} />
@@ -141,9 +142,9 @@
 		<AnimatedHeading
 			tag="h2"
 			start={!isMobile}
-			class="font-c-unbounded text-4xl font-black text-c-neutral-0 max-lg:hidden lg:text-7xl"
+			class="font-c-unbounded text-3xl font-black text-c-neutral-0 max-lg:hidden lg:text-6xl"
 		>
-			About Me
+			A little bit about <span class="text-c-accent-0">me</span>.
 		</AnimatedHeading>
 
 		<p
