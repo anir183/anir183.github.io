@@ -92,9 +92,9 @@
 			bind:this={paraEl}
 			class="font-c-ubuntu text-xl leading-relaxed text-c-neutral-1 max-lg:pointer-events-auto lg:text-2xl"
 		>
-			If you want to reach me, here are some social I am available on. Send
-			a ping my way and I'll reply when I'm available. You will probably have
-			the best luck using Email and Discord.
+			If you want to reach me, here are some social I am available on. Send a
+			ping my way and I'll reply when I'm available. You will probably have the
+			best luck using Email and Discord.
 		</p>
 
 		<div
