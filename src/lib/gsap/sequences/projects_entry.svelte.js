@@ -68,7 +68,7 @@ export async function projectsEntrySequence(config) {
 
 	ScrollTrigger.create({
 		trigger: sectionEl,
-		start: "top 55%",
+		start: "top 20%",
 		once: true,
 		animation: tl
 	});

@@ -42,7 +42,6 @@
 	);
 
 	$effect(() => {
-		if (isMobile) return;
 		if (!sectionEl || !projectListEl) return;
 
 		const list = projectListEl;

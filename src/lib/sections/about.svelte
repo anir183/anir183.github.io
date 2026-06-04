@@ -35,7 +35,7 @@
 
 		const sceneEl = sceneContainer;
 
-		if (!isMobile && !reducedMotion) {
+		if (!reducedMotion) {
 			gsap.registerPlugin(ScrollTrigger);
 
 			const tl = aboutEntrySequence({
@@ -48,7 +48,7 @@
 			if (tl) {
 				ScrollTrigger.create({
 					trigger: sectionEl,
-					start: "top 65%",
+					start: "top 20%",
 					once: true,
 					animation: tl
 				});

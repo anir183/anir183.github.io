@@ -540,8 +540,8 @@
 		});
 
 		scrollTrigger = ScrollTrigger.create({
-			trigger: paraEl ?? sectionEl,
-			start: "top 60%",
+			trigger: sectionEl,
+			start: "top 20%",
 			once: true,
 			animation: tl
 		});
@@ -600,12 +600,7 @@
 			"(prefers-reduced-motion: reduce)"
 		).matches;
 
-		if (isMobile || reducedMotion) {
-			if (!reducedMotion) {
-				import("gsap/ScrollTrigger").then(({ ScrollTrigger }) => {
-					gsap.registerPlugin(ScrollTrigger);
-				});
-			}
+		if (reducedMotion) {
 			return;
 		}
 
