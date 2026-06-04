@@ -25,12 +25,20 @@
 	src: url("/fonts/bebas_neue/BebasNeue-Regular.ttf") format("truetype");
 }
 
+@font-face {
+	font-family: JetBrains;
+	font-display: swap;
+	src: url("/fonts/jetbrains_mono/JetBrainsMono-VariableFont_wght.ttf")
+		format("truetype");
+}
+
 @theme {
 	--breakpoint-intro: 1000px;
 
 	--font-c-unbounded: Unbounded, sans-serif;
 	--font-c-bebas: BebasNeue, sans-serif;
 	--font-c-ubuntu: Ubuntu, sans-serif;
+	--font-c-jetbrains: JetBrains, monospace;
 
 	--color-c-bg-0: #cbcbcb;
 	--color-c-bg-1: #bbbbae;
@@ -105,7 +113,8 @@
 	.hero,
 	#projects,
 	#skills,
-	#about {
+	#about,
+	#socials {
 		scroll-snap-align: start;
 	}
 

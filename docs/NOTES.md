@@ -14,7 +14,8 @@ src/
 │   │   ├── animated_heading.svelte    [implemented]
 │   │   ├── cube_grid.svelte           [implemented]
 │   │   ├── preloader.svelte           [implemented]
-│   │   └── navbar.svelte              [implemented]
+│   │   ├── navbar.svelte              [implemented]
+│   │   └── terminal.svelte            [implemented]
 │   ├── gsap					[all gsap related code lives here]
 │   │   ├── sequences			[full gsap timeline sequences]
 │   │   │   ├── about_intro.svelte.js  [implemented]
@@ -30,12 +31,14 @@ src/
 │   │   ├── crash.svelte
 │   │   ├── hero.svelte        [implemented]
 │   │   ├── projects.svelte    [implemented]
-│   │   └── skills_network.svelte      [implemented]
+│   │   ├── skills_network.svelte      [implemented]
+│   │   └── socials.svelte     [implemented]
 │   └── utils					[utility functions]
 │       ├── constants.svelte.js
 │       ├── loading.svelte.js
 │       ├── projects_data.svelte.js
 │       ├── experiences_data.svelte.js [implemented]
+│       ├── socials_data.svelte.js     [implemented]
 │       ├── skills_data.svelte.js      [implemented]
 │       ├── assert.svelte.js
 │       └── theme.svelte.js
@@ -330,6 +333,50 @@ Uses `gsap.quickTo(el, "x", vars)` and `gsap.quickTo(el, "y", vars)` per layer �
 - Scene container has `perspective: 1200px` for subtle depth hint (no aggressive 3D transforms)
 - Images use `object-contain` — no distortion at any viewport size
 
+### socials section
+
+Interactive terminal section with inline command execution and social link buttons.
+
+**Architecture:**
+
+```
+socials.svelte (composer)
+├── Terminal.svelte (interactive terminal component)
+└── accent_link.svelte (social link buttons, reused from existing component)
+```
+
+**Terminal component (`terminal.svelte`):**
+
+- Self-contained interactive terminal with internal state machine (lines[], currentInput, history[], executing flag)
+- Commands: `help`, `clear`, and one per social link (github, linkedin, email, resume, discord, blog)
+- Help output rendered via `{@html}` with `<button data-cmd>` elements for clickable command names
+- Event delegation on help output container via `.closest("[data-cmd]")`
+- Hidden `<input>` for keyboard capture — styled seamlessly into the prompt line
+- Arrow key history navigation (Up/Down cycles through `history[]`)
+- Cursor blink via JS `setInterval` (530ms) + `$state` toggle + CSS class `.text-hidden`
+- Terminal entry slides from collapsed bar via Svelte `transition:slide`
+- `executing` guard prevents double-trigger on rapid command submission
+- URL opening via `window.open()` after 400ms GSAP `delayedCall`
+- `font-c-jetbrains` for terminal text (JetBrains Mono, defined in layout.css)
+
+**Section layout (`socials.svelte`):**
+
+- Desktop: flex row, terminal left (w-3/5), content right (w-2/5), lg:items-center vertically centered
+- Mobile: stacked column, terminal below content
+- Social links fade on mobile when terminal expands: `max-lg:opacity-0/100` with CSS transition
+  - Uses `pointer-events-none/auto` alongside opacity for interaction gating
+- Entry animation: paragraph + links fade-up via inline GSAP timeline + ScrollTrigger (start: "top 20%", once: true)
+- Heading uses existing `AnimatedHeading` component (SplitText char-stagger)
+- No separate GSAP sequence file — entry is small/single-use, inlined per modularity rule
+- `terminalExpandedOnMobile` state managed in section, passed as `$bindable()` to Terminal
+
+**Edge cases:**
+
+- Reduced motion: cursor blink uses JS interval (not CSS animation), immune to layout.css `prefers-reduced-motion: reduce` nuke. Terminal slide transition disabled via Svelte transition respecting reduced motion (Svelte built-in).
+- SSR safe: all DOM work in `onMount`/`$effect`
+- Preserved state on mobile collapse: lines state stays in component script, only body DOM removed/added via `{#if expanded}`
+- No dependencies added — uses existing GSAP, Svelte transitions, theme colors
+
 ### roadmap
 
 <!-- current state of the project, what has been done and what is to be done -->
@@ -378,7 +425,7 @@ Uses `gsap.quickTo(el, "x", vars)` and `gsap.quickTo(el, "y", vars)` per layer �
 [x] skills_network: GSAP hover wipe effect (animateToActive/animateToRest, edge dash-draw, reduced-motion support)
 [x] skills_network: placeholder paragraph expanded
 [x] about section (parallax layered portrait + procedural halo, 2-col layout, GSAP quickTo parallax, no rAF/rotation)
-[ ] social section
+[x] socials section (interactive terminal + text/links, 2-col desktop, 1-col mobile with collapsible terminal)
 [x] accent_link component (div wrapper + a, bg wipes from left, hard corners, font-c-unbounded)
 [ ] accent_button component
 [ ] route structure for navigation

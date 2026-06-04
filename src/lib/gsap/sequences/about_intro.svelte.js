@@ -65,13 +65,17 @@ export function aboutEntrySequence(config) {
 
 	if (layers.length) {
 		gsap.set(layers, { "--entry-scale": 0.93, opacity: 0 });
-		tl.to(layers, {
-			"--entry-scale": 1,
-			opacity: 1,
-			duration: dur ?? 1.5,
-			stagger: reducedMotion ? 0 : 0.5,
-			ease: "power2.out"
-		}, "-=0.2");
+		tl.to(
+			layers,
+			{
+				"--entry-scale": 1,
+				opacity: 1,
+				duration: dur ?? 1.5,
+				stagger: reducedMotion ? 0 : 0.5,
+				ease: "power2.out"
+			},
+			"-=0.2"
+		);
 	}
 
 	return tl;

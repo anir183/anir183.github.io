@@ -8,6 +8,7 @@
 		About,
 		Projects,
 		SkillsNetwork,
+		Socials,
 		heroEntrySequence,
 		loadAllImages,
 		BODY_SCROLL_LOCK
@@ -92,3 +93,4 @@
 <Projects />
 <SkillsNetwork />
 <About />
+<Socials />

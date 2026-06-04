@@ -78,7 +78,7 @@
 	</div>
 
 	<div
-		class="flex w-full flex-col justify-center px-8 py-16 max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:z-10 max-lg:w-full max-lg:justify-end max-lg:bg-[linear-gradient(45deg,color-mix(in_oklch,var(--color-c-bg-0)_95%,transparent)_0%,color-mix(in_oklch,var(--color-c-bg-0)_95%,transparent)_25%,transparent_70%)] max-lg:px-6 max-lg:pt-72 max-lg:pb-8 max-lg:pointer-events-none lg:w-2/5 lg:px-12 lg:py-24 lg:pl-16 lg:gap-10"
+		class="flex w-full flex-col justify-center px-8 py-16 max-lg:pointer-events-none max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:z-10 max-lg:w-full max-lg:justify-end max-lg:bg-[linear-gradient(45deg,color-mix(in_oklch,var(--color-c-bg-0)_95%,transparent)_0%,color-mix(in_oklch,var(--color-c-bg-0)_95%,transparent)_25%,transparent_70%)] max-lg:px-6 max-lg:pt-72 max-lg:pb-8 lg:w-2/5 lg:gap-10 lg:px-12 lg:py-24 lg:pl-16"
 	>
 		<div class="max-lg:hidden">
 			<AnimatedHeading
@@ -90,7 +90,10 @@
 			</AnimatedHeading>
 		</div>
 
-		<ul bind:this={projectListEl} class="mt-12 flex flex-col gap-4 max-lg:pointer-events-auto">
+		<ul
+			bind:this={projectListEl}
+			class="mt-12 flex flex-col gap-4 max-lg:pointer-events-auto"
+		>
 			{#each projects as project (project.id)}
 				<li>
 					<button
@@ -100,7 +103,9 @@
 						class:text-c-accent-0={activeProject?.id === project.id}
 						aria-pressed={activeProject?.id === project.id}
 					>
-						<span class="font-c-bebas text-sm font-bold tracking-widest text-c-neutral-1">
+						<span
+							class="font-c-bebas text-sm font-bold tracking-widest text-c-neutral-1"
+						>
 							{project.tags.join(" · ")}
 						</span>
 						<h3 class="mt-1 font-c-ubuntu text-2xl font-bold lg:text-3xl">
@@ -113,7 +118,7 @@
 
 		<AccentLink
 			href={resolve("/projects")}
-			class="-translate-x-3 translate-y-0.5 px-4 py-1.5 font-c-unbounded font-bold text-lg max-lg:absolute max-lg:right-6 max-lg:bottom-8 max-lg:mt-0 max-lg:pointer-events-auto"
+			class="-translate-x-3 translate-y-0.5 px-4 py-1.5 font-c-unbounded text-lg font-bold max-lg:pointer-events-auto max-lg:absolute max-lg:right-6 max-lg:bottom-8 max-lg:mt-0"
 			bind:el={ctaEl}
 		>
 			More Projects

@@ -2,13 +2,10 @@
 	let { sceneEl = $bindable() } = $props();
 </script>
 
-<div
-	bind:this={sceneEl}
-	class="relative h-full w-full"
->
+<div bind:this={sceneEl} class="relative h-full w-full">
 	<!-- halo — outside image layer context so bloom with filter:blur doesn't intersect -->
 	<div
-		class="absolute inset-0 m-auto max-h-full max-w-full pointer-events-none"
+		class="pointer-events-none absolute inset-0 m-auto max-h-full max-w-full"
 		style="aspect-ratio: 2160 / 2668"
 	>
 		<div
@@ -18,7 +15,7 @@
 		>
 			<!-- bloom — large soft ambient glow -->
 			<div
-				class="pointer-events-none absolute aspect-square w-[95%] rounded-full top-[29%] left-1/2 -translate-x-1/2 -translate-y-1/2"
+				class="pointer-events-none absolute top-[29%] left-1/2 aspect-square w-[95%] -translate-x-1/2 -translate-y-1/2 rounded-full"
 				style="
 					background: radial-gradient(
 						circle,
@@ -31,7 +28,7 @@
 
 			<!-- main disc — sharper gradient disc -->
 			<div
-				class="pointer-events-none absolute aspect-square w-[80%] rounded-full top-[31%] left-1/2 -translate-x-1/2 -translate-y-1/2"
+				class="pointer-events-none absolute top-[31%] left-1/2 aspect-square w-[80%] -translate-x-1/2 -translate-y-1/2 rounded-full"
 				style="
 					background: linear-gradient(
 						180deg,
@@ -54,7 +51,7 @@
 			data-layer-role="subject"
 			src="/assets/pfp/pfp-layer-2.png"
 			alt=""
-			class="pointer-events-none absolute inset-0 z-[1] h-full w-full select-none object-cover will-change-transform"
+			class="pointer-events-none absolute inset-0 z-[1] h-full w-full object-cover will-change-transform select-none"
 			draggable="false"
 			style="transform: perspective(1200px) translateX(calc(var(--px,0)*1px)) translateY(calc(var(--py,0)*1px)) rotateX(calc(var(--rx,0)*1deg)) rotateY(calc(var(--ry,0)*1deg)) scale(calc(var(--entry-scale, 1)))"
 		/>
@@ -64,7 +61,7 @@
 			data-layer-role="fg"
 			src="/assets/pfp/pfp-layer-1.png"
 			alt=""
-			class="pointer-events-none absolute inset-0 z-[2] h-full w-full select-none object-cover will-change-transform"
+			class="pointer-events-none absolute inset-0 z-[2] h-full w-full object-cover will-change-transform select-none"
 			draggable="false"
 			style="transform: perspective(1200px) translateX(calc(var(--px,0)*1px)) translateY(calc(var(--py,0)*1px)) rotateX(calc(var(--rx,0)*1deg)) rotateY(calc(var(--ry,0)*1deg)) scale(calc(var(--entry-scale, 1)))"
 		/>

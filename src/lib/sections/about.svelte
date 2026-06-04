@@ -38,9 +38,13 @@
 		const layerEls = sceneEl
 			? [...sceneEl.querySelectorAll("[data-layer-role]")]
 			: [];
-		const layers = /** @type {HTMLElement[]} */ (["fg", "subject", "halo"]
-			.map((role) => layerEls.find((el) => el.getAttribute("data-layer-role") === role))
-			.filter((el) => el != null));
+		const layers = /** @type {HTMLElement[]} */ (
+			["fg", "subject", "halo"]
+				.map((role) =>
+					layerEls.find((el) => el.getAttribute("data-layer-role") === role)
+				)
+				.filter((el) => el != null)
+		);
 
 		if (!reducedMotion) {
 			gsap.registerPlugin(ScrollTrigger);
@@ -131,7 +135,7 @@
 
 	<!-- scene panel (middle on mobile, sticky right on desktop) -->
 	<div
-		class="flex w-full items-center justify-center px-4 max-lg:h-[50vh] max-lg:mt-[14rem] lg:sticky lg:top-0 lg:h-screen lg:w-1/2 lg:px-8 lg:order-2"
+		class="flex w-full items-center justify-center px-4 max-lg:mt-[14rem] max-lg:h-[50vh] lg:sticky lg:top-0 lg:order-2 lg:h-screen lg:w-1/2 lg:px-8"
 	>
 		<div class="h-full max-h-[55vh] w-full max-w-[60%] lg:max-h-[70vh]">
 			<AboutScene bind:sceneEl={sceneContainer} />
@@ -140,7 +144,7 @@
 
 	<!-- content panel (absolute bottom on mobile, left on desktop) -->
 	<div
-		class="flex w-full flex-col justify-center gap-6 px-6 pb-12 max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:z-10 max-lg:w-full max-lg:justify-end max-lg:bg-gradient-to-tr max-lg:from-c-bg-0/95 max-lg:via-c-bg-0/75 max-lg:to-c-bg-0/0 max-lg:px-6 max-lg:pt-20 max-lg:pb-8 lg:w-1/2 lg:gap-10 lg:px-16 lg:pb-24 lg:pt-24 lg:pl-16 lg:order-1"
+		class="flex w-full flex-col justify-center gap-6 px-6 pb-12 max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:z-10 max-lg:w-full max-lg:justify-end max-lg:bg-gradient-to-tr max-lg:from-c-bg-0/95 max-lg:via-c-bg-0/75 max-lg:to-c-bg-0/0 max-lg:px-6 max-lg:pt-20 max-lg:pb-8 lg:order-1 lg:w-1/2 lg:gap-10 lg:px-16 lg:pt-24 lg:pb-24 lg:pl-16"
 	>
 		<AnimatedHeading
 			tag="h2"
@@ -154,22 +158,22 @@
 			bind:this={paraEl}
 			class="font-c-ubuntu text-xl leading-relaxed text-c-neutral-1 lg:text-2xl"
 		>
-			B.Tech Computer Science student specializing in Cyber Security.
-			Passionate about low-level systems, modern web engineering, and creating
-			fast interactive experiences. I enjoy working across the full stack —
-			from crafting responsive UIs to designing resilient backend services.
+			B.Tech Computer Science student specializing in Cyber Security. Passionate
+			about low-level systems, modern web engineering, and creating fast
+			interactive experiences. I enjoy working across the full stack — from
+			crafting responsive UIs to designing resilient backend services.
 		</p>
 
 		<div bind:this={ctaEl} class="flex flex-wrap items-center gap-4">
 			<AccentLink
 				href="https://github.com/anir183"
-				class="-translate-x-3 px-4 py-1.5 font-c-unbounded font-bold text-base lg:text-lg"
+				class="-translate-x-3 px-4 py-1.5 font-c-unbounded text-base font-bold lg:text-lg"
 			>
 				GitHub
 			</AccentLink>
 			<AccentLink
 				href="/assets/resume.pdf"
-				class="-translate-x-3 px-4 py-1.5 font-c-unbounded font-bold text-base lg:text-lg"
+				class="-translate-x-3 px-4 py-1.5 font-c-unbounded text-base font-bold lg:text-lg"
 			>
 				Resume
 			</AccentLink>

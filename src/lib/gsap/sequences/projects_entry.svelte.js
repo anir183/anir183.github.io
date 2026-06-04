@@ -29,7 +29,9 @@ export async function projectsEntrySequence(config) {
 	/** @type {HTMLElement[]} */
 	let tiles = [];
 	if (gridContainer) {
-		tiles = /** @type {HTMLElement[]} */ ([...gridContainer.querySelectorAll("[data-tile-index]")]);
+		tiles = /** @type {HTMLElement[]} */ ([
+			...gridContainer.querySelectorAll("[data-tile-index]")
+		]);
 		gsap.set(tiles, { rotationY: 180 });
 	}
 

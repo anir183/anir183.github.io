@@ -21,6 +21,7 @@
 		if (name === "Projects") return resolve("/#projects");
 		if (name === "Skills") return resolve("/#skills");
 		if (name === "About") return resolve("/#about");
+		if (name === "Socials") return resolve("/#socials");
 		return resolve("/");
 	}
 

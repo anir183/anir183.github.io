@@ -64,8 +64,8 @@
 				Hello!<br />
 				I'm
 				<span class="text-c-accent-0 transition-colors duration-700">
-					Anirban.
-				</span>
+					Anirban
+				</span>.
 			</h1>
 		</div>
 	</div>
