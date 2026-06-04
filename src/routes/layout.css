@@ -99,6 +99,14 @@
 @layer base {
 	html {
 		scroll-behavior: smooth;
+		scroll-snap-type: y proximity;
+	}
+
+	.hero,
+	#projects,
+	#skills,
+	#about {
+		scroll-snap-align: start;
 	}
 
 	body.overflow-hidden {

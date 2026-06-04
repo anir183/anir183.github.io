@@ -140,7 +140,7 @@
 
 	<!-- content panel (absolute bottom on mobile, left on desktop) -->
 	<div
-		class="flex w-full flex-col justify-center gap-6 px-6 pb-12 max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:z-10 max-lg:w-full max-lg:justify-end max-lg:bg-gradient-to-tr max-lg:from-c-bg-0/95 max-lg:via-c-bg-0/75 max-lg:to-c-bg-0/0 max-lg:px-6 max-lg:pt-32 max-lg:pb-8 lg:w-1/2 lg:gap-10 lg:px-16 lg:pb-24 lg:pt-24 lg:pl-16 lg:order-1"
+		class="flex w-full flex-col justify-center gap-6 px-6 pb-12 max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:z-10 max-lg:w-full max-lg:justify-end max-lg:bg-gradient-to-tr max-lg:from-c-bg-0/95 max-lg:via-c-bg-0/75 max-lg:to-c-bg-0/0 max-lg:px-6 max-lg:pt-20 max-lg:pb-8 lg:w-1/2 lg:gap-10 lg:px-16 lg:pb-24 lg:pt-24 lg:pl-16 lg:order-1"
 	>
 		<AnimatedHeading
 			tag="h2"
