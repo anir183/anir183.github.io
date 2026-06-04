@@ -7,7 +7,7 @@ import { gsap } from "gsap";
  *
  * @param {object} config
  * @param {HTMLElement} config.container - Element to listen for pointer events on
- * @param {Array<{el: HTMLElement, strength: number}>} config.layers - Layer elements with movement strength in px
+ * @param {Array<{el: HTMLElement, strength: number, rotStrength?: number}>} config.layers - Layer elements with movement strength in px and optional rotation strength in deg
  * @param {number} [config.duration=1.2] - GSAP tween duration for smooth interpolation
  * @param {boolean} [config.reducedMotion=false] - Skip if true
  * @returns {() => void} Cleanup function
@@ -20,10 +20,17 @@ export function createParallax({
 }) {
 	if (reducedMotion || !container || !layers.length) return () => {};
 
+	// Animate CSS custom properties so the inline transform (with perspective)
+	// stays intact — avoids GSAP overwriting the transform string.
+	const tweenOpts = { duration, ease: "power3.out" };
+
 	const pairs = layers.map((l) => ({
-		toX: gsap.quickTo(l.el, "x", { duration, ease: "power3.out" }),
-		toY: gsap.quickTo(l.el, "y", { duration, ease: "power3.out" }),
-		strength: l.strength
+		toPX: gsap.quickTo(l.el, "--px", tweenOpts),
+		toPY: gsap.quickTo(l.el, "--py", tweenOpts),
+		toRY: gsap.quickTo(l.el, "--ry", tweenOpts),
+		toRX: gsap.quickTo(l.el, "--rx", tweenOpts),
+		strength: l.strength,
+		rotStrength: l.rotStrength ?? 0
 	}));
 
 	/**
@@ -37,15 +44,19 @@ export function createParallax({
 		const ny = (e.clientY - rect.top - cy) / cy;
 
 		for (const p of pairs) {
-			p.toX(nx * p.strength);
-			p.toY(ny * p.strength);
+			p.toPX(nx * p.strength);
+			p.toPY(ny * p.strength);
+			p.toRY(nx * p.rotStrength);
+			p.toRX(-ny * p.rotStrength);
 		}
 	}
 
 	function onPointerLeave() {
 		for (const p of pairs) {
-			p.toX(0);
-			p.toY(0);
+			p.toPX(0);
+			p.toPY(0);
+			p.toRY(0);
+			p.toRX(0);
 		}
 	}
 
@@ -56,8 +67,10 @@ export function createParallax({
 		container.removeEventListener("pointermove", onPointerMove);
 		container.removeEventListener("pointerleave", onPointerLeave);
 		for (const p of pairs) {
-			p.toX(0);
-			p.toY(0);
+			p.toPX(0);
+			p.toPY(0);
+			p.toRY(0);
+			p.toRX(0);
 		}
 	};
 }

@@ -39,7 +39,7 @@
 	--color-c-neutral-0: #383a42;
 	--color-c-neutral-1: #6f7175;
 
-	--color-c-accent-0: #85551f;
+	--color-c-accent-0: #aa6704;
 	--color-c-accent-1: #4078f2;
 
 	--color-c-success: #50a14f;
@@ -49,12 +49,14 @@
 
 	--color-c-border: #696969;
 
-	--color-c-shadow: #bbbbae;
+	--color-c-shadow: #91917d;
 }
 
 @layer theme {
 	:root,
 	:host {
+		--halo-disc-stop-2: 65%;
+
 		@variant dark {
 			--color-c-bg-0: #131518;
 			--color-c-bg-1: #282c34;
@@ -74,6 +76,8 @@
 			--color-c-border: #454b59;
 
 			--color-c-shadow: #282b34;
+
+			--halo-disc-stop-2: 45%;
 		}
 	}
 }

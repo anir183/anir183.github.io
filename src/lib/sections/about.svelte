@@ -26,17 +26,25 @@
 			: [];
 
 		const strengthMap = /** @type {Record<string, number>} */ ({
-			halo: 6,
-			bg: 10,
-			subject: 16,
-			fg: 22
+			halo: 8,
+			subject: 18,
+			fg: 28
 		});
 
-		const layerConfig = layers.map((el) => ({
-			el: /** @type {HTMLElement} */ (el),
-			strength:
-				strengthMap[el.getAttribute("data-layer-role") ?? ""] ?? 6
-		}));
+		const rotStrengthMap = /** @type {Record<string, number>} */ ({
+			halo: 1,
+			subject: 3,
+			fg: 5
+		});
+
+		const layerConfig = layers.map((el) => {
+			const role = el.getAttribute("data-layer-role") ?? "";
+			return {
+				el: /** @type {HTMLElement} */ (el),
+				strength: strengthMap[role] ?? 6,
+				rotStrength: rotStrengthMap[role] ?? 0
+			};
+		});
 
 		/** @type {gsap.core.Tween | undefined} */
 		let floatTween;
