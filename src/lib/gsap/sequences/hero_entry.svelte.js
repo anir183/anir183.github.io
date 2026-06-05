@@ -1,5 +1,4 @@
 import { gsap } from "gsap";
-import { SplitText } from "gsap/SplitText";
 import { assert, LG_BREAKPOINT, STAGGER_FAST } from "$lib";
 
 /**
@@ -9,7 +8,6 @@ import { assert, LG_BREAKPOINT, STAGGER_FAST } from "$lib";
  *   navLinks: HTMLElement[],
  *   themeButton: HTMLElement | null | undefined,
  *   hamburgerButton: HTMLElement | null | undefined,
- *   wrapperEl?: HTMLElement | null | undefined,
  *   delay?: number,
  * }} config
  * @returns {Promise<{tl: gsap.core.Timeline}>}
@@ -21,9 +19,10 @@ export async function heroEntrySequence(config) {
 		navLinks = [],
 		themeButton = null,
 		hamburgerButton = null,
-		wrapperEl = null,
 		delay = 0.5
 	} = config ?? {};
+
+	const { SplitText } = await import("gsap/SplitText");
 
 	gsap.registerPlugin(SplitText);
 
@@ -50,8 +49,6 @@ export async function heroEntrySequence(config) {
 		y: "125%",
 		willChange: "transform"
 	});
-
-	if (wrapperEl) gsap.set(wrapperEl, { visibility: "visible", opacity: 1 });
 
 	const INTRO_IMG_SPREAD = 1200;
 	const introImgScale = 0.85;
