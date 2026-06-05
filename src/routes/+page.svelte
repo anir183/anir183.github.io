@@ -27,6 +27,9 @@
 	/** @type {HTMLHeadingElement | undefined} */
 	let heroH1 = $state();
 
+	/** @type {HTMLElement | undefined} */
+	let heroContentEl = $state();
+
 	/** @type {gsap.core.Timeline | undefined} */
 	let tl;
 
@@ -45,7 +48,7 @@
 				);
 				const introImgs = [...introImgEls];
 				const navLinkEls = /** @type {NodeListOf<HTMLElement> | undefined} */ (
-					navEl?.querySelectorAll("a")
+					navEl?.querySelectorAll(":scope > div:first-of-type a")
 				);
 				const navLinks = navLinkEls ? [...navLinkEls] : [];
 				return heroEntrySequence({
@@ -53,7 +56,8 @@
 					heroHeadline: heroH1,
 					navLinks,
 					themeButton: themeBtn,
-					hamburgerButton: hamburgerBtn
+					hamburgerButton: hamburgerBtn,
+					wrapperEl: heroContentEl
 				});
 			})
 			.then((/** @type {{tl: gsap.core.Timeline}} */ result) => {
@@ -88,8 +92,10 @@
 	</div>
 {/if}
 
+<div bind:this={heroContentEl} class="invisible">
 <Navbar bind:navEl bind:themeBtn bind:hamburgerBtn />
 <Hero bind:heroH1 />
+</div>
 <Projects />
 <SkillsNetwork />
 <About />

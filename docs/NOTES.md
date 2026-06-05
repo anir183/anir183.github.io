@@ -214,7 +214,7 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 - GSAP targets use `bind:this` refs (not CSS selectors) for reliable element capture
 - child components expose refs to parent sections via `$bindable()` props (e.g., `<Navbar bind:navEl>`)
 - GSAP easings: use built-in eases only (power2.out, power3.out, power4.out) — no CustomEase
-- SplitText and ScrollTrigger are GSAP bonus/plugins used (dynamically imported)
+- SplitText imported statically in `hero_entry.svelte.js` (eliminates dynamic import latency and async yield point that caused intermittent cold-load failures); ScrollTrigger dynamically imported in `animated_heading.svelte`
 - body scroll is locked during preloader+hero animation phase via `overflow-hidden` on body (hardened in layout.css with `!important position: fixed inset: 0 width: 100% height: 100% overscroll-behavior: none touch-action: none`); lock is released in `.finally()` only after `tl.then()` resolves (timeline finished playing, not just created)
 - preloader always hides due to `.finally()` chain in +page.svelte
 - timeline has 0.5s delay to let preloader fade-out complete before images animate
