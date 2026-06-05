@@ -10,6 +10,7 @@
 		aboutEntrySequence,
 		LG_BREAKPOINT
 	} from "$lib";
+	import { inertOffscreen } from "$lib/actions/inert_offscreen.js";
 
 	/** @type {HTMLDivElement | undefined} */
 	let sceneContainer = $state();
@@ -118,6 +119,7 @@
 
 <section
 	bind:this={sectionEl}
+	use:inertOffscreen
 	id="about"
 	class="relative flex min-h-screen w-full flex-col lg:flex-row"
 >

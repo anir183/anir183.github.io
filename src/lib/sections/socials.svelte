@@ -3,6 +3,7 @@
 	import { gsap } from "gsap";
 	import { ScrollTrigger } from "gsap/ScrollTrigger";
 	import { socials, AnimatedHeading, AccentLink, Terminal } from "$lib";
+	import { inertOffscreen } from "$lib/actions/inert_offscreen.js";
 
 	/** @type {HTMLParagraphElement | undefined} */
 	let paraEl = $state();
@@ -56,6 +57,7 @@
 
 <section
 	bind:this={sectionEl}
+	use:inertOffscreen
 	id="socials"
 	class="relative flex min-h-screen w-full flex-col lg:flex-row lg:gap-16"
 >

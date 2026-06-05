@@ -8,6 +8,7 @@
 		AccentLink,
 		projectsEntrySequence
 	} from "$lib";
+	import { inertOffscreen } from "$lib/actions/inert_offscreen.js";
 
 	/** @type {import("$lib/utils/projects_data.svelte.js").Project | null} */
 	let activeProject = $state(projects[0]);
@@ -62,6 +63,7 @@
 
 <section
 	bind:this={sectionEl}
+	use:inertOffscreen
 	class="relative flex min-h-screen w-full flex-col lg:flex-row"
 	id="projects"
 >

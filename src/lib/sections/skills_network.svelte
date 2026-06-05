@@ -10,6 +10,7 @@
 		AccentLink,
 		LG_BREAKPOINT
 	} from "$lib";
+	import { inertOffscreen } from "$lib/actions/inert_offscreen.js";
 
 	let sectionEl = $state();
 	let svgEl = $state();
@@ -616,6 +617,7 @@
 
 <section
 	bind:this={sectionEl}
+	use:inertOffscreen
 	id="skills"
 	class="relative flex min-h-screen w-full flex-col lg:flex-row"
 >
