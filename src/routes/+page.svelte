@@ -39,13 +39,14 @@
 			if (!mounted) return;
 			progress = pct;
 		})
+			.then(() => document.fonts.ready)
 			.then(() => {
 				const introImgEls = /** @type {NodeListOf<HTMLElement>} */ (
 					document.querySelectorAll(".intro-img")
 				);
 				const introImgs = [...introImgEls];
 				const navLinkEls = /** @type {NodeListOf<HTMLElement> | undefined} */ (
-					navEl?.querySelectorAll("a")
+					navEl?.querySelectorAll(":scope > div:first-of-type a")
 				);
 				const navLinks = navLinkEls ? [...navLinkEls] : [];
 				return heroEntrySequence({
@@ -57,16 +58,21 @@
 				});
 			})
 			.then((/** @type {{tl: gsap.core.Timeline}} */ result) => {
+				const entryTl = result.tl;
 				if (!mounted) {
-					result.tl.kill();
+					entryTl.kill();
 					return;
 				}
-				tl = result.tl;
-				preloaderVisible = false;
-				return tl.then();
+				tl = entryTl;
+				console.log("[page] GSAP setup done, waiting one frame");
+				return new Promise(resolve => requestAnimationFrame(resolve)).then(() => {
+					console.log("[page] frame flushed, fading preloader");
+					preloaderVisible = false;
+					return entryTl.then();
+				});
 			})
 			.catch((/** @type {Error} */ err) => {
-				console.warn("hero animation failed:", err);
+				console.warn("[page] hero animation failed:", err);
 				preloaderVisible = false;
 			})
 			.finally(() => {

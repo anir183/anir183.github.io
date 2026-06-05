@@ -22,10 +22,13 @@ export async function heroEntrySequence(config) {
 		delay = 0.5
 	} = config ?? {};
 
+	console.log("[heroEntry] started", { navLinks: navLinks.length, heroHeadline: !!heroHeadline, introImages: introImages.length, themeButton: !!themeButton });
+
 	const { SplitText } = await import("gsap/SplitText");
 
 	gsap.registerPlugin(SplitText);
 
+	console.time("[heroEntry] SplitText");
 	SplitText.create(navLinks, {
 		type: "lines",
 		linesClass: "line",
@@ -39,11 +42,13 @@ export async function heroEntrySequence(config) {
 		mask: "lines",
 		autoSplit: true
 	});
+	console.timeEnd("[heroEntry] SplitText");
 
 	const navLines = navLinks.flatMap((a) => [...a.querySelectorAll(".line")]);
 	const headlineLines = heroHeadline
 		? [...heroHeadline.querySelectorAll(".line")]
 		: [];
+	console.log("[heroEntry] lines created", { navLines: navLines.length, headlineLines: headlineLines.length });
 
 	gsap.set([...navLines, ...headlineLines], {
 		y: "125%",
@@ -182,5 +187,6 @@ export async function heroEntrySequence(config) {
 		"<"
 	);
 
+	console.log("[heroEntry] returning tl");
 	return { tl };
 }
