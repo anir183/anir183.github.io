@@ -11,13 +11,17 @@
 	/** @type {HTMLElement | undefined} */
 	let sectionEl = $state();
 
+	let terminalPlay = $state(false);
+
 	onMount(() => {
 		gsap.registerPlugin(ScrollTrigger);
 
 		if (paraEl) gsap.set(paraEl, { y: 24, opacity: 0 });
 		if (linksEl) gsap.set(linksEl, { y: 16, opacity: 0 });
 
-		const tl = gsap.timeline();
+		const tl = gsap.timeline({
+			onComplete: () => (terminalPlay = true)
+		});
 
 		if (paraEl) {
 			tl.to(paraEl, {
@@ -72,7 +76,7 @@
 		class="flex w-full px-4 max-lg:max-h-[70vh] max-lg:min-h-[45vh] max-lg:flex-1 max-lg:items-stretch max-lg:justify-start max-lg:pt-52 lg:sticky lg:top-0 lg:order-1 lg:h-screen lg:w-3/5 lg:items-center lg:justify-center lg:px-16"
 	>
 		<div class="w-full max-lg:flex max-lg:flex-1 max-lg:flex-col">
-			<Terminal {socials} />
+			<Terminal bind:playEntry={terminalPlay} {socials} />
 		</div>
 	</div>
 

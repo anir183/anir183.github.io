@@ -37,6 +37,7 @@
 	<Crash
 		error={assert_failure.error?.name}
 		details={assert_failure.error?.message}
+		reload={true}
 	/>
 {:else}
 	<div class="relative min-h-screen bg-c-bg-0 text-c-neutral-0 antialiased">

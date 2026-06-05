@@ -1,10 +1,12 @@
 <script>
 	import { tick, onMount } from "svelte";
 	import { gsap } from "gsap";
+	import { goto } from "$app/navigation";
 
 	let {
 		/** @type {import("$lib/utils/socials_data.svelte.js").Social[]} */
-		socials = []
+		socials = [],
+		playEntry = $bindable(undefined)
 	} = $props();
 
 	/** @type {{ cmd: string, desc: string, url?: string, name?: string, text?: string }[]} */
@@ -427,7 +429,7 @@
 		},
 		"/home/guest/easter": {
 			type: "dir",
-			children: ["snake", "whatisthis", "matrix"]
+			children: ["snake", "whatisthis", "matrix", "teapot"]
 		},
 		"/home/guest/easter/snake": {
 			type: "file",
@@ -465,6 +467,27 @@
 			type: "file",
 			content:
 				"Wake up, Neo...\n\nThe Matrix has you...\n\nFollow the white rabbit.\n\nKnock, knock, Neo.\n\nYou take the blue pill — the story ends, you wake up in your bed and believe whatever you want to believe.\nYou take the red pill — you stay in Wonderland and I show you how deep the rabbit hole goes."
+		},
+		"/home/guest/easter/teapot": {
+			type: "file",
+			content: [
+				"",
+				"    ╔═══════════════════════╗",
+				"    ║                       ║",
+				"    ║    HTTP 418           ║",
+				"    ║    I'm a teapot       ║",
+				"    ║                       ║",
+				"    ║    (╯°□°)╯︵ ┻━┻     ║",
+				"    ║                       ║",
+				"    ╚═══════════════════════╝",
+				"",
+				"The server refuses to brew coffee",
+				"because it is, permanently, a teapot.",
+				"",
+				"This is not a bug. This is art.",
+				"",
+				"💥 Initiating crash sequence..."
+			].join("\n")
 		}
 	};
 
@@ -520,6 +543,13 @@
 	let outputEl = $state();
 	/** @type {HTMLElement | undefined} */
 	let terminalEl = $state();
+
+	/** @type {{ container: Element, titleBar: Element, separator: Element, initialLines: Element[], inputPrompt: Element } | null} */
+	let animRefs = $state(null);
+	let hasAnimated = false;
+	let entryInitialized = false;
+	/** @type {gsap.core.Timeline | null} */
+	let animTl = null;
 
 	/**
 	 * @param {string} type
@@ -699,6 +729,9 @@
 					addLine("text", `cat: ${arg}: Is a directory`, "text-c-error");
 				} else {
 					addLine("text", node.content ?? "", "text-c-accent-1");
+					if (target === "/home/guest/easter/teapot") {
+						gsap.delayedCall(1.5, () => goto("/418"));
+					}
 				}
 			}
 			return;
@@ -883,6 +916,8 @@
 			e.preventDefault();
 			if (historyIndex !== -1) historyIndex = -1;
 			currentInput += "\t";
+		} else if (e.key === "Escape") {
+			terminalEl?.blur();
 		} else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
 			if (historyIndex !== -1) historyIndex = -1;
 			currentInput += e.key;
@@ -923,30 +958,189 @@
 
 	onMount(() => {
 		initTerminal();
+
+		let mounted = true;
+
+		tick().then(() => {
+			if (!mounted || !terminalEl || !outputEl) return;
+
+			const reducedMotion = window.matchMedia(
+				"(prefers-reduced-motion: reduce)"
+			).matches;
+
+			if (reducedMotion) return;
+
+			const titleBar = terminalEl.children[0];
+			const separator = terminalEl.children[1];
+			const outputChildren = [...outputEl.children];
+			const initialLines = outputChildren.slice(0, -1);
+			const inputPrompt = outputChildren[outputChildren.length - 1];
+
+			gsap.set(terminalEl, { opacity: 0 });
+			gsap.set(titleBar, { y: -8, opacity: 0 });
+			gsap.set(separator, { opacity: 0 });
+			gsap.set(initialLines, { y: 12, opacity: 0 });
+			gsap.set(inputPrompt, { y: 8, opacity: 0 });
+
+			animRefs = { container: terminalEl, titleBar, separator, initialLines, inputPrompt };
+		});
+
+		return () => {
+			mounted = false;
+		};
+	});
+
+	$effect(() => {
+		if (playEntry && animRefs && !entryInitialized) {
+			entryInitialized = true;
+			hasAnimated = true;
+			terminalEl?.focus();
+			const { container, titleBar, separator, initialLines, inputPrompt } =
+				animRefs;
+
+			const tl = gsap.timeline();
+
+			tl.to(container, {
+				opacity: 1,
+				duration: 0.7,
+				ease: "power2.out"
+			});
+
+			tl.to(
+				titleBar,
+				{
+					y: 0,
+					opacity: 1,
+					duration: 0.5,
+					ease: "power3.out"
+				},
+				"-=0.1"
+			);
+
+			tl.to(
+				separator,
+				{
+					opacity: 1,
+					duration: 0.5,
+					ease: "power2.out"
+				},
+				0
+			);
+
+			tl.to(
+				initialLines,
+				{
+					y: 0,
+					opacity: 1,
+					duration: 0.7,
+					stagger: 0.12,
+					ease: "power3.out"
+				},
+				0
+			);
+
+			tl.to(
+				inputPrompt,
+				{
+					y: 0,
+					opacity: 1,
+					duration: 0.6,
+					ease: "power2.out"
+				},
+				"-=0.05"
+			);
+
+			animTl = tl;
+		}
 	});
 
 	$effect(() => {
 		const el = terminalEl;
-		if (!el) return;
+		if (!el || entryInitialized || playEntry !== undefined) return;
 
 		const observer = new IntersectionObserver(
 			([entry]) => {
 				if (entry.isIntersecting) {
 					el.focus();
 					observer.disconnect();
+
+					if (!hasAnimated && animRefs) {
+						entryInitialized = true;
+						hasAnimated = true;
+						const { container, titleBar, separator, initialLines, inputPrompt } =
+							animRefs;
+
+						const tl = gsap.timeline();
+
+						tl.to(container, {
+							opacity: 1,
+							duration: 0.7,
+							ease: "power2.out"
+						});
+
+						tl.to(
+							titleBar,
+							{
+								y: 0,
+								opacity: 1,
+								duration: 0.5,
+								ease: "power3.out"
+							},
+							"-=0.1"
+						);
+
+						tl.to(
+							separator,
+							{
+								opacity: 1,
+								duration: 0.5,
+								ease: "power2.out"
+							},
+							0
+						);
+
+						tl.to(
+							initialLines,
+							{
+								y: 0,
+								opacity: 1,
+								duration: 0.7,
+								stagger: 0.12,
+								ease: "power3.out"
+							},
+							0
+						);
+
+						tl.to(
+							inputPrompt,
+							{
+								y: 0,
+								opacity: 1,
+								duration: 0.6,
+								ease: "power2.out"
+							},
+							"-=0.05"
+						);
+
+						animTl = tl;
+					}
 				}
 			},
 			{ threshold: 0.3 }
 		);
 		observer.observe(el);
-		return () => observer.disconnect();
+		return () => {
+			observer.disconnect();
+			animTl?.kill();
+			animTl = null;
+		};
 	});
 </script>
 
 <div
 	bind:this={terminalEl}
 	class="flex flex-col overflow-hidden rounded-2xl border-2 border-c-accent-0/15 bg-c-bg-1/50 backdrop-blur-sm transition-colors duration-300 outline-none max-lg:flex-1"
-	tabindex="0"
+	tabindex="-1"
 	role="application"
 	aria-label="Terminal"
 	onkeydown={onKeydown}
@@ -1037,7 +1231,7 @@
 				<span
 					class="font-bold -ml-[1px]"
 					class:cursor-blink={focused}
-					class:opacity-0={!focused && currentInput === ""}>█</span
+					class:opacity-0={!focused}>█</span
 				>
 			</span>
 		</div>

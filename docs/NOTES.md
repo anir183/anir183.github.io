@@ -370,9 +370,41 @@ socials.svelte (composer)
 - No separate GSAP sequence file — entry is small/single-use, inlined per modularity rule
 - `terminalExpandedOnMobile` state managed in section, passed as `$bindable()` to Terminal
 
+**Entry animation (terminal.svelte):**
+
+Self-contained entry animation driven by the existing IntersectionObserver — not ScrollTrigger, because the terminal lives inside a `lg:sticky` container on desktop which breaks ScrollTrigger's scroll-position calculations. The IntersectionObserver (`threshold: 0.3`) already auto-focuses the terminal on first intersection; the animation piggybacks on the same observer callback.
+
+Architecture:
+
+```
+onMount:
+  initTerminal()
+  tick().then(() =>
+    - check prefers-reduced-motion (skip if reduce)
+    - collect refs: titleBar (children[0]), separator (children[1]),
+      outputChildren (children of outputEl), initialLines (all but last),
+      inputPrompt (last child)
+    - gsap.set() all to hidden state
+    - store refs in animRefs ($state)
+  )
+
+$effect (IntersectionObserver):
+  on first intersection:
+    - el.focus() (existing)
+    - observer.disconnect() (existing)
+    - if !hasAnimated && animRefs:
+      - build staggered gsap.timeline from stored refs
+      - play timeline (no ScrollTrigger wrapping)
+    - store timeline in animTl for cleanup
+
+  cleanup: observer.disconnect(), animTl?.kill()
+```
+
+Stagger order: `titleBar (-8px y, 0.4s)` → `separator (opacity, 0.3s, -0.1s)` → `initialLines (12px y, 0.5s, stagger 0.08, -0.1s)` → `inputPrompt (8px y, 0.4s, -0.15s)`. Uses `power3.out` / `power2.out` eases (existing project convention). `mounted` guard prevents DOM access after teardown. GSAP targets collected via `children[]` (static template nodes) — no bind:this needed. No ScrollTrigger dependency required — avoids sticky-container scroll-position bug that made initial implementation invisible on desktop.
+
 **Edge cases:**
 
-- Reduced motion: cursor blink uses JS interval (not CSS animation), immune to layout.css `prefers-reduced-motion: reduce` nuke. Terminal slide transition disabled via Svelte transition respecting reduced motion (Svelte built-in).
+- Reduced motion: cursor blink uses JS interval (not CSS animation), immune to layout.css `prefers-reduced-motion: reduce` nuke. Terminal slide transition disabled via Svelte transition respecting reduced motion (Svelte built-in). Entry animation skipped via `window.matchMedia("(prefers-reduced-motion: reduce)")`.
 - SSR safe: all DOM work in `onMount`/`$effect`
 - Preserved state on mobile collapse: lines state stays in component script, only body DOM removed/added via `{#if expanded}`
 - No dependencies added — uses existing GSAP, Svelte transitions, theme colors
@@ -426,6 +458,7 @@ socials.svelte (composer)
 [x] skills_network: placeholder paragraph expanded
 [x] about section (parallax layered portrait + procedural halo, 2-col layout, GSAP quickTo parallax, no rAF/rotation)
 [x] socials section (interactive terminal + text/links, 2-col desktop, 1-col mobile with collapsible terminal)
+[x] terminal entry animation (self-contained ScrollTrigger stagger-fade, follows AnimatedHeading pattern, GSAP children[] refs, reduced-motion aware)
 [x] accent_link component (div wrapper + a, bg wipes from left, hard corners, font-c-unbounded)
 [ ] accent_button component
 [ ] route structure for navigation
