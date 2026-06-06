@@ -92,13 +92,18 @@
 		let layerFloatTween;
 		if (!reducedMotion && layers.length) {
 			gsap.set(layers, { "--fy": 0 });
-			layerFloatTween = gsap.to(layers, {
-				"--fy": 6,
-				duration: 4,
-				repeat: -1,
-				yoyo: true,
-				ease: "sine.inOut"
-			});
+			const floatLayers = layers.filter(
+				(l) => l.getAttribute("data-layer-role") !== "halo"
+			);
+			if (floatLayers.length) {
+				layerFloatTween = gsap.to(floatLayers, {
+					"--fy": 6,
+					duration: 4,
+					repeat: -1,
+					yoyo: true,
+					ease: "sine.inOut"
+				});
+			}
 		}
 
 		/** @type {(() => void) | undefined} */
