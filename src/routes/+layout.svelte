@@ -40,7 +40,7 @@
 		reload={true}
 	/>
 {:else}
-	<div class="relative min-h-screen bg-c-bg-0 text-c-neutral-0 antialiased">
+	<div class="relative min-h-screen overflow-x-hidden bg-c-bg-0 text-c-neutral-0 antialiased">
 		{@render children()}
 	</div>
 {/if}
