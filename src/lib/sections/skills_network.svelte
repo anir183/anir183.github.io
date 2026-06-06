@@ -239,8 +239,8 @@
 				);
 				circle.setAttribute("cx", String(initPt.x));
 				circle.setAttribute("cy", String(initPt.y));
-				circle.setAttribute("r", "2.5");
-				circle.classList.add("fill-c-accent-0");
+				circle.setAttribute("r", "1.5");
+				circle.setAttribute("fill", "var(--color-c-accent-0)");
 				circle.style.opacity = "0";
 				circle.style.pointerEvents = "none";
 				circle.dataset.packetEdge = String(i);
@@ -248,7 +248,7 @@
 				/* eslint-enable svelte/no-dom-manipulating */
 				packetEls.push(circle);
 
-				const packetDelay = Math.random() * 10;
+				const packetDelay = Math.random() * 8;
 
 				/** @type {{ t: number, path: SVGPathElement, len: number, el: SVGCircleElement }} */
 				const data = {
@@ -273,14 +273,14 @@
 						gsap.fromTo(
 							circle,
 							{ opacity: 0 },
-							{ opacity: 0.7, duration: 1, ease: "power2.out", overwrite: true }
+							{ opacity: 0.35, duration: 1, ease: "power2.out", overwrite: true }
 						);
 					}
 				});
 				packetTweens.push(tween);
 
 				gsap.to(circle, {
-					opacity: 0.7,
+					opacity: 0.35,
 					duration: 1,
 					delay: packetDelay,
 					ease: "power2.out",
@@ -427,7 +427,7 @@
 			const isConnected = active
 				? edge[0] === active || edge[1] === active
 				: true;
-			el.setAttribute("r", isConnected ? "3" : "2");
+			el.setAttribute("r", isConnected ? "2" : "1");
 		});
 	}
 

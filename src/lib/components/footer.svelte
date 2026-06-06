@@ -182,9 +182,14 @@
 						class="text-c-accent-0/55 transition-colors hover:text-c-accent-0/75"
 					>MIT licensed</a>.
 				</p>
-				<p class="leading-relaxed">
-					Made with  ❤️  Pain and Suffering
-				</p>
+				<div>
+					<p class="leading-relaxed">
+					Made with 🧡 Pain and Suffering
+					</p>
+					<p class="leading-relaxed">
+					Developed by Anirban "anir183" RoyChowdhury
+					</p>
+				</div>
 			</div>
 		</div>
 
