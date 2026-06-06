@@ -35,5 +35,6 @@ export * from "./utils/experiences_data.svelte.js";
 export * from "./utils/socials_data.svelte.js";
 export * from "./utils/theme.svelte.js";
 export * from "./utils/assert.svelte.js";
+export * from "./utils/navigation_state.svelte.js";
 
 export * from "./utils/section_snap.svelte.js";

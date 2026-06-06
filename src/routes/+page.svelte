@@ -13,7 +13,8 @@
 		heroEntrySequence,
 		loadAllImages,
 		BODY_SCROLL_LOCK,
-		createSectionSnap
+		createSectionSnap,
+		isSpaNavigation
 	} from "$lib";
 
 	let preloaderVisible = $state(true);
@@ -41,7 +42,11 @@
 	onMount(() => {
 		let mounted = true;
 
-		document.body.classList.add(BODY_SCROLL_LOCK);
+		const spaNav = isSpaNavigation();
+
+		if (!spaNav) {
+			document.body.classList.add(BODY_SCROLL_LOCK);
+		}
 
 		loadAllImages((/** @type {number} */ pct) => {
 			if (!mounted) return;
@@ -63,7 +68,8 @@
 					navLinks,
 					themeButton: themeBtn,
 					hamburgerButton: hamburgerBtn,
-					logoEl
+					logoEl,
+					skipImageAnimation: spaNav
 				});
 			})
 			.then((/** @type {{tl: gsap.core.Timeline}} */ result) => {
@@ -96,8 +102,10 @@
 			})
 			.finally(() => {
 				if (!mounted) return;
-				document.body.classList.remove(BODY_SCROLL_LOCK);
-				cleanupSnap = createSectionSnap();
+				if (!spaNav) {
+					document.body.classList.remove(BODY_SCROLL_LOCK);
+					cleanupSnap = createSectionSnap();
+				}
 			});
 
 		return () => {

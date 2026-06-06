@@ -36,6 +36,7 @@ src/
 │   └── utils					[utility functions]
 │       ├── constants.svelte.js
 │       ├── loading.svelte.js
+│       ├── navigation_state.svelte.js
 │       ├── projects_data.svelte.js
 │       ├── experiences_data.svelte.js [implemented]
 │       ├── socials_data.svelte.js     [implemented]
@@ -190,6 +191,7 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 - layout.css: `body.overflow-hidden` selector hardened with `!important`, `overscroll-behavior: none`, `touch-action: none` — prevents touch/wheel scroll bypass during preloader phase
 - full codebase audit (batch 1): removed unused static assets (pfp_cutout.png, sun_dark.svg, moon_light.svg, logo_light.png, logo_dark.png); removed dead `GRID_COLS`/`GRID_ROWS` exports; fixed barrel import extensions (.svelte → .svelte.js); replaced animated_heading if-chain with `<svelte:element>`; fixed loading.svelte.js img.onload → addEventListener({ once: true }); simplified theme.svelte.js initTheme conditionals; fixed crash.svelte $state refs; disabled `svelte/no-navigation-without-resolve` eslint rule (cannot validate hash-link concatenation); added `prefers-reduced-motion` query in layout.css; added `role="status"` + `aria-live="polite"` on preloader; changed `aria-selected`→`aria-pressed` on project buttons (buttons don't support aria-selected); added "← Go Home" link on error page
 - about section: new layered portrait section with parallax (`about_scene.svelte`, `about_parallax.svelte.js`, `about_intro.svelte.js`). Uses `gsap.quickTo` for jank-free parallax (no rAF, no manual lerp). Layer translation only (no rotation) to avoid 3D intersection artifacts. Pointer listener scoped to scene container. Procedural halo + 3 PFP layers from `/assets/pfp/`. Content left, scene right 2-col layout matching existing section patterns. Disabled on touch devices and `prefers-reduced-motion`. Follows `data-layer-role` attribute pattern for ref collection.
+- conditional hero entry: `navigation_state.svelte.js` module with `$state` flag (`_spaNavigation`) set by layout's `beforeNavigate` via `markSpaNavigation()`. Home page `onMount` reads `isSpaNavigation()` — if `true` (client-side navigation), skips image animation (applies final positions via `gsap.set()`) and scroll lock; always runs SplitText + nav/headline/logo animations. Resets on full reload (module re-init). LSP may show false "no exported member" for barrel import; svelte-check resolves correctly.
 
 ### notes
 
@@ -463,5 +465,6 @@ Stagger order: `titleBar (-8px y, 0.4s)` → `separator (opacity, 0.3s, -0.1s)` 
 [x] accent_link component (div wrapper + a, bg wipes from left, hard corners, font-c-unbounded)
 [x] accent_button component (div wrapper + button, bg wipes from left, hard corners, font-c-unbounded)
 [x] page-transition overlay (layout-level fixed overlay triggered by beforeNavigate, z-40 between navbar and preloader, 400ms fade-in, instant removal behind preloader after navigation)
+[x] conditional hero entry on SPA navigation (navigation_state.svelte.js flag set in beforeNavigate, home page skips image animation + scroll lock on navigated-to visits; SplitText/text animations always run)
 [ ] route structure for navigation
 [ ] content / data files

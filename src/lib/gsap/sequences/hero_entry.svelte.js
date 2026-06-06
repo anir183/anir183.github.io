@@ -9,7 +9,8 @@ import { assert, LG_BREAKPOINT, STAGGER_FAST } from "$lib";
  *   themeButton: HTMLElement | null | undefined,
  *   hamburgerButton: HTMLElement | null | undefined,
  *   logoEl: HTMLElement | null | undefined,
- *   delay?: number
+ *   delay?: number,
+ *   skipImageAnimation?: boolean
  * }} config
  * @returns {Promise<{tl: gsap.core.Timeline}>}
  */
@@ -21,7 +22,8 @@ export async function heroEntrySequence(config) {
 		themeButton = null,
 		hamburgerButton = null,
 		logoEl = null,
-		delay = 0.5
+		delay = 0.5,
+		skipImageAnimation = false
 	} = config ?? {};
 
 	console.log("[heroEntry] started", { navLinks: navLinks.length, heroHeadline: !!heroHeadline, introImages: introImages.length, themeButton: !!themeButton });
@@ -92,55 +94,75 @@ export async function heroEntrySequence(config) {
 		img.dataset.centeredX = centeredX.toString();
 	});
 
-	const tl = gsap.timeline({ delay });
-
-	introImages.forEach((img) => {
-		tl.to(
-			img,
-			{
-				x: parseFloat(img.dataset.centeredX || "0"),
-				duration: 1.5,
-				ease: "power4.out"
-			},
-			"<0.05"
-		);
-	});
-
-	tl.to(
-		[introImages[0], introImages[1]],
-		{
-			x: `-=${INTRO_IMG_SPREAD}`,
-			duration: 1.5,
-			ease: "power4.out"
-		},
-		"-=0.5"
-	);
-
-	tl.to(
-		[introImages[3], introImages[4]],
-		{
-			x: `+=${INTRO_IMG_SPREAD}`,
-			duration: 1.5,
-			ease: "power4.out"
-		},
-		"<"
-	);
-
-	tl.to(
-		introImages[2],
-		{
+	if (skipImageAnimation) {
+		introImages.forEach((img) => {
+			const centeredX = parseFloat(img.dataset.centeredX || "0");
+			gsap.set(img, { x: centeredX });
+		});
+		gsap.set([introImages[0], introImages[1]], { x: `-=${INTRO_IMG_SPREAD}` });
+		gsap.set([introImages[3], introImages[4]], { x: `+=${INTRO_IMG_SPREAD}` });
+		gsap.set(introImages[2], {
 			scale: 1,
 			x: 0,
 			y: 0,
 			rotation: 0,
 			width: "100vw",
 			height: "100svh",
-			borderRadius: 0,
-			duration: 2,
-			ease: "power4.out"
-		},
-		"<"
-	);
+			borderRadius: 0
+		});
+	}
+
+	const tl = gsap.timeline({ delay });
+
+	if (!skipImageAnimation) {
+		introImages.forEach((img) => {
+			tl.to(
+				img,
+				{
+					x: parseFloat(img.dataset.centeredX || "0"),
+					duration: 1.5,
+					ease: "power4.out"
+				},
+				"<0.05"
+			);
+		});
+
+		tl.to(
+			[introImages[0], introImages[1]],
+			{
+				x: `-=${INTRO_IMG_SPREAD}`,
+				duration: 1.5,
+				ease: "power4.out"
+			},
+			"-=0.5"
+		);
+
+		tl.to(
+			[introImages[3], introImages[4]],
+			{
+				x: `+=${INTRO_IMG_SPREAD}`,
+				duration: 1.5,
+				ease: "power4.out"
+			},
+			"<"
+		);
+
+		tl.to(
+			introImages[2],
+			{
+				scale: 1,
+				x: 0,
+				y: 0,
+				rotation: 0,
+				width: "100vw",
+				height: "100svh",
+				borderRadius: 0,
+				duration: 2,
+				ease: "power4.out"
+			},
+			"<"
+		);
+	}
 
 	if (logoEl) {
 		tl.to(

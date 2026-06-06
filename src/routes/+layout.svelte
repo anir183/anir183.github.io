@@ -5,7 +5,7 @@
 	import { fade } from "svelte/transition";
 	import { beforeNavigate, afterNavigate, goto } from "$app/navigation";
 
-	import { initTheme, assert_failure, Crash } from "$lib";
+	import { initTheme, assert_failure, Crash, markSpaNavigation } from "$lib";
 
 	let { children } = $props();
 
@@ -18,6 +18,8 @@
 		const current = window.location.pathname;
 		const target = new URL(to.url).pathname;
 		if (target === current) return;
+
+		markSpaNavigation();
 
 		if (pendingUrl !== null && pendingUrl === to.url.href) {
 			pendingUrl = null;
