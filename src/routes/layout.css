@@ -107,6 +107,7 @@
 @layer base {
 	html {
 		scroll-behavior: smooth;
+		background-color: var(--color-c-bg-0);
 	}
 
 	body.overflow-hidden {

@@ -15,11 +15,19 @@
 
 	let reducedMotion = $state(false);
 
+	/** @type {any[]} */
+	let splitInstances = [];
+
+	/** @type {gsap.core.Timeline | undefined} */
+	let tl;
+
 	onMount(() => {
 		reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 		const el = footerEl;
 		if (!el) return;
+
+		let canceled = false;
 
 		if (!reducedMotion) {
 			gsap.set(el, { opacity: 0, y: 16 });
@@ -28,15 +36,46 @@
 		const observer = new IntersectionObserver(
 			([entry]) => {
 				if (entry.isIntersecting) {
-					if (!reducedMotion) {
-						gsap.to(el, {
+					observer.disconnect();
+					if (reducedMotion || canceled) return;
+
+					const textElements = el.querySelectorAll("h3, p, a[href^='/']");
+					if (!textElements.length) {
+						gsap.to(el, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" });
+						return;
+					}
+
+					import("gsap/SplitText").then(({ SplitText }) => {
+						if (canceled) return;
+						gsap.registerPlugin(SplitText);
+
+						const splits = [...textElements].map(
+							(el) => new SplitText(el, {
+								type: "lines",
+								linesClass: "line",
+								mask: "lines",
+								autoSplit: true
+							})
+						);
+						splitInstances = splits;
+
+						const allLines = [...el.querySelectorAll(".line")];
+						gsap.set(allLines, { y: "125%", willChange: "transform" });
+
+						tl = gsap.timeline();
+						tl.to(el, {
 							y: 0,
 							opacity: 1,
-							duration: 0.6,
+							duration: 1.0,
 							ease: "power3.out"
 						});
-					}
-					observer.disconnect();
+						tl.to(allLines, {
+							y: "0%",
+							duration: 1.2,
+							stagger: 0.08,
+							ease: "power3.out"
+						}, "+=0.05");
+					});
 				}
 			},
 			{ threshold: 0.3 }
@@ -44,7 +83,12 @@
 
 		observer.observe(el);
 
-		return () => observer.disconnect();
+		return () => {
+			canceled = true;
+			observer.disconnect();
+			tl?.kill();
+			splitInstances.forEach((s) => s.revert());
+		};
 	});
 </script>
 

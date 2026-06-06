@@ -8,6 +8,8 @@
 		el = $bindable(),
 		children
 	} = $props();
+
+	let isExternal = $derived(href.startsWith("http"));
 </script>
 
 <div
@@ -16,6 +18,8 @@
 	<a
 		bind:this={el}
 		{href}
+		target={isExternal ? "_blank" : undefined}
+		rel={isExternal ? "noopener noreferrer" : undefined}
 		class="relative text-c-neutral-0 no-underline transition-colors duration-200 group-hover:text-c-bg-0"
 	>
 		<span class="relative z-10">
