@@ -18,6 +18,7 @@
 
 	let preloaderVisible = $state(true);
 	let progress = $state(0);
+	let preloaderDone = $state(false);
 
 	/** @type {HTMLElement | undefined} */
 	let navEl = $state();
@@ -74,7 +75,17 @@
 				tl = entryTl;
 				console.log("[page] GSAP setup done, waiting one frame");
 				return new Promise(resolve => requestAnimationFrame(resolve)).then(() => {
-					console.log("[page] frame flushed, fading preloader");
+					console.log("[page] frame flushed, waiting for counter to reach 100%");
+					return new Promise(resolve => {
+						if (preloaderDone) return resolve(undefined);
+						const check = () => requestAnimationFrame(() => {
+							if (preloaderDone) resolve(undefined);
+							else check();
+						});
+						check();
+					});
+				}).then(() => {
+					console.log("[page] fading preloader");
 					preloaderVisible = false;
 					return entryTl.then();
 				});
@@ -100,7 +111,7 @@
 
 {#if preloaderVisible}
 	<div transition:fade={{ duration: 500 }}>
-		<Preloader bind:progress />
+		<Preloader bind:progress bind:done={preloaderDone} />
 	</div>
 {/if}
 

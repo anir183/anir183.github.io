@@ -1,5 +1,5 @@
 <script>
-	let { progress = $bindable() } = $props();
+	let { progress = $bindable(), done = $bindable() } = $props();
 
 	let displayProgress = $state(0);
 	let dots = $state("");
@@ -10,6 +10,11 @@
 		let rafId = 0;
 		function tick() {
 			if (progress !== undefined) {
+				if (displayProgress >= 1) {
+					displayProgress = 1;
+					done = true;
+					return;
+				}
 				const diff = progress - displayProgress;
 				if (diff > 0.005) {
 					displayProgress = Math.min(
