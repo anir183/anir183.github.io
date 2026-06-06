@@ -9,6 +9,7 @@
 		Projects,
 		SkillsNetwork,
 		Socials,
+		Footer,
 		heroEntrySequence,
 		loadAllImages,
 		BODY_SCROLL_LOCK,
@@ -109,3 +110,4 @@
 <SkillsNetwork />
 <About />
 <Socials />
+<Footer />

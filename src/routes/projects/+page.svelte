@@ -1,5 +1,5 @@
 <script>
-	import { Wip } from "$lib";
+	import { Wip, Footer } from "$lib";
 </script>
 
 <svelte:head>
@@ -7,3 +7,4 @@
 </svelte:head>
 
 <Wip />
+<Footer />
