@@ -477,7 +477,7 @@
 				"    ║    HTTP 418           ║",
 				"    ║    I'm a teapot       ║",
 				"    ║                       ║",
-				"    ║    (╯°□°)╯︵ ┻━┻     ║",
+				"    ║    (╯°□°)╯︵ ┻━┻      ║",
 				"    ║                       ║",
 				"    ╚═══════════════════════╝",
 				"",
@@ -927,7 +927,7 @@ let isMobileDevice = $state(false);
 
 	function onFocus() {
 		focused = true;
-		hiddenInput?.focus();
+		hiddenInput?.focus({ preventScroll: true });
 	}
 
 	/** @param {FocusEvent} e */
@@ -1181,7 +1181,7 @@ let isMobileDevice = $state(false);
 >
 	<input
 		bind:this={hiddenInput}
-		class="pointer-events-none fixed left-[-9999px] top-[-9999px] h-px w-px opacity-0"
+		class="pointer-events-none fixed left-0 top-0 h-px w-px opacity-0 bg-transparent border-0 outline-none ring-0"
 		tabindex="-1"
 		aria-hidden="true"
 		autocomplete="off"
