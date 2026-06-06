@@ -40,8 +40,9 @@ export function createSectionSnap(options = {}) {
 			}
 
 			if (r.bottom > vh - snapThreshold && r.bottom < vh + snapThreshold) {
-				// Don't snap at the bottom of the last section — allows scrolling past to footer
-				if (section === sections[sections.length - 1]) continue;
+				// Don't snap at the absolute bottom — allows scrolling past to footer
+				const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 1;
+				if (atBottom) continue;
 				snapping = true;
 				lastSnap = now;
 				section.scrollIntoView({ behavior: "smooth", block: "start" });

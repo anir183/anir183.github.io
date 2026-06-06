@@ -44,7 +44,9 @@
 
 		const spaNav = isSpaNavigation();
 
-		if (!spaNav) {
+		if (spaNav) {
+			document.body.classList.remove(BODY_SCROLL_LOCK);
+		} else {
 			document.body.classList.add(BODY_SCROLL_LOCK);
 		}
 

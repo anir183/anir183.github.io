@@ -97,10 +97,10 @@ export async function heroEntrySequence(config) {
 	if (skipImageAnimation) {
 		introImages.forEach((img) => {
 			const centeredX = parseFloat(img.dataset.centeredX || "0");
-			gsap.set(img, { x: centeredX });
+			gsap.set(img, { x: centeredX, opacity: 0 });
 		});
-		gsap.set([introImages[0], introImages[1]], { x: `-=${INTRO_IMG_SPREAD}` });
-		gsap.set([introImages[3], introImages[4]], { x: `+=${INTRO_IMG_SPREAD}` });
+		gsap.set([introImages[0], introImages[1]], { x: `-=${INTRO_IMG_SPREAD}`, opacity: 0 });
+		gsap.set([introImages[3], introImages[4]], { x: `+=${INTRO_IMG_SPREAD}`, opacity: 0 });
 		gsap.set(introImages[2], {
 			scale: 1,
 			x: 0,
@@ -108,11 +108,25 @@ export async function heroEntrySequence(config) {
 			rotation: 0,
 			width: "100vw",
 			height: "100svh",
-			borderRadius: 0
+			borderRadius: 0,
+			opacity: 0
 		});
 	}
 
 	const tl = gsap.timeline({ delay });
+
+	if (skipImageAnimation) {
+		tl.to(
+			introImages,
+			{
+				opacity: 1,
+				duration: 5,
+				ease: "power4.out",
+				stagger: 0.05
+			},
+			0
+		);
+	}
 
 	if (!skipImageAnimation) {
 		introImages.forEach((img) => {
