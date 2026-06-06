@@ -461,6 +461,6 @@ Stagger order: `titleBar (-8px y, 0.4s)` → `separator (opacity, 0.3s, -0.1s)` 
 [x] socials section (interactive terminal + text/links, 2-col desktop, 1-col mobile with collapsible terminal)
 [x] terminal entry animation (self-contained ScrollTrigger stagger-fade, follows AnimatedHeading pattern, GSAP children[] refs, reduced-motion aware)
 [x] accent_link component (div wrapper + a, bg wipes from left, hard corners, font-c-unbounded)
-[ ] accent_button component
+[x] accent_button component (div wrapper + button, bg wipes from left, hard corners, font-c-unbounded)
 [ ] route structure for navigation
 [ ] content / data files

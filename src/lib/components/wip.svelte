@@ -3,6 +3,8 @@
 	import { gsap } from "gsap";
 	import { Navbar, AccentLink } from "$lib";
 
+	let { animationDelay = 0 } = $props();
+
 	const navItems = [
 		{ label: "Home", href: "/" },
 		{ label: "Experiences", href: "/experiences" },
@@ -48,7 +50,14 @@
 
 		if (reducedMotion) {
 			gsap.set([logoEl, themeBtn, hamburgerBtn, ctaEl], { opacity: 1 });
+			if (sectionEl) gsap.set(sectionEl, { opacity: 1 });
 			return;
+		}
+
+		if (sectionEl) gsap.set(sectionEl, { opacity: 0 });
+
+		if (animationDelay > 0) {
+			await new Promise((resolve) => setTimeout(resolve, animationDelay));
 		}
 
 		const navLinks = navEl
@@ -95,6 +104,8 @@
 		if (themeBtn) gsap.set(themeBtn, { opacity: 0, scale: 0.8 });
 		if (hamburgerBtn) gsap.set(hamburgerBtn, { opacity: 0, scale: 0.8 });
 		if (ctaEl) gsap.set(ctaEl, { y: 20, opacity: 0 });
+
+		if (sectionEl) gsap.set(sectionEl, { opacity: 1 });
 
 		tl = gsap.timeline();
 

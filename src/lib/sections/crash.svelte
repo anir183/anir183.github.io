@@ -21,6 +21,7 @@
 	let ctaEl = $state();
 
 	let reducedMotion = $state(false);
+	let hidden = $state(true);
 
 	/** @type {gsap.core.Timeline | undefined} */
 	let tl;
@@ -39,7 +40,10 @@
 			"(prefers-reduced-motion: reduce)"
 		).matches;
 
-		if (reducedMotion) return;
+		if (reducedMotion) {
+			hidden = false;
+			return;
+		}
 
 		initSplitText();
 
@@ -82,6 +86,8 @@
 		});
 
 		if (ctaEl) gsap.set(ctaEl, { y: 20, opacity: 0 });
+
+		hidden = false;
 
 		tl = gsap.timeline();
 
@@ -186,6 +192,7 @@
 <section
 	bind:this={sectionEl}
 	class="relative flex min-h-screen flex-col overflow-hidden bg-c-bg-0"
+	class:opacity-0={hidden}
 >
 	<div class="flex flex-1 flex-col items-center justify-center gap-8 px-4 text-center">
 		<h1
