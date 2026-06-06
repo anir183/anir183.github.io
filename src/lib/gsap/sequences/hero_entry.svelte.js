@@ -8,7 +8,8 @@ import { assert, LG_BREAKPOINT, STAGGER_FAST } from "$lib";
  *   navLinks: HTMLElement[],
  *   themeButton: HTMLElement | null | undefined,
  *   hamburgerButton: HTMLElement | null | undefined,
- *   delay?: number,
+ *   logoEl: HTMLElement | null | undefined,
+ *   delay?: number
  * }} config
  * @returns {Promise<{tl: gsap.core.Timeline}>}
  */
@@ -19,6 +20,7 @@ export async function heroEntrySequence(config) {
 		navLinks = [],
 		themeButton = null,
 		hamburgerButton = null,
+		logoEl = null,
 		delay = 0.5
 	} = config ?? {};
 
@@ -49,6 +51,13 @@ export async function heroEntrySequence(config) {
 		? [...heroHeadline.querySelectorAll(".line")]
 		: [];
 	console.log("[heroEntry] lines created", { navLines: navLines.length, headlineLines: headlineLines.length });
+
+	if (logoEl) {
+		gsap.set(logoEl, {
+			opacity: 0,
+			x: -20
+		});
+	}
 
 	gsap.set([...navLines, ...headlineLines], {
 		y: "125%",
@@ -133,6 +142,19 @@ export async function heroEntrySequence(config) {
 		"<"
 	);
 
+	if (logoEl) {
+		tl.to(
+			logoEl,
+			{
+				opacity: 1,
+				x: 0,
+				duration: 0.7,
+				ease: "power3.out"
+			},
+			"<1"
+		);
+	}
+
 	tl.to(
 		navLines,
 		{
@@ -141,7 +163,7 @@ export async function heroEntrySequence(config) {
 			stagger: STAGGER_FAST,
 			ease: "power3.out"
 		},
-		"<1"
+		"<"
 	);
 
 	tl.fromTo(

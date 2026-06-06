@@ -13,7 +13,8 @@
 	let {
 		navEl = $bindable(),
 		themeBtn = $bindable(),
-		hamburgerBtn = $bindable()
+		hamburgerBtn = $bindable(),
+		logoEl = $bindable()
 	} = $props();
 
 	/** @param {string} name */
@@ -84,6 +85,7 @@
 		: 'border-transparent'}"
 >
 	<a
+		bind:this={logoEl}
 		href={resolve("/")}
 		class="flex shrink-0 items-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)]"
 		aria-label="anir183"

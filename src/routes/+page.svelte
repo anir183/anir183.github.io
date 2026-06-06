@@ -23,6 +23,8 @@
 	let themeBtn = $state();
 	/** @type {HTMLButtonElement | undefined} */
 	let hamburgerBtn = $state();
+	/** @type {HTMLElement | undefined} */
+	let logoEl = $state();
 
 	/** @type {HTMLHeadingElement | undefined} */
 	let heroH1 = $state();
@@ -54,7 +56,8 @@
 					heroHeadline: heroH1,
 					navLinks,
 					themeButton: themeBtn,
-					hamburgerButton: hamburgerBtn
+					hamburgerButton: hamburgerBtn,
+					logoEl
 				});
 			})
 			.then((/** @type {{tl: gsap.core.Timeline}} */ result) => {
@@ -94,7 +97,7 @@
 	</div>
 {/if}
 
-<Navbar bind:navEl bind:themeBtn bind:hamburgerBtn />
+<Navbar bind:navEl bind:themeBtn bind:hamburgerBtn bind:logoEl />
 <Hero bind:heroH1 />
 <Projects />
 <SkillsNetwork />
