@@ -10,7 +10,7 @@
 	>
 		<div
 			data-layer-role="halo"
-			class="pointer-events-none absolute inset-0"
+			class="pointer-events-none absolute inset-0 will-change-transform backface-hidden"
 			style="transform: perspective(1200px) translateX(calc(var(--px,0)*1px)) translateY(calc(var(--py,0)*1px)) rotateX(calc(var(--rx,0)*1deg)) rotateY(calc(var(--ry,0)*1deg)) scale(calc(var(--entry-scale, 1)))"
 		>
 			<!-- bloom — large soft ambient glow -->
