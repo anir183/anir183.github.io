@@ -314,22 +314,47 @@
 		"/home/guest/memes/anime": {
 			type: "file",
 			content: [
-				"\"People die if they are killed\" - Shirou",
+				"Me: says I'll only watch 1 episode",
+				"Also me: 47 episodes later",
 				"",
 				"",
-				"\“You didn't take me to the moon, but you were there with me.\” - Lucy",
+				"Me: *clicks on an anime*",
+				"My sleep schedule: Sayonara.",
 				"",
 				"",
-				"\"Its only a mere 10 year journey.\" - Frieren",
+				"No thoughts. Head empty.",
+				"— Every anime protagonist",
 				"",
 				"",
-				"\"Maybe there's only a dark road up ahead. But you still have to believe and keep going.\" - Kaori",
+				"The power of friendship can defeat anyone.",
+				"The power of friendship cannot defeat student loans.",
 				"",
 				"",
-				"\"What someone likes is nobody else's business.\" - Marin",
+				"Anime character: *exists*",
+				"The fanbase: OMG PEAK FICTION",
 				"",
 				"",
-				"\"Look, Mom. I'm at the top of Arasaka Tower.\" - David",
+				"How to spot a weeb:",
+				"1. They talk about anime unironically",
+				"2. They own more body pillows than real pillows",
+				"3. They unironically say \"ara ara\"",
+				"",
+				"",
+				"POV: You just said \"I prefer the dub\"",
+				"",
+				"",
+				"Reality is often disappointing.",
+				"That's why I watch anime.",
+				"",
+				"",
+				"I could fix them.",
+				"— Every anime fan",
+				"",
+				"",
+				"The prophecy:",
+				"First episode: boring",
+				"Second episode: okay this is interesting",
+				"Twelfth episode: WHY DID THEY END IT THERE",
 			].join("\n")
 		},
 		"/home/guest/secrets": {
@@ -351,15 +376,25 @@
 		"/home/guest/secrets/fourofour": {
 			type: "file",
 			content: [
-				"You found it! 🎉",
 				"",
+				"    ╔═══════════════════════╗",
+				"    ║                       ║",
+				"    ║    HTTP 404           ║",
+				"    ║    Not Found          ║",
+				"    ║                       ║",
+				"    ║    ¯\\_(ツ)_/¯         ║",
+				"    ║                       ║",
+				"    ╚═══════════════════════╝",
+				"",
+				"You found it! 🎉",
 				"This file does not actually exist. Or does it?",
 				"",
 				"Error 404: Meaning of life not found.",
-				"",
 				"But seriously, the answer is 42.",
 				"",
-				"Also, never gonna give you up, never gonna let you down."
+				"Also, never gonna give you up, never gonna let you down.",
+				"",
+				"💥 Initiating crash sequence..."
 			].join("\n")
 		},
 		"/home/guest/secrets/conspiracy": {
@@ -414,33 +449,43 @@
 		"/home/guest/quotes/anime": {
 			type: "file",
 			content: [
-				'"People die if they are killed." — Shirou Emiya (Fate/stay night)',
+				"\"People die if they are killed.\" — Shirou Emiya (Fate/stay night)",
 				"",
-				'"Believe in the me that believes in you!" — Kamina (Gurren Lagann)',
+				"\"Believe in the me that believes in you!\" — Kamina (Gurren Lagann)",
 				"",
-				'"I am not running away anymore. I will not look away. I will not run away again. Never." — Levi (AoT)',
+				"\"I am not running away anymore. I will not look away. I will not run away again. Never.\" — Levi (AoT)",
 				"",
-				'"A lesson without pain is meaningless." — Edward Elric (Fullmetal Alchemist)',
+				"\"A lesson without pain is meaningless.\" — Edward Elric (Fullmetal Alchemist)",
 				"",
-				'"The world is not perfect. But it is there for us, doing the best it can." — (Fruits Basket)',
+				"\"The world is not perfect. But it is there for us, doing the best it can.\" — (Fruits Basket)",
 				"",
-				'"It is not like I wanted to compile your code, baka!" — Tsundere Compiler'
+				"\"It is not like I wanted to compile your code, baka!\" — Tsundere Compiler",
+				"",
+				"\"You didn't take me to the moon, but you were there with me.\" — Lucy (Cyberpunk Edgerunners)",
+				"",
+				"\"It's only a mere 10 year journey.\" — Frieren (Sousou no Frieren)",
+				"",
+				"\"Maybe there's only a dark road up ahead. But you still have to believe and keep going.\" — Kaori (Your Lie in April)",
+				"",
+				"\"What someone likes is nobody else's business.\" — Marin (My Dress-Up Darling)",
+				"",
+				"\"Look, Mom. I'm at the very top of the Arasaka Tower.\" — David (Cyberpunk Edgerunners)"
 			].join("\n")
 		},
 		"/home/guest/easter": {
 			type: "dir",
-			children: ["snake", "whatisthis", "matrix", "teapot"]
+			children: ["snake", "whatisthis", "matrix", "coffee"]
 		},
 		"/home/guest/easter/snake": {
 			type: "file",
 			content: [
-				"🐍 SSSSSSSSSS",
-				"",
 				"Sorry, this is not the game. The real Snake game is in a terminal somewhere else.",
 				"",
-				"But here is a snake: ~🐍~",
+				"Somewhere else where? IDK, not in this site atleast...",
+				"But here is a snake for your troubles:",
+				"~🐍~ SSSSSSSSSS",
 				"",
-				"Also, Python is named after Monty Python, not the snake.",
+				"Fun Fact: Python is named after Monty Python, not the snake.",
 				"The snake is just a bonus."
 			].join("\n")
 		},
@@ -448,6 +493,7 @@
 			type: "file",
 			content: [
 				"We are no strangers to code",
+				"",
 				"You know the rules and so do I",
 				"A full commit is what I am thinking of",
 				"You would not get this from any other guy",
@@ -468,7 +514,7 @@
 			content:
 				"Wake up, Neo...\n\nThe Matrix has you...\n\nFollow the white rabbit.\n\nKnock, knock, Neo.\n\nYou take the blue pill — the story ends, you wake up in your bed and believe whatever you want to believe.\nYou take the red pill — you stay in Wonderland and I show you how deep the rabbit hole goes."
 		},
-		"/home/guest/easter/teapot": {
+		"/home/guest/easter/coffee": {
 			type: "file",
 			content: [
 				"",
@@ -733,8 +779,11 @@ let isMobileDevice = $state(false);
 					addLine("text", `cat: ${arg}: Is a directory`, "text-c-error");
 				} else {
 					addLine("text", node.content ?? "", "text-c-accent-1");
-					if (target === "/home/guest/easter/teapot") {
-						gsap.delayedCall(1.5, () => goto("/418"));
+					if (target === "/home/guest/easter/coffee") {
+						gsap.delayedCall(5, () => goto("/coffee"));
+					}
+					if (target === "/home/guest/secrets/fourofour") {
+						gsap.delayedCall(5, () => goto("/404"));
 					}
 				}
 			}
