@@ -89,10 +89,11 @@
 		});
 
 		/** @type {gsap.core.Tween | undefined} */
-		let floatTween;
-		if (!reducedMotion && sceneEl) {
-			floatTween = gsap.to(sceneEl, {
-				y: "+=6",
+		let layerFloatTween;
+		if (!reducedMotion && layers.length) {
+			gsap.set(layers, { "--fy": 0 });
+			layerFloatTween = gsap.to(layers, {
+				"--fy": 6,
 				duration: 4,
 				repeat: -1,
 				yoyo: true,
@@ -111,7 +112,7 @@
 		}
 
 		return () => {
-			floatTween?.kill();
+			layerFloatTween?.kill();
 			cleanupParallax?.();
 		};
 	});
