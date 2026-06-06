@@ -619,23 +619,24 @@
 	bind:this={sectionEl}
 	use:inertOffscreen
 	id="skills"
-	class="relative flex min-h-screen w-full flex-col lg:flex-row"
+	class="flex min-h-screen w-full flex-col lg:flex-row"
 >
-	<!-- SVG graph panel (left on desktop, top on mobile) -->
+	<!-- mobile heading -->
 	<div
-		class="flex w-full items-center justify-center px-4 max-lg:max-h-[75vh] max-lg:min-h-[45vh] max-lg:flex-1 max-lg:pt-44 max-sm:pt-32 lg:sticky lg:top-0 lg:h-screen lg:w-3/5 lg:px-8"
+		class="pt-20 pb-4 px-6 bg-c-bg-0 lg:hidden"
 	>
-		<!-- mobile heading above graph -->
-		<div
-			class="absolute top-0 left-0 z-10 w-full bg-gradient-to-b from-c-bg-0/90 via-c-bg-0/60 to-transparent px-6 pt-24 pb-12 lg:hidden"
-		>
-			<AnimatedHeading
-				tag="h2"
+		<AnimatedHeading
+			tag="h2"
 			class="font-c-unbounded text-4xl max-sm:text-3xl font-black text-c-neutral-0"
 		>
 			Some <span class="text-c-accent-0">skills</span> I have honed.
 		</AnimatedHeading>
 	</div>
+
+	<!-- SVG graph panel (left on desktop, top on mobile) -->
+	<div
+		class="flex w-full items-center justify-center px-4 max-lg:flex-1 lg:sticky lg:top-0 lg:h-screen lg:w-3/5 lg:px-8"
+	>
 	<div bind:this={svgContainerEl} class="relative h-full w-full">
 			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 			<svg
@@ -770,7 +771,7 @@
 
 	<!-- content panel (right on desktop, bottom on mobile) -->
 	<div
-		class="flex w-full flex-col justify-center gap-6 px-6 pb-12 max-lg:pointer-events-none max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:z-10 max-lg:w-full max-lg:justify-end max-lg:bg-gradient-to-t max-lg:from-c-bg-0/95 max-lg:via-c-bg-0/75 max-lg:to-transparent max-lg:px-6 max-lg:pt-20 max-lg:pb-8 lg:w-2/5 lg:gap-10 lg:px-12 lg:pb-24 lg:pl-16"
+		class="flex w-full flex-col justify-center gap-6 px-6 max-lg:py-8 bg-c-bg-0 lg:w-2/5 lg:gap-10 lg:px-12 lg:py-24 lg:pl-16"
 	>
 		<AnimatedHeading
 			tag="h2"

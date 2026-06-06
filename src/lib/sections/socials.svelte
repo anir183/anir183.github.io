@@ -59,11 +59,11 @@
 	bind:this={sectionEl}
 	use:inertOffscreen
 	id="socials"
-	class="relative flex min-h-screen w-full flex-col lg:flex-row lg:gap-16"
+	class="flex min-h-screen w-full flex-col lg:flex-row lg:gap-16"
 >
-	<!-- mobile heading overlay -->
+	<!-- mobile heading -->
 	<div
-		class="absolute top-0 left-0 z-10 w-full bg-gradient-to-b from-c-bg-0/90 via-c-bg-0/60 to-transparent px-6 pt-24 pb-12 lg:hidden"
+		class="pt-20 pb-4 px-6 bg-c-bg-0 lg:hidden"
 	>
 		<AnimatedHeading
 			tag="h2"
@@ -75,7 +75,7 @@
 
 	<!-- terminal panel (middle on mobile, left on desktop) -->
 	<div
-		class="flex w-full px-4 max-lg:max-h-[55vh] max-lg:min-h-[30vh] max-lg:flex-1 max-lg:items-stretch max-lg:justify-start max-lg:pt-56 max-sm:pt-48 lg:sticky lg:top-0 lg:order-1 lg:h-screen lg:w-3/5 lg:items-center lg:justify-center lg:px-16"
+		class="flex w-full px-4 max-lg:flex-1 max-lg:items-stretch max-lg:justify-start max-lg:py-8 lg:sticky lg:top-0 lg:order-1 lg:h-screen lg:w-3/5 lg:items-center lg:justify-center lg:px-16"
 	>
 		<div class="w-full max-lg:flex max-lg:flex-1 max-lg:flex-col">
 			<Terminal bind:playEntry={terminalPlay} {socials} />
@@ -84,7 +84,7 @@
 
 	<!-- content panel (bottom on mobile with gradient, right on desktop) -->
 	<div
-		class="flex w-full flex-col justify-center gap-6 px-6 pb-12 max-lg:pointer-events-none max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:z-10 max-lg:w-full max-lg:justify-end max-lg:bg-gradient-to-t max-lg:from-c-bg-0/95 max-lg:via-c-bg-0/75 max-lg:to-transparent max-lg:px-6 max-lg:pt-24 max-lg:pb-8 lg:order-2 lg:w-2/5 lg:gap-10 lg:px-16 lg:pt-24 lg:pb-24 lg:pl-16"
+		class="flex w-full flex-col justify-center gap-6 px-6 max-lg:py-8 bg-c-bg-0 lg:order-2 lg:w-2/5 lg:gap-10 lg:px-16 lg:py-24 lg:pl-16"
 	>
 		<AnimatedHeading
 			tag="h2"
@@ -105,7 +105,7 @@
 
 		<div
 			bind:this={linksEl}
-			class="flex flex-wrap items-center gap-2 max-lg:pointer-events-auto"
+			class="flex flex-wrap items-center gap-2"
 		>
 			{#each socials as s (s.id)}
 				<AccentLink

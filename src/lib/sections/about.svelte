@@ -121,11 +121,11 @@
 	bind:this={sectionEl}
 	use:inertOffscreen
 	id="about"
-	class="relative flex min-h-screen w-full flex-col lg:flex-row"
+	class="flex min-h-screen w-full flex-col lg:flex-row"
 >
-	<!-- mobile heading overlay -->
+	<!-- mobile heading -->
 	<div
-		class="absolute top-0 left-0 z-10 w-full bg-gradient-to-b from-c-bg-0/90 via-c-bg-0/60 to-transparent px-6 pt-24 pb-12 lg:hidden"
+		class="pt-20 pb-4 px-6 bg-c-bg-0 lg:hidden"
 	>
 		<AnimatedHeading
 			tag="h2"
@@ -137,16 +137,16 @@
 
 	<!-- scene panel (middle on mobile, sticky right on desktop) -->
 	<div
-		class="flex w-full items-center justify-center px-4 max-lg:mt-[16rem] max-sm:mt-[12rem] max-lg:h-[50vh] lg:sticky lg:top-0 lg:order-2 lg:h-screen lg:w-1/2 lg:px-8"
+		class="flex w-full justify-center px-4 max-lg:flex-1 max-lg:items-center lg:sticky lg:top-0 lg:order-2 lg:h-screen lg:w-1/2 lg:items-center lg:px-8"
 	>
-		<div class="h-full max-h-[55vh] w-full max-w-[60%] max-sm:max-w-[75%] lg:max-h-[70vh]">
+		<div class="w-full max-w-[60%] max-sm:max-w-[75%] max-lg:h-auto max-lg:aspect-[2160/2668] lg:h-full lg:max-h-[70vh]">
 			<AboutScene bind:sceneEl={sceneContainer} />
 		</div>
 	</div>
 
 	<!-- content panel (absolute bottom on mobile, left on desktop) -->
 	<div
-		class="flex w-full flex-col justify-center gap-6 px-6 pb-12 max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:z-10 max-lg:w-full max-lg:justify-end max-lg:bg-gradient-to-t max-lg:from-c-bg-0/95 max-lg:via-c-bg-0/75 max-lg:to-transparent max-lg:px-6 max-lg:pt-20 max-lg:pb-8 lg:order-1 lg:w-1/2 lg:gap-10 lg:px-16 lg:pt-24 lg:pb-24 lg:pl-16"
+		class="flex w-full flex-col justify-center gap-6 px-6 max-lg:py-8 bg-c-bg-0 lg:order-1 lg:w-1/2 lg:gap-10 lg:px-16 lg:py-24 lg:pl-16"
 	>
 		<AnimatedHeading
 			tag="h2"
