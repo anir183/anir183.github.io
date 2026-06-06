@@ -539,10 +539,14 @@
 	let awaitingConfirm = $state(false);
 	let focused = $state(false);
 
-	/** @type {HTMLDivElement | undefined} */
-	let outputEl = $state();
-	/** @type {HTMLElement | undefined} */
-	let terminalEl = $state();
+/** @type {HTMLDivElement | undefined} */
+let outputEl = $state();
+/** @type {HTMLElement | undefined} */
+let terminalEl = $state();
+/** @type {HTMLInputElement | undefined} */
+let hiddenInput = $state();
+let composing = $state(false);
+let isMobileDevice = $state(false);
 
 	/** @type {{ container: Element, titleBar: Element, separator: Element, initialLines: Element[], inputPrompt: Element } | null} */
 	let animRefs = $state(null);
@@ -918,18 +922,36 @@
 			currentInput += "\t";
 		} else if (e.key === "Escape") {
 			terminalEl?.blur();
-		} else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
-			if (historyIndex !== -1) historyIndex = -1;
-			currentInput += e.key;
 		}
 	}
 
 	function onFocus() {
 		focused = true;
+		hiddenInput?.focus();
 	}
 
-	function onBlur() {
+	/** @param {FocusEvent} e */
+	function onBlur(e) {
+		if (e.relatedTarget instanceof Node && terminalEl?.contains(e.relatedTarget)) return;
 		focused = false;
+	}
+
+	function onHiddenBlur() {
+		focused = false;
+	}
+
+	function onInput() {
+		if (composing || !hiddenInput) return;
+		currentInput = hiddenInput.value;
+	}
+
+	function onCompositionStart() {
+		composing = true;
+	}
+
+	function onCompositionEnd() {
+		composing = false;
+		if (hiddenInput) currentInput = hiddenInput.value;
 	}
 
 	/** @param {MouseEvent} e */
@@ -958,6 +980,9 @@
 
 	onMount(() => {
 		initTerminal();
+
+		isMobileDevice =
+			"ontouchstart" in window && matchMedia("(hover: none)").matches;
 
 		let mounted = true;
 
@@ -994,7 +1019,7 @@
 		if (playEntry && animRefs && !entryInitialized) {
 			entryInitialized = true;
 			hasAnimated = true;
-			terminalEl?.focus();
+			if (!isMobileDevice) terminalEl?.focus();
 			const { container, titleBar, separator, initialLines, inputPrompt } =
 				animRefs;
 
@@ -1061,7 +1086,7 @@
 		const observer = new IntersectionObserver(
 			([entry]) => {
 				if (entry.isIntersecting) {
-					el.focus();
+					if (!isMobileDevice) el.focus();
 					observer.disconnect();
 
 					if (!hasAnimated && animRefs) {
@@ -1135,11 +1160,18 @@
 			animTl = null;
 		};
 	});
+
+	$effect(() => {
+		const val = currentInput;
+		if (hiddenInput && hiddenInput.value !== val) {
+			hiddenInput.value = val;
+		}
+	});
 </script>
 
 <div
 	bind:this={terminalEl}
-	class="flex flex-col overflow-hidden rounded-2xl border-2 border-c-accent-0/15 bg-c-bg-1/50 backdrop-blur-sm transition-colors duration-300 outline-none max-lg:flex-1"
+	class="flex flex-col overflow-hidden rounded-2xl border-2 bg-c-bg-1/50 backdrop-blur-sm transition-colors duration-300 outline-none max-lg:flex-1 {focused ? 'border-c-accent-0/15' : 'border-transparent'}"
 	tabindex="-1"
 	role="application"
 	aria-label="Terminal"
@@ -1147,6 +1179,20 @@
 	onfocus={onFocus}
 	onblur={onBlur}
 >
+	<input
+		bind:this={hiddenInput}
+		class="pointer-events-none fixed left-[-9999px] top-[-9999px] h-px w-px opacity-0"
+		tabindex="-1"
+		aria-hidden="true"
+		autocomplete="off"
+		autocapitalize="off"
+		autocorrect="off"
+		spellcheck="false"
+		oninput={onInput}
+		oncompositionstart={onCompositionStart}
+		oncompositionend={onCompositionEnd}
+		onblur={onHiddenBlur}
+	/>
 	<div
 		class="flex w-full items-center gap-3 px-5 py-3 max-lg:px-4 max-lg:py-2.5"
 	>
