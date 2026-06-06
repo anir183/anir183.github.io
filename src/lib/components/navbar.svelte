@@ -14,17 +14,14 @@
 		navEl = $bindable(),
 		themeBtn = $bindable(),
 		hamburgerBtn = $bindable(),
-		logoEl = $bindable()
+		logoEl = $bindable(),
+		navItems = [
+			{ label: "Projects", href: resolve("/#projects") },
+			{ label: "Skills", href: resolve("/#skills") },
+			{ label: "About", href: resolve("/#about") },
+			{ label: "Socials", href: resolve("/#socials") }
+		]
 	} = $props();
-
-	/** @param {string} name */
-	function sectionUrl(name) {
-		if (name === "Projects") return resolve("/#projects");
-		if (name === "Skills") return resolve("/#skills");
-		if (name === "About") return resolve("/#about");
-		if (name === "Socials") return resolve("/#socials");
-		return resolve("/");
-	}
 
 	let mobileMenuOpen = $state(false);
 	/** @type {HTMLElement | undefined} */
@@ -75,7 +72,6 @@
 		return () => window.removeEventListener("scroll", onScroll);
 	});
 
-	const navItems = ["Projects", "Skills", "About", "Socials"];
 </script>
 
 <nav
@@ -111,9 +107,9 @@
 	</a>
 
 	<div class="mr-8 ml-auto flex items-center gap-2 max-lg:hidden">
-		{#each navItems as item (item)}
+		{#each navItems as item (item.label)}
 			<a
-				href={sectionUrl(item)}
+				href={item.href}
 				class="group relative overflow-hidden px-7 py-3 no-underline"
 			>
 				<span
@@ -122,7 +118,7 @@
 					<span
 						class="absolute inset-0 translate-y-full -skew-x-6 bg-c-accent-0 transition-transform duration-[400ms] ease-out group-hover:translate-y-0"
 					></span>
-					<span class="relative z-10">{item}</span>
+					<span class="relative z-10">{item.label}</span>
 				</span>
 			</a>
 		{/each}
@@ -193,22 +189,22 @@
 			</button>
 
 			<div bind:this={mobileLinksEl} class="flex flex-col items-center gap-6">
-				{#each navItems as item (item)}
-					<a
-						href={sectionUrl(item)}
-						onclick={() => (mobileMenuOpen = false)}
-						class="group relative px-8 py-4 no-underline"
+		{#each navItems as item (item.label)}
+				<a
+					href={item.href}
+					onclick={() => (mobileMenuOpen = false)}
+					class="group relative px-8 py-4 no-underline"
+				>
+					<span
+						class="relative inline-flex items-center overflow-hidden font-c-unbounded text-4xl font-black tracking-wide text-c-neutral-0 transition-colors duration-200 group-hover:text-c-bg-0"
 					>
 						<span
-							class="relative inline-flex items-center overflow-hidden font-c-unbounded text-4xl font-black tracking-wide text-c-neutral-0 transition-colors duration-200 group-hover:text-c-bg-0"
-						>
-							<span
-								class="absolute inset-0 translate-y-full -skew-x-6 bg-c-accent-0 transition-transform duration-[400ms] ease-out group-hover:translate-y-0"
-							></span>
-							<span class="relative z-10">{item}</span>
-						</span>
-					</a>
-				{/each}
+							class="absolute inset-0 translate-y-full -skew-x-6 bg-c-accent-0 transition-transform duration-[400ms] ease-out group-hover:translate-y-0"
+						></span>
+						<span class="relative z-10">{item.label}</span>
+					</span>
+				</a>
+			{/each}
 			</div>
 		</div>
 	</div>

@@ -15,6 +15,7 @@ export { default as AccentLink } from "./components/accent_link.svelte";
 export { default as AccentButton } from "./components/accent_button.svelte";
 export { default as AboutScene } from "./components/about_scene.svelte";
 export { default as Terminal } from "./components/terminal.svelte";
+export { default as Wip } from "./components/wip.svelte";
 
 // animations
 export * from "./gsap/sequences/hero_entry.svelte.js";
