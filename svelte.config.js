@@ -21,12 +21,6 @@ const config = {
 		// https://svelte.dev/docs/kit/adapter-static#GitHub-Pages
 		paths: {
 			base: process.argv.includes("dev") ? "" : process.env.BASE_PATH
-		},
-		prerender: {
-			handleHttpError: ({ status, path }) => {
-				if (status === 418 && path === "/418") return;
-				throw new Error(`Failed to prerender ${path} with status ${status}`);
-			}
 		}
 	}
 };
