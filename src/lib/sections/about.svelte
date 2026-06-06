@@ -129,7 +129,7 @@
 	>
 		<AnimatedHeading
 			tag="h2"
-			class="font-c-unbounded text-4xl font-black text-c-neutral-0"
+			class="font-c-unbounded text-4xl max-sm:text-3xl font-black text-c-neutral-0"
 		>
 			A little bit about <span class="text-c-accent-0">me</span>.
 		</AnimatedHeading>
@@ -137,16 +137,16 @@
 
 	<!-- scene panel (middle on mobile, sticky right on desktop) -->
 	<div
-		class="flex w-full items-center justify-center px-4 max-lg:mt-[14rem] max-lg:h-[50vh] lg:sticky lg:top-0 lg:order-2 lg:h-screen lg:w-1/2 lg:px-8"
+		class="flex w-full items-center justify-center px-4 max-lg:mt-[16rem] max-sm:mt-[12rem] max-lg:h-[50vh] lg:sticky lg:top-0 lg:order-2 lg:h-screen lg:w-1/2 lg:px-8"
 	>
-		<div class="h-full max-h-[55vh] w-full max-w-[60%] lg:max-h-[70vh]">
+		<div class="h-full max-h-[55vh] w-full max-w-[60%] max-sm:max-w-[75%] lg:max-h-[70vh]">
 			<AboutScene bind:sceneEl={sceneContainer} />
 		</div>
 	</div>
 
 	<!-- content panel (absolute bottom on mobile, left on desktop) -->
 	<div
-		class="flex w-full flex-col justify-center gap-6 px-6 pb-12 max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:z-10 max-lg:w-full max-lg:justify-end max-lg:bg-gradient-to-tr max-lg:from-c-bg-0/95 max-lg:via-c-bg-0/75 max-lg:to-c-bg-0/0 max-lg:px-6 max-lg:pt-20 max-lg:pb-8 lg:order-1 lg:w-1/2 lg:gap-10 lg:px-16 lg:pt-24 lg:pb-24 lg:pl-16"
+		class="flex w-full flex-col justify-center gap-6 px-6 pb-12 max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:z-10 max-lg:w-full max-lg:justify-end max-lg:bg-gradient-to-t max-lg:from-c-bg-0/95 max-lg:via-c-bg-0/75 max-lg:to-transparent max-lg:px-6 max-lg:pt-20 max-lg:pb-8 lg:order-1 lg:w-1/2 lg:gap-10 lg:px-16 lg:pt-24 lg:pb-24 lg:pl-16"
 	>
 		<AnimatedHeading
 			tag="h2"
@@ -158,7 +158,7 @@
 
 		<p
 			bind:this={paraEl}
-			class="font-c-ubuntu text-xl leading-relaxed text-c-neutral-1 lg:text-2xl"
+			class="font-c-ubuntu text-xl max-sm:text-base leading-relaxed text-c-neutral-1 lg:text-2xl"
 		>
 			B.Tech Computer Science student specializing in Cyber Security. Passionate
 			about low-level systems, modern web engineering, and creating fast
@@ -169,13 +169,13 @@
 		<div bind:this={ctaEl} class="flex flex-wrap items-center gap-4">
 			<AccentLink
 				href="https://github.com/anir183"
-				class="-translate-x-3 px-4 py-1.5 font-c-unbounded text-base font-bold lg:text-lg"
+				class="-translate-x-3 px-4 py-1.5 font-c-unbounded text-base max-sm:text-sm font-bold lg:text-lg"
 			>
 				GitHub
 			</AccentLink>
 			<AccentLink
 				href="/assets/resume.pdf"
-				class="-translate-x-3 px-4 py-1.5 font-c-unbounded text-base font-bold lg:text-lg"
+				class="-translate-x-3 px-4 py-1.5 font-c-unbounded text-base max-sm:text-sm font-bold lg:text-lg"
 			>
 				Resume
 			</AccentLink>

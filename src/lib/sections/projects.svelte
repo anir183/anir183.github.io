@@ -73,14 +73,14 @@
 		<AnimatedHeading
 			tag="h2"
 			start={true}
-			class="font-c-unbounded text-4xl font-black text-c-neutral-0"
-		>
-			<span class="text-c-accent-0">Projects</span> I have built.
-		</AnimatedHeading>
-	</div>
+		class="font-c-unbounded text-4xl max-sm:text-3xl font-black text-c-neutral-0"
+	>
+		<span class="text-c-accent-0">Projects</span> I have built.
+	</AnimatedHeading>
+</div>
 
 	<div
-		class="flex w-full flex-col justify-center px-8 py-16 max-lg:pointer-events-none max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:z-10 max-lg:w-full max-lg:justify-end max-lg:bg-[linear-gradient(45deg,color-mix(in_oklch,var(--color-c-bg-0)_95%,transparent)_0%,color-mix(in_oklch,var(--color-c-bg-0)_95%,transparent)_25%,transparent_70%)] max-lg:px-6 max-lg:pt-72 max-lg:pb-8 lg:w-2/5 lg:gap-10 lg:px-12 lg:py-24 lg:pl-16"
+		class="flex w-full flex-col justify-center px-8 py-16 max-lg:pointer-events-none max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:z-10 max-lg:w-full max-lg:justify-end max-lg:bg-[linear-gradient(45deg,color-mix(in_oklch,var(--color-c-bg-0)_95%,transparent)_0%,color-mix(in_oklch,var(--color-c-bg-0)_95%,transparent)_25%,transparent_70%)] max-lg:px-6 max-lg:pt-72 max-sm:pt-48 max-lg:pb-8 lg:w-2/5 lg:gap-10 lg:px-12 lg:py-24 lg:pl-16"
 	>
 		<div class="max-lg:hidden">
 			<AnimatedHeading
@@ -110,7 +110,7 @@
 						>
 							{project.tags.join(" · ")}
 						</span>
-						<h3 class="mt-1 font-c-ubuntu text-2xl font-bold lg:text-3xl">
+						<h3 class="mt-1 font-c-ubuntu text-2xl max-sm:text-xl font-bold lg:text-3xl">
 							{project.name}
 						</h3>
 					</button>
@@ -129,7 +129,7 @@
 
 	<div
 		bind:this={gridContainerEl}
-		class="sticky bottom-0 flex h-[50vh] w-full items-center justify-center max-lg:static max-lg:h-screen max-lg:p-12 lg:top-0 lg:h-screen lg:w-3/5 lg:pr-16"
+		class="sticky bottom-0 flex h-[50vh] w-full items-center justify-center max-lg:static max-lg:h-screen max-lg:p-12 max-sm:px-6 max-sm:py-10 lg:top-0 lg:h-screen lg:w-3/5 lg:pr-16"
 	>
 		{#each projects as project (project.id)}
 			<img

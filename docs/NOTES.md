@@ -330,6 +330,7 @@ Uses `gsap.quickTo(el, "x", vars)` and `gsap.quickTo(el, "y", vars)` per layer �
 
 - Desktop (lg+): side-by-side, content `w-2/5` left, scene `sticky lg:h-screen w-3/5` right
 - Mobile (<lg): stacked, content + scene below, scene `max-h-[50vh]`
+- Small mobile (<640px / `max-sm:`): targeted overrides added to scale down fonts and spacing that were uniform across the entire 320-1023px range. Previously all mobile sizes shared identical `max-lg:` values — a 360px phone got the same `pt-72` (288px padding), `text-xl` (20px body), `text-4xl` (36px heading) as an 800px tablet. Overrides reduce padding (e.g., `pt-72` → `max-sm:pt-48`, `pt-52` → `max-sm:pt-36`), body text (`text-xl` → `max-sm:text-base`), and heading sizes (`text-4xl` → `max-sm:text-3xl`). Fixes "massive and overlapping" appearance on real Android devices vs Firefox DevTools emulation.
 - Scene container has `perspective: 1200px` for subtle depth hint (no aggressive 3D transforms)
 - Images use `object-contain` — no distortion at any viewport size
 

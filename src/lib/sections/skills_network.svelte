@@ -623,7 +623,7 @@
 >
 	<!-- SVG graph panel (left on desktop, top on mobile) -->
 	<div
-		class="flex w-full items-center justify-center px-4 max-lg:max-h-[75vh] max-lg:min-h-[45vh] max-lg:flex-1 max-lg:pt-44 lg:sticky lg:top-0 lg:h-screen lg:w-3/5 lg:px-8"
+		class="flex w-full items-center justify-center px-4 max-lg:max-h-[75vh] max-lg:min-h-[45vh] max-lg:flex-1 max-lg:pt-44 max-sm:pt-32 lg:sticky lg:top-0 lg:h-screen lg:w-3/5 lg:px-8"
 	>
 		<!-- mobile heading above graph -->
 		<div
@@ -631,12 +631,12 @@
 		>
 			<AnimatedHeading
 				tag="h2"
-				class="font-c-unbounded text-4xl font-black text-c-neutral-0"
-			>
-				Some <span class="text-c-accent-0">skills</span> I have honed.
-			</AnimatedHeading>
-		</div>
-		<div bind:this={svgContainerEl} class="relative h-full w-full">
+			class="font-c-unbounded text-4xl max-sm:text-3xl font-black text-c-neutral-0"
+		>
+			Some <span class="text-c-accent-0">skills</span> I have honed.
+		</AnimatedHeading>
+	</div>
+	<div bind:this={svgContainerEl} class="relative h-full w-full">
 			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 			<svg
 				bind:this={svgEl}
@@ -770,7 +770,7 @@
 
 	<!-- content panel (right on desktop, bottom on mobile) -->
 	<div
-		class="flex w-full flex-col justify-center gap-6 px-6 pb-12 max-lg:pointer-events-none max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:z-10 max-lg:w-full max-lg:justify-end max-lg:bg-gradient-to-tr max-lg:from-c-bg-0/95 max-lg:via-c-bg-0/75 max-lg:to-c-bg-0/0 max-lg:px-6 max-lg:pt-20 max-lg:pb-8 lg:w-2/5 lg:gap-10 lg:px-12 lg:pb-24 lg:pl-16"
+		class="flex w-full flex-col justify-center gap-6 px-6 pb-12 max-lg:pointer-events-none max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:z-10 max-lg:w-full max-lg:justify-end max-lg:bg-gradient-to-t max-lg:from-c-bg-0/95 max-lg:via-c-bg-0/75 max-lg:to-transparent max-lg:px-6 max-lg:pt-20 max-lg:pb-8 lg:w-2/5 lg:gap-10 lg:px-12 lg:pb-24 lg:pl-16"
 	>
 		<AnimatedHeading
 			tag="h2"
@@ -782,7 +782,7 @@
 
 		<p
 			bind:this={paraEl}
-			class="font-c-ubuntu text-xl leading-relaxed text-c-neutral-1 lg:text-2xl"
+			class="font-c-ubuntu text-xl max-sm:text-base leading-relaxed text-c-neutral-1 lg:text-2xl"
 		>
 			A collection of technologies and tools I've worked with across frontend
 			and backend development, cloud infrastructure, and design. Each node
@@ -791,7 +791,7 @@
 
 		<AccentLink
 			href={resolve("/experiences")}
-			class="-translate-x-3 px-4 py-1.5 font-c-unbounded text-base font-bold max-lg:pointer-events-auto lg:text-lg"
+			class="-translate-x-3 px-4 py-1.5 font-c-unbounded text-base max-sm:text-sm font-bold max-lg:pointer-events-auto lg:text-lg"
 			bind:el={buttonEl}
 		>
 			Experiences

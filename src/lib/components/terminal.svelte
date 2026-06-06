@@ -1167,7 +1167,7 @@
 	<div class="border-t border-c-border/10"></div>
 	<div
 		bind:this={outputEl}
-		class="flex flex-col overflow-y-auto px-5 py-4 font-c-jetbrains text-sm leading-relaxed text-c-neutral-0 max-lg:max-h-[50vh] max-lg:min-h-[45vh] max-lg:px-4 max-lg:py-3 max-lg:text-xs lg:h-[55vh]"
+		class="flex flex-col overflow-y-auto px-5 py-4 font-c-jetbrains text-sm leading-relaxed text-c-neutral-0 max-lg:max-h-[35vh] max-lg:min-h-[30vh] max-lg:px-4 max-lg:py-3 max-lg:text-xs lg:h-[55vh]"
 	>
 		{#each lines as line (line.id)}
 			{#if line.type === "help"}
