@@ -67,7 +67,7 @@
 	>
 		<AnimatedHeading
 			tag="h2"
-			class="font-c-unbounded text-4xl max-sm:text-3xl font-black text-c-neutral-0"
+			class="font-c-unbounded text-4xl max-sm:text-2xl font-black text-c-neutral-0"
 		>
 			Open a <span class="text-c-accent-0">social</span>.
 		</AnimatedHeading>

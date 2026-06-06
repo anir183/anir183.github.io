@@ -73,7 +73,7 @@
 		<AnimatedHeading
 			tag="h2"
 			start={true}
-		class="font-c-unbounded text-4xl max-sm:text-3xl font-black text-c-neutral-0"
+		class="font-c-unbounded text-4xl max-sm:text-2xl font-black text-c-neutral-0"
 	>
 		<span class="text-c-accent-0">Projects</span> I have built.
 	</AnimatedHeading>
@@ -110,7 +110,7 @@
 						>
 							{project.tags.join(" · ")}
 						</span>
-						<h3 class="mt-1 font-c-ubuntu text-2xl max-sm:text-xl font-bold lg:text-3xl">
+						<h3 class="mt-1 font-c-ubuntu text-2xl max-sm:text-lg font-bold lg:text-3xl">
 							{project.name}
 						</h3>
 					</button>
@@ -120,7 +120,7 @@
 
 		<AccentLink
 			href={resolve("/projects")}
-			class="-translate-x-3 translate-y-0.5 px-4 py-1.5 font-c-unbounded text-lg font-bold max-lg:pointer-events-auto max-lg:absolute max-lg:right-6 max-lg:bottom-8 max-lg:mt-0"
+			class="-translate-x-3 translate-y-0.5 px-4 py-1.5 font-c-unbounded text-lg font-bold max-lg:pointer-events-auto max-lg:mt-6 max-lg:self-start max-sm:text-sm"
 			bind:el={ctaEl}
 		>
 			More Projects
