@@ -11,7 +11,8 @@
 		Socials,
 		heroEntrySequence,
 		loadAllImages,
-		BODY_SCROLL_LOCK
+		BODY_SCROLL_LOCK,
+		createSectionSnap
 	} from "$lib";
 
 	let preloaderVisible = $state(true);
@@ -31,6 +32,9 @@
 
 	/** @type {gsap.core.Timeline | undefined} */
 	let tl;
+
+	/** @type {(() => void) | undefined} */
+	let cleanupSnap;
 
 	onMount(() => {
 		let mounted = true;
@@ -81,12 +85,14 @@
 			.finally(() => {
 				if (!mounted) return;
 				document.body.classList.remove(BODY_SCROLL_LOCK);
+				cleanupSnap = createSectionSnap();
 			});
 
 		return () => {
 			mounted = false;
 			tl?.kill();
 			document.body.classList.remove(BODY_SCROLL_LOCK);
+			cleanupSnap?.();
 		};
 	});
 </script>
