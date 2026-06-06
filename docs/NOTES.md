@@ -462,5 +462,6 @@ Stagger order: `titleBar (-8px y, 0.4s)` → `separator (opacity, 0.3s, -0.1s)` 
 [x] terminal entry animation (self-contained ScrollTrigger stagger-fade, follows AnimatedHeading pattern, GSAP children[] refs, reduced-motion aware)
 [x] accent_link component (div wrapper + a, bg wipes from left, hard corners, font-c-unbounded)
 [x] accent_button component (div wrapper + button, bg wipes from left, hard corners, font-c-unbounded)
+[x] page-transition overlay (layout-level fixed overlay triggered by beforeNavigate, z-40 between navbar and preloader, 400ms fade-in, instant removal behind preloader after navigation)
 [ ] route structure for navigation
 [ ] content / data files

@@ -2,10 +2,40 @@
 	import "./layout.css";
 
 	import { onMount } from "svelte";
+	import { fade } from "svelte/transition";
+	import { beforeNavigate, afterNavigate, goto } from "$app/navigation";
 
 	import { initTheme, assert_failure, Crash } from "$lib";
 
 	let { children } = $props();
+
+	let overlayVisible = $state(false);
+	let pendingUrl = $state(/** @type {string | null} */ (null));
+
+	beforeNavigate(({ to, cancel }) => {
+		if (!to) return;
+
+		const current = window.location.pathname;
+		const target = new URL(to.url).pathname;
+		if (target === current) return;
+
+		if (pendingUrl !== null && pendingUrl === to.url.href) {
+			pendingUrl = null;
+			return;
+		}
+
+		cancel();
+		overlayVisible = true;
+
+		setTimeout(() => {
+			pendingUrl = to.url.href;
+			goto(to.url);
+		}, 400);
+	});
+
+	afterNavigate(() => {
+		overlayVisible = false;
+	});
 
 	onMount(() => {
 		initTheme();
@@ -32,6 +62,13 @@
 		}
 	</script>
 </svelte:head>
+
+{#if overlayVisible}
+	<div
+		in:fade={{ duration: 400 }}
+		class="fixed inset-0 z-40 bg-c-bg-0"
+	></div>
+{/if}
 
 {#if assert_failure.occurred}
 	<Crash
