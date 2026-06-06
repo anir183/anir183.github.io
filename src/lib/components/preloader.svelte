@@ -1,10 +1,30 @@
 <script>
 	let { progress = $bindable() } = $props();
 
+	let displayProgress = $state(0);
 	let dots = $state("");
 	let showDots = $derived(progress === undefined);
 
 	const DOT_INTERVAL_MS = 500;
+	$effect(() => {
+		let rafId = 0;
+		function tick() {
+			if (progress !== undefined) {
+				const diff = progress - displayProgress;
+				if (diff > 0.005) {
+					displayProgress = Math.min(
+						displayProgress + Math.max(0.02, diff * 0.4),
+						progress
+					);
+				} else {
+					displayProgress = progress;
+				}
+			}
+			rafId = requestAnimationFrame(tick);
+		}
+		rafId = requestAnimationFrame(tick);
+		return () => cancelAnimationFrame(rafId);
+	});
 
 	$effect(() => {
 		if (!showDots) return;
@@ -24,6 +44,6 @@
 		role="status"
 		aria-live="polite"
 	>
-		{showDots ? `Loading${dots}` : `${Math.round(progress * 100)}%`}
+		{showDots ? `Loading${dots}` : `${Math.round(displayProgress * 100)}%`}
 	</p>
 </div>
