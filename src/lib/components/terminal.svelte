@@ -2,6 +2,13 @@
 	import { tick, onMount } from "svelte";
 	import { gsap } from "gsap";
 	import { goto } from "$app/navigation";
+	import {
+		segmentLsShort, segmentLsLong,
+		segmentGitStatus, segmentGitCommit, segmentGitPush, segmentGitLog,
+		segmentBashrc, segmentQuotes,
+		segmentGrepLine,
+		segmentDate
+	} from "$lib";
 
 	let {
 		/** @type {import("$lib/utils/socials_data.svelte.js").Social[]} */
@@ -35,7 +42,7 @@
 
 	let cmdMap = $derived(new Map(commandDefs.map((c) => [c.cmd, c])));
 
-	/** @type {Array<{ id: number, type: string, text?: string, cls?: string, commands?: { cmd: string, desc: string }[] }>} */
+	/** @type {Array<{ id: number, type: string, text?: string, cls?: string, commands?: { cmd: string, desc: string }[], richText?: Array<{ text: string, cls: string }> }>} */
 	let lines = $state([]);
 
 	const asciiArts = [
@@ -633,6 +640,17 @@ let isMobileDevice = $state(false);
 		});
 	}
 
+	/**
+	 * @param {Array<{ text: string, cls: string }>} segments
+	 */
+	function addRichLine(segments) {
+		const id = nextId++;
+		lines = [...lines, { id, type: "rich", richText: segments }];
+		tick().then(() => {
+			if (outputEl) outputEl.scrollTop = outputEl.scrollHeight;
+		});
+	}
+
 	/** @param {string} cmd @param {string} [raw] */
 		function execCmd(cmd, raw) {
 		if (executing) return;
@@ -666,35 +684,7 @@ let isMobileDevice = $state(false);
 		}
 
 		if (cmd === "date") {
-			const d = new Date();
-			const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-			const months = [
-				"Jan",
-				"Feb",
-				"Mar",
-				"Apr",
-				"May",
-				"Jun",
-				"Jul",
-				"Aug",
-				"Sep",
-				"Oct",
-				"Nov",
-				"Dec"
-			];
-			const day = String(d.getDate()).padStart(2, " ");
-			const h = String(d.getHours()).padStart(2, "0");
-			const m = String(d.getMinutes()).padStart(2, "0");
-			const s = String(d.getSeconds()).padStart(2, "0");
-			const tz =
-				d
-					.toLocaleTimeString("en-US", { timeZoneName: "short" })
-					.split(" ")[2] ?? "UTC";
-			addLine(
-				"text",
-				`${days[d.getDay()]} ${months[d.getMonth()]} ${day} ${h}:${m}:${s} ${tz} ${d.getFullYear()}`,
-				"text-c-accent-1"
-			);
+			addRichLine(segmentDate(new Date()));
 			return;
 		}
 
@@ -719,20 +709,30 @@ let isMobileDevice = $state(false);
 					for (const c of children) {
 						const childPath = target === "/" ? "/" + c : target + "/" + c;
 						const childNode = fs[childPath];
-						const suffix = classify && childNode?.type === "dir" ? "/" : "";
-						const type = childNode?.type === "dir" ? "d" : "-";
-						addLine("text", `${type}rw-r--r--  guest guest  ${type === "d" ? "4.0K" : "2.3K"}  ${c}${suffix}`, "text-c-accent-1");
+						const nodeType = childNode?.type ?? "file";
+						const isSymlink = !!symlinks[childPath];
+						let suffix = "";
+						if (classify) {
+							if (isSymlink) suffix = "@";
+							else if (nodeType === "dir") suffix = "/";
+						}
+						const prefix = isSymlink ? "l" : (nodeType === "dir" ? "d" : "-");
+						const size = nodeType === "dir" ? "4.0K" : "2.3K";
+						const metaStr = `${prefix}rw-r--r--  guest guest  ${size}  `;
+						addRichLine(segmentLsLong(metaStr, c, suffix, nodeType, isSymlink));
 					}
 				} else {
-					let display = children;
-					if (classify) {
-						display = children.map(c => {
-							const childPath = target === "/" ? "/" + c : target + "/" + c;
-							return fs[childPath]?.type === "dir" ? c + "/" : c;
-						});
-					}
-					addLine("text", display.join("    "), "text-c-accent-1");
-				}
+				/** @type {(name: string) => { type: string, isSymlink: boolean }} */
+				const lookup = (name) => {
+					const p = target === "/" ? "/" + name : target + "/" + name;
+					const node = fs[p];
+					return {
+						type: node?.type ?? "file",
+						isSymlink: !!symlinks[p]
+					};
+				};
+				addRichLine(segmentLsShort(children, lookup, classify));
+			}
 			}
 			return;
 		}
@@ -778,12 +778,19 @@ let isMobileDevice = $state(false);
 				} else if (node.type !== "file") {
 					addLine("text", `cat: ${arg}: Is a directory`, "text-c-error");
 				} else {
-					addLine("text", node.content ?? "", "text-c-accent-1");
+					const content = node.content ?? "";
+					if (target.endsWith(".bashrc")) {
+						addRichLine(segmentBashrc(content));
+					} else if (target.startsWith("/home/guest/quotes/")) {
+						addRichLine(segmentQuotes(content));
+					} else {
+						addLine("text", content, "text-c-accent-1");
+					}
 					if (target === "/home/guest/easter/coffee") {
 						gsap.delayedCall(5, () => goto("/coffee"));
 					}
 					if (target === "/home/guest/secrets/fourofour") {
-						gsap.delayedCall(5, () => goto("/404"));
+						gsap.delayedCall(5, () => goto("/fourofour"));
 					}
 				}
 			}
@@ -824,7 +831,7 @@ let isMobileDevice = $state(false);
 				for (const line of lines) {
 					if (line.toLowerCase().includes(pattern.toLowerCase())) {
 						found = true;
-						addLine("text", targets.length > 1 ? `${name}:${line}` : line, "text-c-accent-1");
+						addRichLine(segmentGrepLine(line, pattern, targets.length > 1 ? name : undefined));
 					}
 				}
 			}
@@ -836,22 +843,22 @@ let isMobileDevice = $state(false);
 			const args = ((raw ?? currentInput).slice(4).trim() || "").split(/\s+/).filter(Boolean);
 			const sub = args[0];
 			if (sub === "status") {
-				addLine("text", "On branch main\nYour branch is up to date with 'origin/main'.\n\nnothing to commit, working tree clean", "text-c-accent-1");
+				addRichLine(segmentGitStatus("On branch main\nYour branch is up to date with 'origin/main'.\n\nnothing to commit, working tree clean"));
 			} else if (sub === "commit") {
 				const rest = args.slice(1).join(" ");
 				const m = rest.match(/-m\s+['\"](.+)['\"]/);
-				addLine("text", `[main ${Math.random().toString(36).slice(2, 8)}] ${m ? m[1] : "commit"}\n 1 file changed, 1 insertion(+)`, "text-c-accent-1");
+				addRichLine(segmentGitCommit(`[main ${Math.random().toString(36).slice(2, 8)}] ${m ? m[1] : "commit"}\n 1 file changed, 1 insertion(+)`));
 			} else if (sub === "push") {
-				addLine("text", "Everything up-to-date", "text-c-success");
+				addRichLine(segmentGitPush("Everything up-to-date"));
 			} else if (sub === "log") {
 				const rest = args.slice(1).join(" ");
 				if (rest.includes("--oneline") && rest.includes("--graph")) {
-					addLine("text", ["* a1b2c3d feat: add new feature", "* e4f5g6h fix: resolve critical bug", "* i7j8k9l chore: update dependencies", "* m0n1o2p refactor: clean up code", "* q3r4s5t docs: update readme"].join("\n"), "text-c-accent-1");
+					addRichLine(segmentGitLog(["* a1b2c3d feat: add new feature", "* e4f5g6h fix: resolve critical bug", "* i7j8k9l chore: update dependencies", "* m0n1o2p refactor: clean up code", "* q3r4s5t docs: update readme"].join("\n")));
 				} else {
-					addLine("text", "commit a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t\nAuthor: Guest <guest@portfolio-183>\nDate:   today\n\n    feat: add new feature", "text-c-accent-1");
+					addRichLine(segmentGitLog("commit a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t\nAuthor: Guest <guest@portfolio-183>\nDate:   today\n\n    feat: add new feature"));
 				}
 			} else {
-				addLine("text", "usage: git <command> [<args>]\n\nAvailable commands:\n  status   Show working tree status\n  commit   Record changes\n  push     Push to remote\n  log      Show commit logs", "text-c-accent-1");
+				addRichLine(segmentGitLog("usage: git <command> [<args>]\n\nAvailable commands:\n  status   Show working tree status\n  commit   Record changes\n  push     Push to remote\n  log      Show commit logs"));
 			}
 			return;
 		}
@@ -1306,6 +1313,12 @@ let isMobileDevice = $state(false);
 					class="font-c-jetbrains text-sm leading-relaxed whitespace-pre max-lg:text-xs {line.cls}"
 				>
 					{line.text}
+				</div>
+			{:else if line.type === "rich"}
+				<div class="whitespace-pre">
+					{#each line.richText as seg, j (j)}
+						<span class={seg.cls}>{seg.text}</span>
+					{/each}
 				</div>
 			{:else if line.type === "prompt"}
 				<div class="mt-4 text-c-neutral-1/60">{line.text}</div>

@@ -405,6 +405,27 @@ $effect (IntersectionObserver):
 
 Stagger order: `titleBar (-8px y, 0.4s)` → `separator (opacity, 0.3s, -0.1s)` → `initialLines (12px y, 0.5s, stagger 0.08, -0.1s)` → `inputPrompt (8px y, 0.4s, -0.15s)`. Uses `power3.out` / `power2.out` eases (existing project convention). `mounted` guard prevents DOM access after teardown. GSAP targets collected via `children[]` (static template nodes) — no bind:this needed. No ScrollTrigger dependency required — avoids sticky-container scroll-position bug that made initial implementation invisible on desktop.
 
+**Terminal highlighting (`terminal_highlight.svelte.js`):**
+
+A utility module that enables per-file-type coloring in `ls` command output. Lives at `src/lib/utils/terminal_highlight.svelte.js` and is exported through the `$lib` barrel.
+
+Exports:
+- `TERMINAL_COLORS` — map of element types to CSS color classes (`directory`, `symlink`, `file`, `executable`)
+- `classForNode(type, isSymlink)` — returns the appropriate color class for a node
+- `segmentLsShort(children, lookup, classify)` — builds rich-text segments for short-format `ls`; each item colored by type
+- `segmentLsLong(metaStr, name, suffix, type, isSymlink)` — builds rich segments for `-l` format; metadata (permissions, size) muted, name colored by type
+
+**Line type extension:**
+
+Lines array element type extended with optional `richText` property:
+```
+{ id, type: "rich", richText: [{ text: string, cls: string }] }
+```
+
+And `addRichLine(segments)` helper mirrors `addLine()` but pushes `{ type: "rich", richText: segments }`.
+
+Template renders `type: "rich"` lines by iterating `richText` segments and wrapping each in `<span class={seg.cls}>` — no `{@html}`, no XSS risk.
+
 **Edge cases:**
 
 - Reduced motion: cursor blink uses JS interval (not CSS animation), immune to layout.css `prefers-reduced-motion: reduce` nuke. Terminal slide transition disabled via Svelte transition respecting reduced motion (Svelte built-in). Entry animation skipped via `window.matchMedia("(prefers-reduced-motion: reduce)")`.
