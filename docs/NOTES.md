@@ -21,7 +21,8 @@ src/
 │   │   │   ├── about_intro.svelte.js  [implemented]
 │   │   │   ├── cube_grid.svelte.js    [implemented]
 │   │   │   ├── hero_entry.svelte.js   [implemented]
-│   │   │   └── projects_entry.svelte.js
+│   │   │   ├── projects_entry.svelte.js
+│   │   │   └── experiences_entry.svelte.js
 │   │   └── clips				[reusable GSAP clips/tweens]
 │   │       ├── about_parallax.svelte.js
 │   │       └── stagger_wipe.svelte.js
@@ -212,7 +213,7 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 - packet fade-in: starts at `opacity: 0`, GSAP `fromTo` fades to 0.7 on start and on each repeat — no more pop-in
 - placeholder paragraph: expanded description text for the graph area
 - GSAP hover wipe effect: reactive edge/node styling removed from template; `animateToActive(id)` draws dash from source node outward using `edgePathLengths` + `edgePosDat` lookup, `animateToRest()` clears; reversed edge paths for correct direction; `prefers-reduced-motion` media query respected (no animation, just class toggles)
-- /experiences page: vertical timeline with left line + dot per entry + right card; `data-exp-id` attribute used for GSAP target; `ScrollTrigger.batch` with stagger entrance; follows existing route pattern (AnimatedHeading, theme classes)
+- /experiences page: full-viewport section-per-experience with SVG path overlay. SVG is `position: absolute; inset: 0; z-index: 0` inside the outer `relative` div with `w-full h-full`. viewBox matches parent dimensions (`0 0 ${parentWidth} ${parentHeight}`). Path is a cubic-bezier snake connecting nodes at each section's vertical center (Y = `section.offsetTop + section.offsetHeight/2`), alternating between X=10% and X=90% of parent width. 5 nodes, one per experience. Per-segment control points use deterministic Y variation (seeded by index) for organic wave effect. On mobile (<1024px), all nodes collapse to X=50%, path becomes vertical. Each experience is `min-h-screen` with raw text positioned on same side as curve node via `lg:ml-[10vw]`/`lg:mr-[10vw]`. "Experiences" heading in own `min-h-screen` section. GSAP entry: master path draw scrubs via ScrollTrigger (`top top+=1px` → `bottom bottom`); per-section node activation (`once: true`, `gsap.to` scale+opacity) and staggered content entrance via `data-el` attributes — heading h3 (y:50→0), `[data-el="company"]` (+0.12), `[data-el="desc"]` (+0.18), `[data-el="tags"]` (+0.22). Content and node use `once: true` (not scrubbed, play-and-stay). First section + node visible on load with ~22% of path pre-drawn. Reduced motion: gsap.set to final state, no ScrollTrigger. Cleanup kills all triggers.
 - GSAP targets use `bind:this` refs (not CSS selectors) for reliable element capture
 - child components expose refs to parent sections via `$bindable()` props (e.g., `<Navbar bind:navEl>`)
 - GSAP easings: use built-in eases only (power2.out, power3.out, power4.out) — no CustomEase
@@ -457,6 +458,7 @@ Template renders `type: "rich"` lines by iterating `richText` segments and wrapp
 | `animated_heading.svelte:70` | GSAP SplitText stagger | `$effect` guard — skips init |
 | `stagger_wipe.svelte.js:24` | GSAP wipe-in | `gsap.set` to final state |
 | `section_snap.svelte.js:17` | `scrollIntoView` smooth | `behavior: "instant"` |
+| `experiences_entry.svelte.js:40` | GSAP path + node + staggered content | early return — `gsap.set` to final state, skip ScrollTrigger |
 
 **Detection pattern:** All `.svelte` files use synchronous `$state(typeof window !== 'undefined' && window.matchMedia("(prefers-reduced-motion: reduce)").matches)` so the value is correct at first render (no flash). Pure JS utility files accept a `reducedMotion` parameter from the caller. `section_snap.svelte.js` auto-detects internally since it runs client-side only.
 
@@ -501,7 +503,7 @@ Template renders `type: "rich"` lines by iterating `richText` segments and wrapp
 [x] skills_data.svelte.js: added `featured` boolean field (8 featured skills for mobile) and `featuredSkills` export
 [x] experiences_data.svelte.js: new file with `Experience` typedef + 5 placeholder entries
 [x] skills_network.svelte redesign: single-column layout with `flex-1` SVG filling available space between heading (top-right) and Experiences button (bottom-right); side info panel removed; replaced with floating HTML tooltip overlay positioned via `SVGPoint.matrixTransform(getScreenCTM())` for viewBox→pixel conversion; tooltip flips to left side when near container right edge; node radius increased to 30; mobile shows horizontal snap-scrollable cards with only featured skills, tap-to-popover detail modal
-[x] /experiences route: new full timeline page with vertical line + dots + cards, GSAP ScrollTrigger.batch stagger entrance, matches projects page pattern
+[x] /experiences route: absolute SVG path overlay with nodes at each section's center, per-experience full-viewport sections with alternating left/right raw text, ScrollTrigger path draw scrub + node activation + staggered content entrance at top 20% (once: true). Heading section: `pt-24 max-lg:pt-16` restored for navbar compensation, heading node positioned immediately below centered text via `getBoundingClientRect()`. Content wrap `opacity: 0` bug fixed (parent opacity hides children). `navReady` polling removed — navbar animation independent. Animations: node activation 1.2s, content entrance each 1s with increased stagger (0.2/0.3/0.35). Sections have `id="experience-{i}"` for `createSectionSnap` scroll snapping.
 [x] skills_data.svelte.js: hardcoded positions removed, dynamic computePositions with 3 category bands + deterministic jitter
 [x] skills_network: all 16 skills on mobile (featured/export removed), flexible graph container, px-4 lg:px-8 padding, larger tooltip/popover
 [x] skills_network: packet density reduced, init flash fix, fade-in opacity

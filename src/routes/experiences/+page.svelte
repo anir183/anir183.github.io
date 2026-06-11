@@ -10,6 +10,7 @@
 		Preloader,
 		loadAllImages,
 		BODY_SCROLL_LOCK,
+		createSectionSnap,
 		ExperiencesSection,
 		STAGGER_FAST,
 		LG_BREAKPOINT
@@ -29,6 +30,9 @@
 
 	/** @type {gsap.core.Timeline | undefined} */
 	let navTl;
+
+	/** @type {(() => void) | undefined} */
+	let cleanupSnap;
 
 	const navItems = [
 		{ label: "Home", href: resolve("/") },
@@ -130,11 +134,13 @@
 			.finally(() => {
 				if (!mounted) return;
 				document.body.classList.remove(BODY_SCROLL_LOCK);
+				cleanupSnap = createSectionSnap();
 			});
 
 		return () => {
 			mounted = false;
 			navTl?.kill();
+			cleanupSnap?.();
 			document.body.classList.remove(BODY_SCROLL_LOCK);
 		};
 	});
