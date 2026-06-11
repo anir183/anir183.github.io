@@ -3,12 +3,14 @@
 
 	import { onMount } from "svelte";
 	import { fade } from "svelte/transition";
+	import { browser } from "$app/environment";
 	import { beforeNavigate, afterNavigate, goto } from "$app/navigation";
 
 	import { initTheme, assert_failure, Crash, markSpaNavigation } from "$lib";
 
 	let { children } = $props();
 
+	let reducedMotion = $state(browser && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 	let overlayVisible = $state(false);
 	let pendingUrl = $state(/** @type {string | null} */ (null));
 
@@ -67,7 +69,7 @@
 
 {#if overlayVisible}
 	<div
-		in:fade={{ duration: 400 }}
+		in:fade={{ duration: reducedMotion ? 0 : 400 }}
 		class="fixed inset-0 z-40 bg-c-bg-0"
 	></div>
 {/if}

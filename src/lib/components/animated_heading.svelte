@@ -5,6 +5,7 @@
 		tag = "h1",
 		class: className = "",
 		start = false,
+		reducedMotion = false,
 		stagger = 0.05,
 		fromX = 100,
 		fromSkew = 10,
@@ -64,7 +65,7 @@
 	}
 
 	$effect(() => {
-		if (start && el && !initialized) {
+		if (start && el && !initialized && !reducedMotion) {
 			initialized = true;
 			initAnimation();
 		}

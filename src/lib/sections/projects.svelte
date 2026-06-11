@@ -13,7 +13,7 @@
 	/** @type {import("$lib/utils/projects_data.svelte.js").Project | null} */
 	let activeProject = $state(projects[0]);
 	let isMobile = $state(false);
-	let reducedMotion = $state(false);
+	let reducedMotion = $state(typeof window !== 'undefined' && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
 	/** @type {HTMLElement | undefined} */
 	let sectionEl = $state();
@@ -30,10 +30,6 @@
 		const handler = (/** @type {MediaQueryListEvent} */ e) =>
 			(isMobile = e.matches);
 		mql.addEventListener("change", handler);
-
-		reducedMotion = window.matchMedia(
-			"(prefers-reduced-motion: reduce)"
-		).matches;
 
 		return () => mql.removeEventListener("change", handler);
 	});
@@ -73,6 +69,7 @@
 		<AnimatedHeading
 			tag="h2"
 			start={true}
+			reducedMotion={reducedMotion}
 		class="font-c-unbounded text-4xl max-sm:text-2xl font-black text-c-neutral-0"
 	>
 		<span class="text-c-accent-0">Projects</span> I have built.
@@ -86,6 +83,7 @@
 			<AnimatedHeading
 				tag="h2"
 				start={true}
+				reducedMotion={reducedMotion}
 				class="font-c-unbounded text-4xl font-black text-c-neutral-0 lg:text-6xl"
 			>
 				<span class="text-c-accent-0">Projects</span> I have built.

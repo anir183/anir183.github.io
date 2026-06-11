@@ -8,6 +8,7 @@ import { gsap } from "gsap";
  * @param {number} [opts.duration=0.6]
  * @param {string} [opts.ease="power3.out"]
  * @param {number} [opts.delay=0]
+ * @param {boolean} [opts.reducedMotion=false]
  * @returns {gsap.core.Tween}
  */
 export function staggerWipeIn({
@@ -16,9 +17,16 @@ export function staggerWipeIn({
 	stagger = 0.08,
 	duration = 0.6,
 	ease = "power3.out",
-	delay = 0
+	delay = 0,
+	reducedMotion = false
 }) {
 	const els = Array.isArray(targets) ? targets : [targets];
+
+	if (reducedMotion) {
+		gsap.set(els, { y: "0%", x: "0%", opacity: 1 });
+		const tl = gsap.timeline();
+		return /** @type {gsap.core.Tween} */ (/** @type {unknown} */ (tl));
+	}
 
 	/** @type {Record<string, string | number>} */
 	const fromProps = { opacity: 0 };

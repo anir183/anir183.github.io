@@ -20,7 +20,7 @@
 	/** @type {HTMLAnchorElement | undefined} */
 	let buttonEl = $state();
 	let isMobile = $state(false);
-	let reducedMotion = $state(false);
+	let reducedMotion = $state(typeof window !== 'undefined' && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 	let selectedId = $state(/** @type {string | null} */ (null));
 	let hoveredId = $state(/** @type {string | null} */ (null));
 	let tooltipX = $state(0);
@@ -151,13 +151,13 @@
 	function onNodeEnter(id) {
 		if (isMobile || selectedId) return;
 		hoveredId = id;
-		if (!reducedMotion) animateToActive(id);
+		animateToActive(id);
 	}
 
 	function onNodeLeave() {
 		if (isMobile || selectedId) return;
 		hoveredId = null;
-		if (!reducedMotion) animateToRest();
+		animateToRest();
 	}
 
 	/**
@@ -171,10 +171,10 @@
 		}
 		if (selectedId === id) {
 			selectedId = null;
-			if (!reducedMotion) animateToRest();
+			animateToRest();
 		} else {
 			selectedId = id;
-			if (!reducedMotion) animateToActive(id);
+			animateToActive(id);
 		}
 		if (selectedId !== id) return;
 		updateTooltip();
@@ -184,7 +184,7 @@
 		if (isMobile) return;
 		selectedId = null;
 		hoveredId = null;
-		if (!reducedMotion) animateToRest();
+		animateToRest();
 	}
 
 	function closeMobileDetail() {
@@ -601,10 +601,6 @@
 
 	onMount(() => {
 		isMobile = window.innerWidth < LG_BREAKPOINT;
-		reducedMotion = window.matchMedia(
-			"(prefers-reduced-motion: reduce)"
-		).matches;
-
 		if (reducedMotion) {
 			return;
 		}
@@ -722,7 +718,7 @@
 				<div
 					class="pointer-events-none absolute z-10"
 					style="left: {tooltipX}px; top: {tooltipY}px; transform: translateY(-50%);"
-					transition:fade={{ duration: 120 }}
+					transition:fade={{ duration: reducedMotion ? 0 : 120 }}
 				>
 					<div
 						class="w-80 rounded-2xl border border-c-border/40 bg-c-bg-2/90 px-6 py-5 shadow-lg backdrop-blur-xl"
@@ -776,6 +772,7 @@
 		<AnimatedHeading
 			tag="h2"
 			start={!isMobile}
+			reducedMotion={reducedMotion}
 			class="font-c-unbounded text-3xl font-black text-c-neutral-0 max-lg:hidden lg:text-6xl"
 		>
 			Some <span class="text-c-accent-0">skills</span> I have honed.
@@ -809,7 +806,7 @@
 		onkeydown={(e) => e.key === "Escape" && closeMobileDetail()}
 		role="dialog"
 		tabindex="0"
-		transition:fade={{ duration: 150 }}
+		transition:fade={{ duration: reducedMotion ? 0 : 150 }}
 	>
 		<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 		<div
@@ -817,7 +814,7 @@
 			role="document"
 			onclick={(e) => e.stopPropagation()}
 			onkeydown={() => {}}
-			transition:scale={{ start: 0.92, duration: 150 }}
+			transition:scale={{ start: reducedMotion ? 1 : 0.92, duration: reducedMotion ? 0 : 150 }}
 		>
 			<div class="flex items-center gap-4">
 				<span class="text-5xl">{mobileDetailSkill.icon}</span>

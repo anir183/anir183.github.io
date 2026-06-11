@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from "svelte";
 	import { fade } from "svelte/transition";
+	import { browser } from "$app/environment";
 	import {
 		Preloader,
 		Navbar,
@@ -17,6 +18,7 @@
 		isSpaNavigation
 	} from "$lib";
 
+	let reducedMotion = $state(browser && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 	let preloaderVisible = $state(true);
 	let progress = $state(0);
 	let preloaderDone = $state(false);
@@ -71,7 +73,8 @@
 					themeButton: themeBtn,
 					hamburgerButton: hamburgerBtn,
 					logoEl,
-					skipImageAnimation: spaNav
+					skipImageAnimation: spaNav,
+					reducedMotion
 				});
 			})
 			.then((/** @type {{tl: gsap.core.Timeline}} */ result) => {
@@ -120,7 +123,7 @@
 </script>
 
 {#if preloaderVisible}
-	<div transition:fade={{ duration: 500 }} class="relative z-50">
+	<div transition:fade={{ duration: reducedMotion ? 0 : 500 }} class="relative z-50">
 		<Preloader bind:progress bind:done={preloaderDone} />
 	</div>
 {/if}

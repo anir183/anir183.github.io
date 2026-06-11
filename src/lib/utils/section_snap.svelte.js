@@ -13,6 +13,8 @@ export function createSectionSnap(options = {}) {
 	const sections = [...document.querySelectorAll(selector)];
 	if (!sections.length) return () => {};
 
+	const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 	/** @type {ReturnType<typeof setTimeout> | undefined} */
 	let timeout;
 	let snapping = false;
@@ -32,7 +34,7 @@ export function createSectionSnap(options = {}) {
 			if (r.top > 0 && r.top < snapThreshold) {
 				snapping = true;
 				lastSnap = now;
-				section.scrollIntoView({ behavior: "smooth", block: "start" });
+				section.scrollIntoView({ behavior: reducedMotion ? "instant" : "smooth", block: "start" });
 				setTimeout(() => {
 					snapping = false;
 				}, 500);
@@ -45,7 +47,7 @@ export function createSectionSnap(options = {}) {
 				if (atBottom) continue;
 				snapping = true;
 				lastSnap = now;
-				section.scrollIntoView({ behavior: "smooth", block: "start" });
+				section.scrollIntoView({ behavior: reducedMotion ? "instant" : "smooth", block: "start" });
 				setTimeout(() => {
 					snapping = false;
 				}, 500);

@@ -1,6 +1,7 @@
 <script>
 	import { onMount, tick } from "svelte";
 	import { resolve } from "$app/paths";
+	import { browser } from "$app/environment";
 	import { fade, fly } from "svelte/transition";
 	import {
 		theme,
@@ -23,6 +24,7 @@
 		]
 	} = $props();
 
+	let reducedMotion = $state(browser && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 	let mobileMenuOpen = $state(false);
 	/** @type {HTMLElement | undefined} */
 	let mobilePanelEl = $state();
@@ -43,7 +45,8 @@
 					from: "bottom",
 					stagger: STAGGER_FAST,
 					duration: 0.5,
-					delay: 0.1
+					delay: 0.1,
+					reducedMotion
 				});
 				mobilePanelEl?.focus();
 			});
@@ -171,14 +174,14 @@
 			class="absolute inset-0 bg-black/40 backdrop-blur-sm"
 			onclick={() => (mobileMenuOpen = false)}
 			role="presentation"
-			transition:fade={{ duration: 150 }}
+			transition:fade={{ duration: reducedMotion ? 0 : 150 }}
 		></div>
 
 		<div
 			bind:this={mobilePanelEl}
 			tabindex="-1"
 			class="absolute top-0 right-0 flex h-full w-80 flex-col items-center justify-center bg-c-bg-0 shadow-2xl outline-none max-sm:w-full"
-			transition:fly={{ duration: 250, x: 400 }}
+			transition:fly={{ duration: reducedMotion ? 0 : 250, x: reducedMotion ? 0 : 400 }}
 		>
 			<button
 				onclick={() => (mobileMenuOpen = false)}

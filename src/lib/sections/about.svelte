@@ -25,14 +25,11 @@
 	let ctaEl = $state();
 
 	let isMobile = $state(false);
-	let reducedMotion = $state(false);
+	let reducedMotion = $state(typeof window !== 'undefined' && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
 	onMount(() => {
 		const isTouch = window.matchMedia("(pointer: coarse)").matches;
 		isMobile = window.innerWidth < LG_BREAKPOINT;
-		reducedMotion = window.matchMedia(
-			"(prefers-reduced-motion: reduce)"
-		).matches;
 
 		const sceneEl = sceneContainer;
 
@@ -157,6 +154,7 @@
 		<AnimatedHeading
 			tag="h2"
 			start={!isMobile}
+			reducedMotion={reducedMotion}
 			class="font-c-unbounded text-3xl font-black text-c-neutral-0 max-lg:hidden lg:text-6xl"
 		>
 			A little bit about <span class="text-c-accent-0">me</span>.

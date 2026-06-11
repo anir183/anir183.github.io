@@ -10,7 +10,8 @@ import { assert, LG_BREAKPOINT, STAGGER_FAST } from "$lib";
  *   hamburgerButton: HTMLElement | null | undefined,
  *   logoEl: HTMLElement | null | undefined,
  *   delay?: number,
- *   skipImageAnimation?: boolean
+ *   skipImageAnimation?: boolean,
+ *   reducedMotion?: boolean
  * }} config
  * @returns {Promise<{tl: gsap.core.Timeline}>}
  */
@@ -23,48 +24,51 @@ export async function heroEntrySequence(config) {
 		hamburgerButton = null,
 		logoEl = null,
 		delay = 0.5,
-		skipImageAnimation = false
+		skipImageAnimation = false,
+		reducedMotion = false
 	} = config ?? {};
 
 	console.log("[heroEntry] started", { navLinks: navLinks.length, heroHeadline: !!heroHeadline, introImages: introImages.length, themeButton: !!themeButton });
 
 	const { SplitText } = await import("gsap/SplitText");
 
-	gsap.registerPlugin(SplitText);
+	if (!reducedMotion) {
+		gsap.registerPlugin(SplitText);
 
-	console.time("[heroEntry] SplitText");
-	SplitText.create(navLinks, {
-		type: "lines",
-		linesClass: "line",
-		mask: "lines",
-		autoSplit: true
-	});
+		console.time("[heroEntry] SplitText");
+		SplitText.create(navLinks, {
+			type: "lines",
+			linesClass: "line",
+			mask: "lines",
+			autoSplit: true
+		});
 
-	SplitText.create(heroHeadline, {
-		type: "lines",
-		linesClass: "line",
-		mask: "lines",
-		autoSplit: true
-	});
-	console.timeEnd("[heroEntry] SplitText");
+		SplitText.create(heroHeadline, {
+			type: "lines",
+			linesClass: "line",
+			mask: "lines",
+			autoSplit: true
+		});
+		console.timeEnd("[heroEntry] SplitText");
 
-	const navLines = navLinks.flatMap((a) => [...a.querySelectorAll(".line")]);
-	const headlineLines = heroHeadline
-		? [...heroHeadline.querySelectorAll(".line")]
-		: [];
-	console.log("[heroEntry] lines created", { navLines: navLines.length, headlineLines: headlineLines.length });
+		const navLines = navLinks.flatMap((a) => [...a.querySelectorAll(".line")]);
+		const headlineLines = heroHeadline
+			? [...heroHeadline.querySelectorAll(".line")]
+			: [];
+		console.log("[heroEntry] lines created", { navLines: navLines.length, headlineLines: headlineLines.length });
 
-	if (logoEl) {
-		gsap.set(logoEl, {
-			opacity: 0,
-			x: -20
+		if (logoEl) {
+			gsap.set(logoEl, {
+				opacity: 0,
+				x: -20
+			});
+		}
+
+		gsap.set([...navLines, ...headlineLines], {
+			y: "125%",
+			willChange: "transform"
 		});
 	}
-
-	gsap.set([...navLines, ...headlineLines], {
-		y: "125%",
-		willChange: "transform"
-	});
 
 	const INTRO_IMG_SPREAD = 1200;
 	const introImgScale = 0.85;
@@ -112,6 +116,39 @@ export async function heroEntrySequence(config) {
 			opacity: 0
 		});
 	}
+
+	if (reducedMotion) {
+		if (skipImageAnimation) {
+			introImages.forEach((img) => gsap.set(img, { opacity: 1 }));
+		} else {
+			introImages.forEach((img, i) => {
+				const cx = parseFloat(img.dataset.centeredX || "0");
+				if (i === 2) {
+					gsap.set(img, {
+						opacity: 1, scale: 1, x: 0, y: 0, rotation: 0,
+						width: "100vw", height: "100svh", borderRadius: 0
+					});
+				} else {
+					gsap.set(img, {
+						opacity: 1,
+						x: i < 2 ? cx - INTRO_IMG_SPREAD : cx + INTRO_IMG_SPREAD
+					});
+				}
+			});
+		}
+		if (logoEl) gsap.set(logoEl, { opacity: 1, x: 0 });
+		if (themeButton) gsap.set(themeButton, { opacity: 1, scale: 1 });
+		if (hamburgerButton && window.innerWidth < LG_BREAKPOINT) {
+			gsap.set(hamburgerButton, { opacity: 1, scale: 1 });
+		}
+		console.log("[heroEntry] reduced motion — skipping animation");
+		return { tl: gsap.timeline({ delay }) };
+	}
+
+	const navLines = navLinks.flatMap((a) => [...a.querySelectorAll(".line")]);
+	const headlineLines = heroHeadline
+		? [...heroHeadline.querySelectorAll(".line")]
+		: [];
 
 	const tl = gsap.timeline({ delay });
 

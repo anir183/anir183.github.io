@@ -12,10 +12,18 @@
 	/** @type {HTMLElement | undefined} */
 	let sectionEl = $state();
 
+	let reducedMotion = $state(typeof window !== 'undefined' && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 	let terminalPlay = $state(false);
 
 	onMount(() => {
 		gsap.registerPlugin(ScrollTrigger);
+
+		if (reducedMotion) {
+			if (paraEl) gsap.set(paraEl, { y: 0, opacity: 1 });
+			if (linksEl) gsap.set(linksEl, { y: 0, opacity: 1 });
+			terminalPlay = true;
+			return;
+		}
 
 		if (paraEl) gsap.set(paraEl, { y: 24, opacity: 0 });
 		if (linksEl) gsap.set(linksEl, { y: 16, opacity: 0 });
@@ -89,6 +97,7 @@
 		<AnimatedHeading
 			tag="h2"
 			start={true}
+			reducedMotion={reducedMotion}
 			class="font-c-unbounded text-3xl font-black text-c-neutral-0 max-lg:hidden lg:text-6xl"
 		>
 			Open a <span class="text-c-accent-0">social</span>.

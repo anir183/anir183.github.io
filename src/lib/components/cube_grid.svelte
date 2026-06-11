@@ -5,6 +5,8 @@
 
 	let { activeImage = null } = $props();
 
+	let reducedMotion = $state(typeof window !== 'undefined' && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+
 	/** @type {HTMLDivElement | undefined} */
 	let gridEl = $state();
 
@@ -237,7 +239,7 @@
 		paintFaces(image, hiddenFace);
 
 		const cubes = tileMeta.map((t) => t.el);
-		staggerRotateTiles(cubes, cols, rows, onTransitionComplete);
+		staggerRotateTiles(cubes, cols, rows, onTransitionComplete, reducedMotion);
 	}
 
 	onMount(async () => {
@@ -259,8 +261,10 @@
 			};
 		});
 
-		startBreathing();
-		initProximityDim();
+		if (!reducedMotion) {
+			startBreathing();
+			initProximityDim();
+		}
 
 		if (activeImage) {
 			const loaded = await ensureImageLoaded(activeImage);

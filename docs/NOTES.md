@@ -433,6 +433,33 @@ Template renders `type: "rich"` lines by iterating `richText` segments and wrapp
 - Preserved state on mobile collapse: lines state stays in component script, only body DOM removed/added via `{#if expanded}`
 - No dependencies added — uses existing GSAP, Svelte transitions, theme colors
 
+### prefers-reduced-motion implementation
+
+**CSS layer** (`layout.css:93-105`): Global `@media (prefers-reduced-motion: reduce)` kills all CSS `animation-duration` and `transition-duration` with `!important`. Covers `@keyframes`, Tailwind `transition-*` classes, and `scroll-behavior: smooth` on `<html>`.
+
+**JS-based animations are NOT covered by the CSS rule.** Each was individually guarded:
+
+| Location | Mechanism | Guard pattern |
+|----------|-----------|---------------|
+| `+layout.svelte:73` | `in:fade` overlay | `duration: reducedMotion ? 0 : 400` |
+| `+page.svelte:126` | `transition:fade` preloader | `duration: reducedMotion ? 0 : 500` |
+| `experiences/+page.svelte:68` | `transition:fade` preloader | `duration: reducedMotion ? 0 : 500` |
+| `projects/+page.svelte:68` | `transition:fade` preloader | `duration: reducedMotion ? 0 : 500` |
+| `navbar.svelte:177` | `transition:fade` backdrop | `duration: reducedMotion ? 0 : 150` |
+| `navbar.svelte:184` | `transition:fly` panel | `duration: reducedMotion ? 0 : 250`, `x: reducedMotion ? 0 : 400` |
+| `skills_network.svelte:731` | `transition:fade` tooltip | `duration: reducedMotion ? 0 : 120` |
+| `skills_network.svelte:818` | `transition:fade` dialog | `duration: reducedMotion ? 0 : 150` |
+| `skills_network.svelte:826` | `transition:scale` dialog | `start: 1`, `duration: 0` |
+| `hero_entry.svelte.js:35` | GSAP full hero sequence | early return — no SplitText, no timeline |
+| `socials.svelte:31` | GSAP para+links fade-up | `gsap.set` to visible, skip ScrollTrigger |
+| `cube_grid.svelte.js:16` | GSAP staggerRotateTiles | `gsap.to` with `duration: 0` |
+| `cube_grid.svelte:269` | Breathing + proximity dim | skipped entirely |
+| `animated_heading.svelte:70` | GSAP SplitText stagger | `$effect` guard — skips init |
+| `stagger_wipe.svelte.js:24` | GSAP wipe-in | `gsap.set` to final state |
+| `section_snap.svelte.js:17` | `scrollIntoView` smooth | `behavior: "instant"` |
+
+**Detection pattern:** All `.svelte` files use synchronous `$state(typeof window !== 'undefined' && window.matchMedia("(prefers-reduced-motion: reduce)").matches)` so the value is correct at first render (no flash). Pure JS utility files accept a `reducedMotion` parameter from the caller. `section_snap.svelte.js` auto-detects internally since it runs client-side only.
+
 ### roadmap
 
 <!-- current state of the project, what has been done and what is to be done -->
@@ -487,5 +514,6 @@ Template renders `type: "rich"` lines by iterating `richText` segments and wrapp
 [x] accent_button component (div wrapper + button, bg wipes from left, hard corners, font-c-unbounded)
 [x] page-transition overlay (layout-level fixed overlay triggered by beforeNavigate, z-40 between navbar and preloader, 400ms fade-in, instant removal behind preloader after navigation)
 [x] conditional hero entry on SPA navigation (navigation_state.svelte.js flag set in beforeNavigate, home page skips image animation + scroll lock on navigated-to visits; SplitText/text animations always run)
+[x] prefers-reduced-motion audit: all 18 JS-based animation sites (Svelte transitions, GSAP sequences, scrollIntoView) individually guarded with synchronous `matchMedia` detection in 14 files
 [ ] route structure for navigation
 [ ] content / data files

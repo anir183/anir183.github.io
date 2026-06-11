@@ -6,9 +6,13 @@ import { gsap } from "gsap";
  * @param {number} cols
  * @param {number} rows
  * @param {() => void} [onComplete]
+ * @param {boolean} [reducedMotion]
  * @returns {gsap.core.Tween}
  */
-export function staggerRotateTiles(tiles, cols, rows, onComplete) {
+export function staggerRotateTiles(tiles, cols, rows, onComplete, reducedMotion = false) {
+	if (reducedMotion) {
+		return gsap.to(tiles, { rotationY: "+=180", duration: 0, onComplete });
+	}
 	return gsap.to(tiles, {
 		rotationY: "+=180",
 		duration: 0.9,
