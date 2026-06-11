@@ -107,10 +107,8 @@
 			})
 			.finally(() => {
 				if (!mounted) return;
-				if (!spaNav) {
-					document.body.classList.remove(BODY_SCROLL_LOCK);
-					cleanupSnap = createSectionSnap();
-				}
+				document.body.classList.remove(BODY_SCROLL_LOCK);
+				cleanupSnap = createSectionSnap();
 			});
 
 		return () => {
