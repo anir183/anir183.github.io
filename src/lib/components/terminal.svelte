@@ -601,6 +601,8 @@
 /** @type {HTMLDivElement | undefined} */
 let completionPopupEl = $state();
 
+let popupAbove = $state(true);
+
 $effect(() => {
 	const idx = tabCompletionIdx;
 	const el = completionPopupEl;
@@ -608,6 +610,17 @@ $effect(() => {
 	const btn = el.querySelector(`[data-idx="${idx}"]`);
 	if (btn && !(btn instanceof HTMLElement)) return;
 	(/** @type {HTMLElement} */ (btn))?.scrollIntoView({ block: "nearest" });
+});
+
+$effect(() => {
+	if (!tabCompletions.length || !outputEl || !hiddenInput) return;
+	const raf = requestAnimationFrame(() => {
+		if (!tabCompletions.length || !outputEl || !hiddenInput) return;
+		const opRect = outputEl.getBoundingClientRect();
+		const inRect = hiddenInput.getBoundingClientRect();
+		popupAbove = inRect.top - opRect.top >= 120;
+	});
+	return () => cancelAnimationFrame(raf);
 });
 
 	let inputSegments = $derived(highlightInput(currentInput, cmdMap, aliases, fs, cwd));
@@ -916,7 +929,13 @@ let isMobileDevice = $state(false);
 		tabCompletions = [];
 		const raw = currentInput;
 		const input = raw.trim().toLowerCase();
-		if (!input) return;
+		if (!input) {
+			addLine("prompt", `guest@portfolio-183:${promptDir}$ `);
+			history = [...history, ""];
+			historyIndex = -1;
+			currentInput = "";
+			return;
+		}
 
 		if (awaitingConfirm) {
 			if (lines.length > 0) {
@@ -1411,7 +1430,7 @@ let isMobileDevice = $state(false);
 						bind:this={completionPopupEl}
 						role="listbox"
 						tabindex="-1"
-						class="absolute bottom-full left-0 mb-2 max-h-40 overflow-y-auto rounded-lg border border-c-border/20 bg-c-bg-1 py-1 shadow-xl"
+						class="absolute left-0 max-h-40 overflow-y-auto rounded-lg border border-c-border/20 bg-c-bg-1 py-1 shadow-xl {popupAbove ? 'bottom-full mb-2' : 'top-full mt-2'}"
 						onmousedown={(e) => e.stopPropagation()}
 					>
 						{#each tabCompletions as comp, i}
