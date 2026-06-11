@@ -37,5 +37,6 @@ export * from "./utils/theme.svelte.js";
 export * from "./utils/assert.svelte.js";
 export * from "./utils/navigation_state.svelte.js";
 export * from "./utils/terminal_highlight.svelte.js";
+export * from "./utils/terminal_completion.svelte.js";
 
 export * from "./utils/section_snap.svelte.js";

@@ -261,3 +261,100 @@ export function segmentDate(date) {
 		{ text: `${date.getFullYear()}`, cls: "text-c-accent-0" }
 	];
 }
+
+/* ─── input highlighting (typing) ─────────────────────── */
+
+/**
+ * @param {string} input
+ * @param {Map<string, unknown>} cmdMap
+ * @param {Map<string, string>} aliases
+ * @param {Record<string, { type: string, children?: string[] }>} fs
+ * @param {string} cwd
+ * @returns {Segment[]}
+ */
+export function highlightInput(input, cmdMap, aliases, fs, cwd) {
+	if (!input) return [];
+
+	/** @type {Segment[]} */
+	const segments = [];
+
+	/** @param {string} p @returns {string} */
+	function resolvePathCwd(p) {
+		if (p === "~") return "/home/guest";
+		if (p.startsWith("~/")) p = "/home/guest" + p.slice(1);
+		const parts = (p.startsWith("/") ? [] : cwd.split("/").filter(Boolean)).concat(
+			p.split("/").filter(Boolean)
+		);
+		const resolved = [];
+		for (const part of parts) {
+			if (part === "." || part === "") continue;
+			if (part === "..") {
+				resolved.pop();
+				continue;
+			}
+			resolved.push(part);
+		}
+		return "/" + resolved.join("/");
+	}
+
+	/** @param {string} raw @returns {string} */
+	function colorForPath(raw) {
+		const resolved = resolvePathCwd(raw);
+		const node = fs[resolved];
+		if (!node) return "text-c-neutral-0";
+		if (node.type === "dir") return "text-c-accent-0";
+		return "text-c-neutral-0";
+	}
+
+	// pass 1: tokenize with whitespace preservation
+	/** @type {{ text: string, isWord: boolean, type?: string }[]} */
+	const rawTokens = [];
+	let buf = "";
+	let inSingle = false;
+	let inDouble = false;
+
+	for (const ch of input) {
+		if (ch === "'" && !inDouble) { inSingle = !inSingle; buf += ch; continue; }
+		if (ch === '"' && !inSingle) { inDouble = !inDouble; buf += ch; continue; }
+		if (!inSingle && !inDouble && ch === " ") {
+			if (buf) { rawTokens.push({ text: buf, isWord: true }); buf = ""; }
+			rawTokens.push({ text: " ", isWord: false });
+			continue;
+		}
+		buf += ch;
+	}
+	if (buf) rawTokens.push({ text: buf, isWord: true });
+	if (input.endsWith(" ")) rawTokens.push({ text: " ", isWord: false });
+
+	// pass 2: classify word tokens and emit segments
+	const wordTokens = rawTokens.filter((t) => t.isWord);
+	let wordIndex = 0;
+
+	for (const raw of rawTokens) {
+		if (!raw.isWord) {
+			segments.push({ text: raw.text, cls: "" });
+			continue;
+		}
+
+		const tok = raw.text;
+		const localIdx = wordIndex;
+		wordIndex++;
+
+		let cls = "";
+		if (localIdx === 0) {
+			const name = tok.toLowerCase();
+			cls = cmdMap.has(name) || aliases.has(name) ? "text-c-accent-0" : "text-c-neutral-0";
+		} else if (localIdx === 1 && wordTokens[0]?.text === "git") {
+			cls = "text-c-accent-0";
+		} else if (tok.startsWith("-")) {
+			cls = "text-c-info";
+		} else if (tok.startsWith("'") || tok.startsWith('"')) {
+			cls = "text-c-warning";
+		} else {
+			cls = colorForPath(tok);
+		}
+		segments.push({ text: tok, cls });
+	}
+
+	return segments;
+}

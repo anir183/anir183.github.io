@@ -7,7 +7,10 @@
 		segmentGitStatus, segmentGitCommit, segmentGitPush, segmentGitLog,
 		segmentBashrc, segmentQuotes,
 		segmentGrepLine,
-		segmentDate
+		segmentDate,
+		highlightInput,
+		getCompletions,
+		applyCompletion
 	} from "$lib";
 
 	let {
@@ -592,6 +595,23 @@
 	let awaitingConfirm = $state(false);
 	let focused = $state(false);
 
+	let tabCompletions = $state(/** @type {string[]} */ ([]));
+	let tabCompletionIdx = $state(0);
+
+/** @type {HTMLDivElement | undefined} */
+let completionPopupEl = $state();
+
+$effect(() => {
+	const idx = tabCompletionIdx;
+	const el = completionPopupEl;
+	if (!el || !tabCompletions.length) return;
+	const btn = el.querySelector(`[data-idx="${idx}"]`);
+	if (btn && !(btn instanceof HTMLElement)) return;
+	(/** @type {HTMLElement} */ (btn))?.scrollIntoView({ block: "nearest" });
+});
+
+	let inputSegments = $derived(highlightInput(currentInput, cmdMap, aliases, fs, cwd));
+
 /** @type {HTMLDivElement | undefined} */
 let outputEl = $state();
 /** @type {HTMLElement | undefined} */
@@ -893,6 +913,7 @@ let isMobileDevice = $state(false);
 	}
 
 	function submitCommand() {
+		tabCompletions = [];
 		const raw = currentInput;
 		const input = raw.trim().toLowerCase();
 		if (!input) return;
@@ -945,6 +966,9 @@ let isMobileDevice = $state(false);
 
 	/** @param {KeyboardEvent} e */
 	function onKeydown(e) {
+		if (tabCompletions.length > 0 && e.key !== "Tab" && e.key !== "Shift" && e.key !== "Control" && e.key !== "Alt" && e.key !== "Meta") {
+			tabCompletions = [];
+		}
 		if (e.key === "Enter") {
 			e.preventDefault();
 			submitCommand();
@@ -974,10 +998,33 @@ let isMobileDevice = $state(false);
 			}
 		} else if (e.key === "Tab") {
 			e.preventDefault();
+			if (composing) return;
 			if (historyIndex !== -1) historyIndex = -1;
-			currentInput += "\t";
+
+			if (tabCompletions.length > 0) {
+				const len = tabCompletions.length;
+				if (e.shiftKey) {
+					tabCompletionIdx = (tabCompletionIdx - 1 + len) % len;
+				} else {
+					tabCompletionIdx = (tabCompletionIdx + 1) % len;
+				}
+				currentInput = applyCompletion(currentInput, tabCompletions[tabCompletionIdx]);
+			} else {
+				const comps = getCompletions(currentInput, cmdMap, aliases, fs, cwd);
+				if (comps.length === 1) {
+					currentInput = applyCompletion(currentInput, comps[0]);
+				} else if (comps.length > 1) {
+					tabCompletions = comps;
+					tabCompletionIdx = 0;
+					currentInput = applyCompletion(currentInput, comps[0]);
+				}
+			}
 		} else if (e.key === "Escape") {
-			terminalEl?.blur();
+			if (tabCompletions.length > 0) {
+				tabCompletions = [];
+			} else {
+				terminalEl?.blur();
+			}
 		}
 	}
 
@@ -1331,7 +1378,11 @@ let isMobileDevice = $state(false);
 				<span class="shrink-0 text-c-accent-0">guest@portfolio-183:{promptDir}$</span>
 			{/if}
 			<span class="relative flex items-center">
-				<span class="whitespace-pre text-c-neutral-0">{currentInput}</span>
+				<span class="whitespace-pre">
+				{#each inputSegments as seg, i}
+					<span class={seg.cls}>{seg.text}</span>
+				{/each}
+			</span>
 				<span
 					class="font-bold -ml-[1px]"
 					class:cursor-blink={focused}
@@ -1351,6 +1402,28 @@ let isMobileDevice = $state(false);
 					oncompositionend={onCompositionEnd}
 					onblur={onHiddenBlur}
 				/>
+				{#if tabCompletions.length > 0}
+					<div
+						bind:this={completionPopupEl}
+						role="listbox"
+						tabindex="-1"
+						class="absolute bottom-full left-0 mb-2 max-h-40 overflow-y-auto rounded-lg border border-c-border/20 bg-c-bg-1 py-1 shadow-xl"
+						onmousedown={(e) => e.stopPropagation()}
+					>
+						{#each tabCompletions as comp, i}
+							<button
+								data-idx={i}
+								class="block w-full whitespace-nowrap px-3 py-0.5 text-left font-c-jetbrains text-sm transition-colors {i === tabCompletionIdx ? 'bg-c-accent-0/10 text-c-accent-0' : 'text-c-neutral-0'}"
+								onmousedown={(e) => {
+									e.preventDefault();
+									currentInput = applyCompletion(currentInput, comp);
+									tabCompletions = [];
+									terminalEl?.focus();
+								}}>{comp}</button
+							>
+						{/each}
+					</div>
+				{/if}
 			</span>
 		</div>
 	</div>
