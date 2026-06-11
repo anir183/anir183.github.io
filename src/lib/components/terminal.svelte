@@ -1042,6 +1042,15 @@ let isMobileDevice = $state(false);
 
 		let mounted = true;
 
+		let prevVpHeight = window.visualViewport?.height ?? window.innerHeight;
+		function onVpResize() {
+			if (!isMobileDevice || !terminalEl || !window.visualViewport) return;
+			const h = window.visualViewport.height;
+			if (h < prevVpHeight) terminalEl.scrollIntoView({ block: "nearest" });
+			prevVpHeight = h;
+		}
+		window.visualViewport?.addEventListener("resize", onVpResize);
+
 		tick().then(() => {
 			if (!mounted || !terminalEl || !outputEl) return;
 
@@ -1068,6 +1077,7 @@ let isMobileDevice = $state(false);
 
 		return () => {
 			mounted = false;
+			window.visualViewport?.removeEventListener("resize", onVpResize);
 		};
 	});
 
@@ -1235,20 +1245,6 @@ let isMobileDevice = $state(false);
 	onfocus={onFocus}
 	onblur={onBlur}
 >
-	<input
-		bind:this={hiddenInput}
-		class="pointer-events-none fixed left-0 top-0 h-px w-px opacity-0 bg-transparent border-0 outline-none ring-0"
-		tabindex="-1"
-		aria-hidden="true"
-		autocomplete="off"
-		autocapitalize="off"
-		autocorrect="off"
-		spellcheck="false"
-		oninput={onInput}
-		oncompositionstart={onCompositionStart}
-		oncompositionend={onCompositionEnd}
-		onblur={onHiddenBlur}
-	/>
 	<div
 		class="flex w-full items-center gap-3 px-5 py-3 max-lg:px-4 max-lg:py-2.5"
 	>
@@ -1334,13 +1330,27 @@ let isMobileDevice = $state(false);
 			{:else}
 				<span class="shrink-0 text-c-accent-0">guest@portfolio-183:{promptDir}$</span>
 			{/if}
-			<span class="flex items-center">
+			<span class="relative flex items-center">
 				<span class="whitespace-pre text-c-neutral-0">{currentInput}</span>
 				<span
 					class="font-bold -ml-[1px]"
 					class:cursor-blink={focused}
 					class:opacity-0={!focused}>█</span
 				>
+				<input
+					bind:this={hiddenInput}
+					class="pointer-events-none absolute left-0 top-0 h-px w-px opacity-0"
+					tabindex="-1"
+					aria-hidden="true"
+					autocomplete="off"
+					autocapitalize="off"
+					autocorrect="off"
+					spellcheck="false"
+					oninput={onInput}
+					oncompositionstart={onCompositionStart}
+					oncompositionend={onCompositionEnd}
+					onblur={onHiddenBlur}
+				/>
 			</span>
 		</div>
 	</div>
