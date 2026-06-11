@@ -18,7 +18,10 @@
 	/** @type {HTMLElement | undefined} */
 	let el = $state();
 
-	let initialized = $state(false);
+	let alive = true;
+	let setupDone = false;
+	/** @type {any} */
+	let chars;
 	/** @type {any} */
 	let st;
 	/** @type {any} */
@@ -31,23 +34,34 @@
 
 		gsap.registerPlugin(SplitTextPlugin, ScrollTriggerPlugin);
 
-		if (!el) return;
+		if (!el || !alive) return;
 
-		split = new SplitTextPlugin(el, {
-			type: "chars,words",
-			charsClass: "char",
-			charsTag: "span",
-			wordsClass: "word",
-			wordsTag: "span"
-		});
+		// Phase 1: split text and set initial invisible state
+		if (!setupDone) {
+			split = new SplitTextPlugin(el, {
+				type: "chars,words",
+				charsClass: "char",
+				charsTag: "span",
+				wordsClass: "word",
+				wordsTag: "span"
+			});
 
-		const chars = split.chars;
+			chars = split.chars;
 
-		gsap.set(chars, {
-			x: fromX,
-			opacity: 0,
-			skewX: fromSkew
-		});
+			gsap.set(chars, {
+				x: fromX,
+				opacity: 0,
+				skewX: fromSkew
+			});
+
+			setupDone = true;
+		}
+
+		// Wait for start signal if not ready
+		if (!start) return;
+
+		// Phase 2: create ScrollTrigger animation
+		if (st) return;
 
 		st = ScrollTriggerPlugin.create({
 			trigger: el,
@@ -64,15 +78,23 @@
 		});
 	}
 
+	// Phase 1: split text + initial state when el is ready
 	$effect(() => {
-		if (start && el && !initialized && !reducedMotion) {
-			initialized = true;
+		if (el && !setupDone && !reducedMotion) {
+			initAnimation();
+		}
+	});
+
+	// Phase 2: create ScrollTrigger when start becomes true
+	$effect(() => {
+		if (start && setupDone && !st && !reducedMotion) {
 			initAnimation();
 		}
 	});
 
 	$effect(() => {
 		return () => {
+			alive = false;
 			st?.kill();
 			split?.revert();
 		};

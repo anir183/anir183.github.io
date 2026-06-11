@@ -31,6 +31,8 @@
 	/** @type {gsap.core.Timeline | undefined} */
 	let navTl;
 
+	let headingStart = $state(false);
+
 	/** @type {(() => void) | undefined} */
 	let cleanupSnap;
 
@@ -103,7 +105,10 @@
 			})
 			.then(() => {
 				preloaderVisible = false;
-				if (reducedMotion || !navLinesStore.length) return;
+				if (reducedMotion || !navLinesStore.length) {
+					headingStart = true;
+					return;
+				}
 				return new Promise(r => setTimeout(r, 800));
 			})
 			.then(() => {
@@ -127,6 +132,7 @@
 					);
 				}
 				navTl = tl;
+				navTl.then(() => { headingStart = true; });
 			})
 			.catch(() => {
 				preloaderVisible = false;
@@ -135,6 +141,7 @@
 				if (!mounted) return;
 				document.body.classList.remove(BODY_SCROLL_LOCK);
 				cleanupSnap = createSectionSnap();
+				setTimeout(() => { headingStart = true; }, 3000);
 			});
 
 		return () => {
@@ -157,5 +164,5 @@
 {/if}
 
 <Navbar bind:navEl bind:themeBtn bind:hamburgerBtn {navItems} />
-<ExperiencesSection {reducedMotion} />
+<ExperiencesSection {reducedMotion} {headingStart} />
 <Footer />

@@ -30,11 +30,6 @@ export async function experiencesEntrySequence(config) {
 	gsap.set(nodeEls, { scale: 0, opacity: 0 });
 	gsap.set(contentWraps, { y: 0, opacity: 0 });
 
-	// reveal heading node + first experience section + node immediately
-	gsap.set(nodeEls[0], { scale: 1, opacity: 1 });  // heading circle
-	gsap.set(nodeEls[1], { scale: 1, opacity: 1 });  // first experience circle
-	gsap.set(contentWraps[0], { opacity: 1, y: 0 });
-
 	if (reducedMotion) {
 		if (wavePath) gsap.set(wavePath, { strokeDashoffset: 0 });
 		gsap.set(nodeEls, { scale: 1, opacity: 1 });

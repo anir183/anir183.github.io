@@ -1,10 +1,11 @@
 <script>
 	import { onMount, onDestroy, tick } from "svelte";
+	import { gsap } from "gsap";
 	import { experiences } from "$lib/utils/experiences_data.svelte.js";
 	import { experiencesEntrySequence } from "$lib/gsap/sequences/experiences_entry.svelte.js";
 	import { AnimatedHeading } from "$lib";
 
-	let { reducedMotion = false } = $props();
+	let { reducedMotion = false, headingStart = false } = $props();
 
 	let sectionsParent = $state(/** @type {HTMLElement | undefined} */ (undefined));
 	let wavePathEl = $state(/** @type {SVGPathElement | undefined} */ (undefined));
@@ -19,6 +20,16 @@
 
 	/** @type {(() => void) | undefined} */
 	let cleanup;
+
+	$effect(() => {
+		if (headingStart && mountsReady && !reducedMotion) {
+			const timeout = setTimeout(() => {
+				const node = nodeEls[0];
+				if (node) gsap.to(node, { scale: 1, opacity: 1, duration: 0.6, ease: "power2.out" });
+			}, 1200);
+			return () => clearTimeout(timeout);
+		}
+	});
 
 	onMount(async () => {
 		await tick();
@@ -141,7 +152,7 @@
 <div class="relative">
 	<section class="relative z-10 flex min-h-screen items-center px-6 pt-24 max-lg:pt-16 max-lg:px-4">
 		<div class="mx-auto w-full max-w-6xl">
-			<AnimatedHeading tag="h2" start={true} {reducedMotion} class="font-c-unbounded text-6xl font-black text-center lg:text-8xl"
+			<AnimatedHeading tag="h2" start={headingStart} {reducedMotion} class="font-c-unbounded text-6xl font-black text-center lg:text-8xl"
 			>Experiences</AnimatedHeading>
 		</div>
 	</section>
