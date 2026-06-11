@@ -5,6 +5,7 @@ export { default as About } from "./sections/about.svelte";
 export { default as Projects } from "./sections/projects.svelte";
 export { default as SkillsNetwork } from "./sections/skills_network.svelte";
 export { default as Socials } from "./sections/socials.svelte";
+export { default as ExperiencesSection } from "./sections/experiences.svelte";
 
 // components
 export { default as Preloader } from "./components/preloader.svelte";
@@ -25,6 +26,7 @@ export * from "./gsap/sequences/projects_entry.svelte.js";
 export * from "./gsap/clips/stagger_wipe.svelte.js";
 export * from "./gsap/clips/about_parallax.svelte.js";
 export * from "./gsap/sequences/about_intro.svelte.js";
+export * from "./gsap/sequences/experiences_entry.svelte.js";
 
 // utilities
 export * from "./utils/constants.svelte.js";

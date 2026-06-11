@@ -2,12 +2,17 @@
 	import { onMount } from "svelte";
 	import { fade } from "svelte/transition";
 	import { browser } from "$app/environment";
+	import { resolve } from "$app/paths";
+	import { gsap } from "gsap";
 	import {
-		Wip,
+		Navbar,
 		Footer,
 		Preloader,
 		loadAllImages,
-		BODY_SCROLL_LOCK
+		BODY_SCROLL_LOCK,
+		ExperiencesSection,
+		STAGGER_FAST,
+		LG_BREAKPOINT
 	} from "$lib";
 
 	let reducedMotion = $state(browser && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
@@ -15,8 +20,26 @@
 	let progress = $state(0);
 	let preloaderDone = $state(false);
 
+	/** @type {HTMLElement | undefined} */
+	let navEl = $state();
+	/** @type {HTMLButtonElement | undefined} */
+	let themeBtn = $state();
+	/** @type {HTMLButtonElement | undefined} */
+	let hamburgerBtn = $state();
+
+	/** @type {gsap.core.Timeline | undefined} */
+	let navTl;
+
+	const navItems = [
+		{ label: "Home", href: resolve("/") },
+		{ label: "Experiences", href: resolve("/experiences") },
+		{ label: "Projects", href: resolve("/projects") }
+	];
+
 	onMount(() => {
 		let mounted = true;
+		/** @type {HTMLElement[]} */
+		let navLinesStore = [];
 
 		document.body.classList.add(BODY_SCROLL_LOCK);
 
@@ -25,6 +48,39 @@
 			progress = pct;
 		})
 			.then(() => document.fonts.ready)
+			.then(async () => {
+				// --- GSAP setup: initial state only, before preloader fades ---
+				if (!mounted) return;
+
+				const navLinkEls = navEl
+					? [...navEl.querySelectorAll(":scope > div:first-of-type a")]
+					: [];
+				if (!navLinkEls.length || !themeBtn) return;
+
+				const { SplitText } = await import("gsap/SplitText");
+				gsap.registerPlugin(SplitText);
+
+				SplitText.create(navLinkEls, {
+					type: "lines",
+					linesClass: "line",
+					mask: "lines",
+					autoSplit: true
+				});
+				navLinesStore = /** @type {HTMLElement[]} */ (navLinkEls.flatMap(a => [...a.querySelectorAll(".line")]));
+
+				if (reducedMotion) {
+					gsap.set(navLinesStore, { y: "0%" });
+					gsap.set(themeBtn, { opacity: 1, scale: 1 });
+					if (hamburgerBtn && window.innerWidth < LG_BREAKPOINT) gsap.set(hamburgerBtn, { opacity: 1, scale: 1 });
+					return;
+				}
+
+				gsap.set(navLinesStore, { opacity: 0, y: "125%", willChange: "transform" });
+				gsap.set(themeBtn, { opacity: 0, scale: 0.8 });
+				if (hamburgerBtn && window.innerWidth < LG_BREAKPOINT) {
+					gsap.set(hamburgerBtn, { opacity: 0, scale: 0.8 });
+				}
+			})
 			.then(() => {
 				if (!mounted) return;
 				return new Promise((resolve) =>
@@ -43,6 +99,30 @@
 			})
 			.then(() => {
 				preloaderVisible = false;
+				if (reducedMotion || !navLinesStore.length) return;
+				return new Promise(r => setTimeout(r, 800));
+			})
+			.then(() => {
+				// --- Timeline plays after preloader fully faded + buffer ---
+				if (!mounted || !navLinesStore.length || !themeBtn) return;
+
+				const tl = gsap.timeline();
+				tl.to(navLinesStore, { opacity: 1, y: "0%", duration: 1, stagger: STAGGER_FAST, ease: "power3.out" }, 0);
+				tl.fromTo(
+					themeBtn,
+					{ opacity: 0, scale: 0.8 },
+					{ opacity: 1, scale: 1, duration: 0.5, ease: "power3.out" },
+					0
+				);
+				if (hamburgerBtn && window.innerWidth < LG_BREAKPOINT) {
+					tl.fromTo(
+						hamburgerBtn,
+						{ opacity: 0, scale: 0.8 },
+						{ opacity: 1, scale: 1, duration: 1, ease: "power3.out" },
+						0
+					);
+				}
+				navTl = tl;
 			})
 			.catch(() => {
 				preloaderVisible = false;
@@ -54,6 +134,7 @@
 
 		return () => {
 			mounted = false;
+			navTl?.kill();
 			document.body.classList.remove(BODY_SCROLL_LOCK);
 		};
 	});
@@ -69,5 +150,6 @@
 	</div>
 {/if}
 
-<Wip animationDelay={700} />
+<Navbar bind:navEl bind:themeBtn bind:hamburgerBtn {navItems} />
+<ExperiencesSection {reducedMotion} />
 <Footer />
