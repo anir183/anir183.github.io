@@ -74,7 +74,7 @@
 							duration: 1.2,
 							stagger: 0.08,
 							ease: "power3.out"
-						}, "+=0.05");
+						}, "-=0.4");
 					});
 				}
 			},
