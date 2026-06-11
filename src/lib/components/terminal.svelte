@@ -1393,7 +1393,11 @@ let isMobileDevice = $state(false);
 					class="pointer-events-none absolute left-0 top-0 h-px w-px opacity-0"
 					tabindex="-1"
 					aria-hidden="true"
+					type="text"
 					autocomplete="off"
+					data-lpignore="true"
+					data-1p-ignore
+					data-bwignore
 					autocapitalize="off"
 					autocorrect="off"
 					spellcheck="false"
