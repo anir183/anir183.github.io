@@ -518,8 +518,8 @@ onDestroy(() => {
 	}
 	:global(.dot-grid .dot) {
 		position: absolute;
-		width: 2.5px;
-		height: 2.5px;
+		width: 2px;
+		height: 2px;
 		border-radius: 50%;
 		background: var(--color-c-border);
 		opacity: var(--dot-opacity, 0.15);
@@ -527,7 +527,7 @@ onDestroy(() => {
 		will-change: transform;
 	}
 	:global(.dot-grid .dot.active) {
-		transform: scale(2.5);
+		transform: scale(2);
 		background: var(--color-c-accent-0);
 		opacity: 0.5;
 	}

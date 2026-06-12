@@ -138,7 +138,7 @@
 					? "/assets/icons/sun_light.svg"
 					: "/assets/icons/moon_dark.svg"}
 				alt=""
-				class="block h-[18px] w-[18px]"
+				class="block h-[14px] w-[14px]"
 			/>
 		</button>
 

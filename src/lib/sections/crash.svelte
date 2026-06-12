@@ -131,8 +131,8 @@
 		glow.style.cssText = `
 			position: fixed;
 			pointer-events: none;
-			width: 600px;
-			height: 600px;
+			width: 480px;
+			height: 480px;
 			border-radius: 50%;
 			background: radial-gradient(circle at center, color-mix(in srgb, var(--color-c-error) 15%, transparent) 0%, transparent 70%);
 			z-index: 0;
