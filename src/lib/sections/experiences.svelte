@@ -397,7 +397,7 @@
 
 			yearEls.forEach((el) => {
 				const split = new SplitText(el, { type: "chars" });
-				gsap.set(split.chars, { y: 30, opacity: 0 });
+				gsap.set(split.chars, { y: 24, opacity: 0 });
 				const st = ScrollTrigger.create({
 					trigger: /** @type {HTMLElement} */ (el.closest("section")),
 					start: "top 20%",

@@ -26,7 +26,7 @@ export function aboutEntrySequence(config) {
 	const tl = gsap.timeline();
 
 	if (subtitle) {
-		gsap.set(subtitle, { y: 24, opacity: 0 });
+		gsap.set(subtitle, { y: 19, opacity: 0 });
 		tl.to(subtitle, {
 			y: 0,
 			opacity: 1,
@@ -50,7 +50,7 @@ export function aboutEntrySequence(config) {
 	}
 
 	if (ctaGroup) {
-		gsap.set(ctaGroup, { y: 16, opacity: 0 });
+		gsap.set(ctaGroup, { y: 13, opacity: 0 });
 		tl.to(
 			ctaGroup,
 			{

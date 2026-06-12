@@ -85,7 +85,7 @@
 			willChange: "transform"
 		});
 
-		if (ctaEl) gsap.set(ctaEl, { y: 20, opacity: 0 });
+		if (ctaEl) gsap.set(ctaEl, { y: 16, opacity: 0 });
 
 		hidden = false;
 

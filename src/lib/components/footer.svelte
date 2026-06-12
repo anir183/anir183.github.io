@@ -30,7 +30,7 @@
 		let canceled = false;
 
 		if (!reducedMotion) {
-			gsap.set(el, { opacity: 0, y: 16 });
+			gsap.set(el, { opacity: 0, y: 13 });
 		}
 
 		const observer = new IntersectionObserver(

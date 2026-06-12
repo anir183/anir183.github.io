@@ -96,14 +96,14 @@
 		const headingLines = wipHeading ? [...wipHeading.querySelectorAll(".line")] : [];
 		const descLines = description ? [...description.querySelectorAll(".line")] : [];
 
-		if (logoEl) gsap.set(logoEl, { opacity: 0, x: -20 });
+		if (logoEl) gsap.set(logoEl, { opacity: 0, x: -16 });
 		gsap.set([...navLines, ...headingLines, ...descLines], {
 			y: "125%",
 			willChange: "transform"
 		});
 		if (themeBtn) gsap.set(themeBtn, { opacity: 0, scale: 0.8 });
 		if (hamburgerBtn) gsap.set(hamburgerBtn, { opacity: 0, scale: 0.8 });
-		if (ctaEl) gsap.set(ctaEl, { y: 20, opacity: 0 });
+		if (ctaEl) gsap.set(ctaEl, { y: 16, opacity: 0 });
 
 		if (sectionEl) gsap.set(sectionEl, { opacity: 1 });
 

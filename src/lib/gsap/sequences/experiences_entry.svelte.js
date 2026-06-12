@@ -209,10 +209,10 @@ export async function experiencesEntrySequence(config) {
 
 		const contentTl = gsap.timeline({ defaults: { ease: "power2.out", duration: 1 } });
 		contentTl.set(wrap, { opacity: 1 }, 0);
-		if (heading) contentTl.fromTo(heading, { y: 50, opacity: 0 }, { y: 0, opacity: 1 }, 0);
-		if (company) contentTl.fromTo(company, { y: 30, opacity: 0 }, { y: 0, opacity: 1 }, 0.2);
-		if (desc) contentTl.fromTo(desc, { y: 25, opacity: 0 }, { y: 0, opacity: 1 }, 0.3);
-		if (tags) contentTl.fromTo(tags, { y: 20, opacity: 0 }, { y: 0, opacity: 1 }, 0.35);
+		if (heading) contentTl.fromTo(heading, { y: 40, opacity: 0 }, { y: 0, opacity: 1 }, 0);
+		if (company) contentTl.fromTo(company, { y: 24, opacity: 0 }, { y: 0, opacity: 1 }, 0.2);
+		if (desc) contentTl.fromTo(desc, { y: 20, opacity: 0 }, { y: 0, opacity: 1 }, 0.3);
+		if (tags) contentTl.fromTo(tags, { y: 16, opacity: 0 }, { y: 0, opacity: 1 }, 0.35);
 
 		const contentSt = ScrollTrigger.create({
 			trigger: section,

@@ -467,8 +467,8 @@
 
 		const dur = reducedMotion ? 0 : undefined;
 
-		if (paraEl) gsap.set(paraEl, { y: 40, opacity: 0, scale: 0.97 });
-		if (buttonEl) gsap.set(buttonEl, { y: 20, opacity: 0 });
+		if (paraEl) gsap.set(paraEl, { y: 32, opacity: 0, scale: 0.97 });
+		if (buttonEl) gsap.set(buttonEl, { y: 16, opacity: 0 });
 
 		const tl = gsap.timeline();
 

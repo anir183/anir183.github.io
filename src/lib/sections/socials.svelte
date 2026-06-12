@@ -25,8 +25,8 @@
 			return;
 		}
 
-		if (paraEl) gsap.set(paraEl, { y: 24, opacity: 0 });
-		if (linksEl) gsap.set(linksEl, { y: 16, opacity: 0 });
+		if (paraEl) gsap.set(paraEl, { y: 19, opacity: 0 });
+		if (linksEl) gsap.set(linksEl, { y: 13, opacity: 0 });
 
 		const tl = gsap.timeline({
 			onComplete: () => (terminalPlay = true)
