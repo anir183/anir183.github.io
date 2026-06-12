@@ -517,5 +517,8 @@ Template renders `type: "rich"` lines by iterating `richText` segments and wrapp
 [x] page-transition overlay (layout-level fixed overlay triggered by beforeNavigate, z-40 between navbar and preloader, 400ms fade-in, instant removal behind preloader after navigation)
 [x] conditional hero entry on SPA navigation (navigation_state.svelte.js flag set in beforeNavigate, home page skips image animation + scroll lock on navigated-to visits; SplitText/text animations always run)
 [x] prefers-reduced-motion audit: all 18 JS-based animation sites (Svelte transitions, GSAP sequences, scrollIntoView) individually guarded with synchronous `matchMedia` detection in 14 files
+[x] experiences section: Perlin noise dot grid (seeded 2D noise, ~3000+ dots, 48px spacing, opacity 0.30–0.75 noise‑mapped, smoothstep fade‑in from heading bottom through first 35vh of first experience, z‑0 below sections)
+[x] experiences section: mouse proximity interaction (RAF‑throttled pointermove, 150px radius, scale(3.5) + accent‑color on active dots, per‑dot active‑state tracking, 1s CSS transition for hover/restore)
+[x] experiences section: year as section side header (`exp.period.slice(0, 4)`, absolutely positioned on opposite side from content, hidden mobile, SVG clip‑path `backdrop-filter: blur(8px)` masked to exact character glyphs, GSAP char‑stagger entrance `y: 30→0` `opacity: 0→0.1` duration 1 stagger 0.3, SVG path raised to z‑20 above backdrop‑blur
 [ ] route structure for navigation
 [ ] content / data files
