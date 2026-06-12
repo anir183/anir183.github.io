@@ -431,7 +431,7 @@ onDestroy(() => {
 <div class="relative">
 	<section id="experiences-heading" class="relative z-10 flex min-h-screen items-center px-6 max-lg:px-4">
 		<div class="mx-auto w-full max-w-6xl">
-			<AnimatedHeading tag="h2" start={headingStart} {reducedMotion} class="font-c-unbounded text-6xl font-black text-center lg:text-8xl"
+			<AnimatedHeading tag="h2" start={headingStart} {reducedMotion} class="font-c-unbounded text-6xl max-sm:text-3xl font-black text-center lg:text-8xl"
 			>Experiences</AnimatedHeading>
 		</div>
 	</section>
@@ -445,7 +445,7 @@ onDestroy(() => {
 			{#each pathSegments as d, i}
 				<path d={d} data-path-seg={i}
 					fill="none" stroke="var(--color-c-accent-0)"
-					stroke-width="3" stroke-opacity="0.35"
+					stroke-width="2.5" stroke-opacity="0.35"
 				/>
 			{/each}
 			{#each nodePositions as pos, i}
@@ -453,7 +453,7 @@ onDestroy(() => {
 					bind:this={nodeEls[i]}
 					cx={pos.x}
 					cy={pos.y}
-					r="7"
+					r="5.6"
 					fill="var(--color-c-accent-0)"
 				/>
 			{/each}

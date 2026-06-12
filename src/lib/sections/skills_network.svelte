@@ -239,7 +239,7 @@
 				);
 				circle.setAttribute("cx", String(initPt.x));
 				circle.setAttribute("cy", String(initPt.y));
-				circle.setAttribute("r", "1.5");
+				circle.setAttribute("r", "1.2");
 				circle.setAttribute("fill", "var(--color-c-accent-0)");
 				circle.style.opacity = "0";
 				circle.style.pointerEvents = "none";
@@ -427,7 +427,7 @@
 			const isConnected = active
 				? edge[0] === active || edge[1] === active
 				: true;
-			el.setAttribute("r", isConnected ? "2" : "1");
+			el.setAttribute("r", isConnected ? "1.6" : "0.8");
 		});
 	}
 
@@ -654,7 +654,7 @@
 						fill="none"
 						stroke-linecap="round"
 						stroke="var(--color-c-border)"
-						stroke-width="1.5"
+						stroke-width="1.2"
 						opacity="0.3"
 					/>
 				{/each}
@@ -686,17 +686,17 @@
 						onmouseleave={onNodeLeave}
 					>
 						<circle
-							r={isMobile ? 46 : 26}
+							r={isMobile ? 37 : 21}
 							class="fill-c-bg-2/50"
-							stroke-width="1.5"
+							stroke-width="1.2"
 							stroke="var(--color-c-border)"
 						/>
 						{#if !isMobile}
 							<circle
-								r="30"
+								r="24"
 								fill="none"
 								stroke="currentColor"
-								stroke-width="2"
+								stroke-width="1.6"
 								class="pointer-events-none text-c-accent-0"
 								data-pulse={skill.id}
 								opacity="0"
