@@ -314,15 +314,23 @@
 			/** @type {number | null} */
 			let rafId = null;
 			const activeStates = new Array(dotEls.length).fill(false);
+			/** @type {PointerEvent | null} */
+			let lastEvent = null;
 
 			/** @param {PointerEvent} e */
 			function onMove(e) {
+				lastEvent = e;
+				scheduleProximityCheck();
+			}
+
+			function scheduleProximityCheck() {
 				if (rafId) return;
 				rafId = requestAnimationFrame(() => {
 					rafId = null;
+					if (!lastEvent) return;
 					const rect = dotGrid.getBoundingClientRect();
-					const mx = e.clientX - rect.left;
-					const my = e.clientY - rect.top;
+					const mx = lastEvent.clientX - rect.left;
+					const my = lastEvent.clientY - rect.top;
 					for (let i = 0; i < dotEls.length; i++) {
 						if (!dots[i].hoverable) continue;
 						const dx = dots[i].x - mx;
@@ -336,10 +344,38 @@
 				});
 			}
 
-			window.addEventListener("pointermove", onMove);
+			function onLeave() {
+				lastEvent = null;
+				if (rafId) {
+					cancelAnimationFrame(rafId);
+					rafId = null;
+				}
+				for (let i = 0; i < dotEls.length; i++) {
+					if (!dots[i].hoverable) continue;
+					if (activeStates[i]) {
+						activeStates[i] = false;
+						dotEls[i].classList.remove("active");
+					}
+				}
+			}
+
+			window.addEventListener("pointermove", onMove, { passive: true });
+			document.documentElement.addEventListener("pointerleave", onLeave);
+			window.addEventListener("scroll", scheduleProximityCheck, { passive: true });
+
+			/** @param {PointerEvent} e */
+			function onOut(e) {
+				if (!e.relatedTarget) onLeave();
+			}
+			document.addEventListener("pointerout", onOut);
+			window.addEventListener("blur", onLeave);
 
 			dotGridCleanup = () => {
 				window.removeEventListener("pointermove", onMove);
+				document.documentElement.removeEventListener("pointerleave", onLeave);
+				window.removeEventListener("scroll", scheduleProximityCheck);
+				document.removeEventListener("pointerout", onOut);
+				window.removeEventListener("blur", onLeave);
 				if (rafId) cancelAnimationFrame(rafId);
 				dotGrid.remove();
 			};
@@ -393,7 +429,7 @@ onDestroy(() => {
 </script>
 
 <div class="relative">
-	<section class="relative z-10 flex min-h-screen items-center px-6 pt-24 max-lg:pt-16 max-lg:px-4">
+	<section id="experiences-heading" class="relative z-10 flex min-h-screen items-center px-6 max-lg:px-4">
 		<div class="mx-auto w-full max-w-6xl">
 			<AnimatedHeading tag="h2" start={headingStart} {reducedMotion} class="font-c-unbounded text-6xl font-black text-center lg:text-8xl"
 			>Experiences</AnimatedHeading>
@@ -491,8 +527,8 @@ onDestroy(() => {
 		will-change: transform;
 	}
 	:global(.dot-grid .dot.active) {
-		transform: scale(3.5);
+		transform: scale(2.5);
 		background: var(--color-c-accent-0);
-		opacity: 0.7;
+		opacity: 0.5;
 	}
 </style>

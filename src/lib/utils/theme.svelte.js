@@ -22,12 +22,23 @@ export function applyTheme(mode) {
 
 	if (typeof document === "undefined") return;
 	const root = document.documentElement;
-	root.classList.remove(themes.DARK);
 
-	if (mode === themes.DARK) {
-		root.classList.add(themes.DARK);
+	const updateDOM = () => {
+		root.classList.remove(themes.DARK);
+		if (mode === themes.DARK) {
+			root.classList.add(themes.DARK);
+		}
+		theme.current = mode;
+	};
+
+	if (
+		document.startViewTransition &&
+		!window.matchMedia("(prefers-reduced-motion: reduce)").matches
+	) {
+		document.startViewTransition(updateDOM);
+	} else {
+		updateDOM();
 	}
-	theme.current = mode;
 }
 
 export function toggleTheme() {
