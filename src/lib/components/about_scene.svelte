@@ -22,7 +22,7 @@
 						color-mix(in srgb, var(--color-c-accent-0) 40%, transparent) 0%,
 						transparent 50%
 					);
-					filter: blur(40px);
+					filter: blur(32px);
 				"
 			></div>
 

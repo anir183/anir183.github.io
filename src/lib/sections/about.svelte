@@ -65,15 +65,15 @@
 		}
 
 		const strengthMap = /** @type {Record<string, number>} */ ({
-			halo: 8,
-			subject: 18,
-			fg: 28
+			halo: 6,
+			subject: 14,
+			fg: 22
 		});
 
 		const rotStrengthMap = /** @type {Record<string, number>} */ ({
 			halo: 1,
-			subject: 3,
-			fg: 5
+			subject: 2,
+			fg: 4
 		});
 
 		const layerConfig = layers.map((el) => {
@@ -94,7 +94,7 @@
 			);
 			if (floatLayers.length) {
 				layerFloatTween = gsap.to(floatLayers, {
-					"--fy": 6,
+					"--fy": 5,
 					duration: 4,
 					repeat: -1,
 					yoyo: true,
