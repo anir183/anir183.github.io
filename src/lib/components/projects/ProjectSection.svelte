@@ -3,6 +3,7 @@
 	import { gsap } from "gsap";
 	import ProjectInfo from "./ProjectInfo.svelte";
 	import ProjectCarousel from "./ProjectCarousel.svelte";
+	import { AccentLink } from "$lib";
 
 
 	let {
@@ -34,6 +35,7 @@
 			gsapCleanup = undefined;
 
 			const nowMobile = window.innerWidth < 1024;
+			isMobile = nowMobile;
 
 			if (!mounted || !sectionEl) return;
 
@@ -88,40 +90,6 @@
 						tl.kill();
 					};
 				});
-			} else if (nowMobile && images.length > 0) {
-				import("gsap/ScrollTrigger").then(({ ScrollTrigger }) => {
-					if (!mounted || !sectionEl) return;
-
-					gsap.registerPlugin(ScrollTrigger);
-
-					const imgEls = /** @type {HTMLElement[]} */ ([
-						...sectionEl.querySelectorAll("[data-project-img]")
-					]);
-					if (!imgEls.length) return;
-
-					gsap.set(imgEls, { y: 30, opacity: 0 });
-
-					const mobileTl = gsap.timeline();
-					mobileTl.to(imgEls, {
-						y: 0,
-						opacity: 1,
-						stagger: 0.15,
-						duration: 0.6,
-						ease: "power2.out"
-					});
-
-					const st = ScrollTrigger.create({
-						trigger: sectionEl,
-						start: "top 80%",
-						once: true,
-						animation: mobileTl
-					});
-
-					gsapCleanup = () => {
-						st.kill();
-						mobileTl.kill();
-					};
-				});
 			}
 		}
 
@@ -141,9 +109,10 @@
 <section
 	bind:this={sectionEl}
 	id="project-{project?.id}"
-	class="relative w-full px-5 py-12 lg:flex lg:min-h-screen lg:items-center lg:px-10 lg:py-20"
+	class="relative w-full lg:flex lg:min-h-screen lg:items-center lg:px-10 lg:py-20 max-lg:flex max-lg:min-h-screen max-lg:flex-col"
 >
-	<div class="lg:w-2/5 lg:pr-8">
+	<!-- DESKTOP: ProjectInfo left panel -->
+	<div class="lg:w-2/5 lg:pr-8 max-lg:hidden">
 		<ProjectInfo
 			number={project?.number ?? ""}
 			title={project?.name ?? ""}
@@ -153,22 +122,61 @@
 		/>
 	</div>
 
-	<div class="relative mt-8 flex items-stretch gap-3 lg:mt-0 lg:w-3/5">
-		<div class="flex-1 min-w-0">
-			<ProjectCarousel
-				images={images}
-				bind:imageTrackEl
-				{activeIndex}
-			/>
-		</div>
-		<div
-			class="hidden flex-col items-center justify-center gap-3 lg:flex"
+	<!-- MOBILE: Row 1 — number, title, description -->
+	<div class="pt-20 pb-4 px-5 bg-c-bg-0 lg:hidden">
+		<span
+			class="block font-c-jetbrains text-[clamp(1.5rem,6vw,3rem)] font-black text-c-accent-0/60 leading-none select-none"
 		>
-			{#each images as _, i}
-				<div
-					class="h-3 w-3 rounded-full border transition-all duration-500 {i === activeIndex ? 'border-c-accent-0 bg-c-accent-0 scale-125' : 'border-c-neutral-2/40 bg-transparent'}"
-				></div>
-			{/each}
-		</div>
+			{project?.number}
+		</span>
+		<h3
+			class="mt-1 font-c-unbounded text-[clamp(1.5rem,5vw,2.75rem)] font-black leading-tight text-c-neutral-0"
+		>
+			{project?.name}
+		</h3>
+		<p class="mt-2 max-w-prose text-xs leading-relaxed text-c-neutral-1 font-c-ubuntu">
+			{project?.description}
+		</p>
+	</div>
+
+	<!-- Carousel area: right on desktop, middle on mobile -->
+	<div class="flex max-lg:flex-1 max-lg:px-5 lg:w-3/5 lg:h-[80vh]">
+		<ProjectCarousel
+			images={images}
+			bind:imageTrackEl
+			bind:activeIndex
+			{isMobile}
+		/>
+	</div>
+
+	<!-- DESKTOP: Dot indicators -->
+	<div
+		class="hidden flex-col items-center justify-center gap-3 lg:flex lg:ml-4"
+	>
+		{#each images as _, i}
+			<div
+				class="h-3 w-3 rounded-full border transition-all duration-500 {i === activeIndex ? 'border-c-accent-0 bg-c-accent-0 scale-125' : 'border-c-neutral-2/40 bg-c-bg-2'}"
+			></div>
+		{/each}
+	</div>
+
+	<!-- MOBILE: Row 3 — tags + button -->
+	<div class="py-6 px-5 bg-c-bg-0 lg:hidden">
+		{#if project?.tags?.length}
+			<div class="flex flex-wrap gap-1.5">
+				{#each project.tags as tag}
+					<span
+						class="rounded-full border border-c-accent-0/15 px-2.5 py-0.5 text-xs text-c-accent-0 font-c-ubuntu"
+					>
+						{tag}
+					</span>
+				{/each}
+			</div>
+		{/if}
+		{#if project?.link}
+			<AccentLink href={project.link} class="mt-3 -translate-x-3 px-3 py-1 font-c-unbounded text-xs font-bold">
+				View Project
+			</AccentLink>
+		{/if}
 	</div>
 </section>
