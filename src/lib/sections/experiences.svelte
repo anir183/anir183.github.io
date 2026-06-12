@@ -51,12 +51,11 @@
 	let { reducedMotion = false, headingStart = false } = $props();
 
 	let sectionsParent = $state(/** @type {HTMLElement | undefined} */ (undefined));
-	let wavePathEl = $state(/** @type {SVGPathElement | undefined} */ (undefined));
 	let sectionEls = $state(/** @type {HTMLElement[]} */ ([]));
 	let contentWraps = $state(/** @type {HTMLElement[]} */ ([]));
 	let nodeEls = $state(/** @type {SVGCircleElement[]} */ ([]));
 
-	let pathD = $state("");
+	let pathSegments = $state(/** @type {string[]} */ ([]));
 	let viewBoxStr = $state("0 0 100 100");
 	let nodePositions = $state(/** @type {{ x: number, y: number }[]} */ ([]));
 	let mountsReady = $state(false);
@@ -89,9 +88,6 @@
 		const nodeCount = experiences.length;
 		if (!nodeCount) return;
 
-		const leftX = parentWidth * 0.1;
-		const rightX = parentWidth * 0.9;
-
 		// Heading node immediately below centered header text
 		/** @type {HTMLElement} */
 		const headingSection = /** @type {HTMLElement} */ (parentEl.firstElementChild);
@@ -111,84 +107,155 @@
 		// Experience nodes on opposite side of text
 		// Text side: even=left (ml-[10vw]), odd=right (mr-[10vw])
 		// Node side: even=RIGHT, odd=LEFT
-		const expNodes = [];
-		for (let i = 0; i < nodeCount; i++) {
-			const section = sectionEls[i];
-			expNodes.push({
-				x: isMobile ? parentWidth * 0.5 : (i % 2 === 0 ? rightX : leftX),
-				y: section.offsetTop + section.offsetHeight / 2
-			});
-		}
+		nodePositions = [headingNode];
 
-		// Full path waypoints: heading + all experiences
-		const pathPoints = [headingNode, ...expNodes];
-
-		// Build path d string from all waypoints
-		let d = "";
-		for (let i = 0; i < pathPoints.length; i++) {
-			if (i === 0) {
-				d += `M ${Math.round(pathPoints[i].x)} ${Math.round(pathPoints[i].y)}`;
-			} else {
-				const prev = pathPoints[i - 1];
-				const curr = pathPoints[i];
-				const segLen = Math.abs(curr.x - prev.x);
-				const spread = segLen * 0.4;
-				const expIdx = i - 1;
-				const yOff = isMobile ? window.innerHeight * 0.12 : window.innerHeight * (0.05 + 0.03 * (expIdx % 3));
-				const dir = expIdx % 2 === 0 ? -1 : 1;
-
-				const cp1x = prev.x + (curr.x > prev.x ? spread : -spread);
-				const cp1y = prev.y + yOff * dir;
-				const cp2x = curr.x - (curr.x > prev.x ? spread : -spread);
-				const cp2y = curr.y - yOff * dir;
-
-				d += ` C ${Math.round(cp1x)} ${Math.round(cp1y)}, ${Math.round(cp2x)} ${Math.round(cp2y)}, ${Math.round(curr.x)} ${Math.round(curr.y)}`;
-			}
-		}
-
-		pathD = d;
-		viewBoxStr = `0 0 ${parentWidth} ${parentHeight}`;
-		nodePositions = [headingNode, ...expNodes];
-
-		// Compute per-segment path lengths from the same control points
 		/** @type {number[]} */
-		const segmentLengths = [];
-		if (pathPoints.length > 1) {
-			const tempPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-			document.body.appendChild(tempPath);
-			try {
-				for (let i = 1; i < pathPoints.length; i++) {
-					const prev = pathPoints[i - 1];
-					const curr = pathPoints[i];
-					const sLen = Math.abs(curr.x - prev.x);
-					const spread = sLen * 0.4;
-					const expIdx = i - 1;
-					const yOff = isMobile ? window.innerHeight * 0.12 : window.innerHeight * (0.05 + 0.03 * (expIdx % 3));
-					const dir = expIdx % 2 === 0 ? -1 : 1;
-					const cp1x = prev.x + (curr.x > prev.x ? spread : -spread);
-					const cp1y = prev.y + yOff * dir;
-					const cp2x = curr.x - (curr.x > prev.x ? spread : -spread);
-					const cp2y = curr.y - yOff * dir;
-					const segD = `M ${Math.round(prev.x)} ${Math.round(prev.y)} C ${Math.round(cp1x)} ${Math.round(cp1y)}, ${Math.round(cp2x)} ${Math.round(cp2y)}, ${Math.round(curr.x)} ${Math.round(curr.y)}`;
-					tempPath.setAttribute("d", segD);
-					segmentLengths.push(tempPath.getTotalLength());
+		let segmentLengths = [];
+
+		if (isMobile) {
+			const parentRect = parentEl.getBoundingClientRect();
+			const cx = parentWidth * 0.5;
+			const pad = 40;
+
+			// Node positions: heading + top_i for all, bot_i except last — all centered
+			let prevY = headingNodeY;
+			for (let i = 0; i < nodeCount; i++) {
+				const cr = contentWraps[i].getBoundingClientRect();
+				const topY = cr.top - parentRect.top - pad;
+				const botY = cr.bottom - parentRect.top + pad;
+				nodePositions.push({ x: cx, y: topY });
+				if (i < nodeCount - 1) {
+					nodePositions.push({ x: cx, y: botY });
 				}
-			} finally {
-				document.body.removeChild(tempPath);
+				// Visible segment: prevY → topY (heading→top_0, or bot_{i-1}→top_i)
+				pathSegments.push(`M ${Math.round(cx)} ${Math.round(prevY)} L ${Math.round(cx)} ${Math.round(topY)}`);
+				segmentLengths.push(Math.abs(topY - prevY));
+				prevY = botY;
+			}
+		} else {
+			const parentRect = parentEl.getBoundingClientRect();
+			const pad = 40;
+			for (let i = 0; i < nodeCount; i++) {
+				const yearEl = sectionEls[i].querySelector('[data-el="year"]');
+				if (yearEl) {
+					const yearRect = yearEl.getBoundingClientRect();
+					const cx = yearRect.left + yearRect.width / 2 - parentRect.left;
+					const topY = yearRect.top - parentRect.top - pad;
+					const botY = yearRect.bottom - parentRect.top + pad;
+					nodePositions.push({ x: cx, y: topY });
+					if (i < nodeCount - 1) {
+						nodePositions.push({ x: cx, y: botY });
+					}
+				}
+			}
+
+			// Visible segments: odd-indexed pairs in nodePositions:
+			// 0→1 = heading→top_0, 2→3 = bot_0→top_1, 4→5 = bot_1→top_2, ...
+			if (nodePositions.length > 1) {
+				const tempPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+				document.body.appendChild(tempPath);
+				try {
+					for (let i = 1; i < nodePositions.length; i += 2) {
+						const prev = nodePositions[i - 1];
+						const curr = nodePositions[i];
+						const expIdx = i - 1;
+						const segLen = Math.abs(curr.x - prev.x);
+						const spread = segLen * 0.4;
+						const dir = expIdx % 2 === 0 ? -1 : 1;
+
+						let s = (expIdx * 127 + 42) % 2147483647;
+						s = (s * 16807) % 2147483647;
+						const rY = s / 2147483647;
+						s = (s * 16807) % 2147483647;
+						const rX1 = s / 2147483647;
+						s = (s * 16807) % 2147483647;
+						const rX2 = s / 2147483647;
+
+						const yMul = 0.7 + 0.6 * rY;
+						const baseYOff = window.innerHeight * 0.08;
+						const yOff = baseYOff * yMul;
+						const xRandScale = 0.05;
+						const xOff1 = (rX1 * 2 - 1) * parentWidth * xRandScale;
+						const xOff2 = (rX2 * 2 - 1) * parentWidth * xRandScale;
+
+						let cp1x = prev.x + (curr.x > prev.x ? spread : -spread) + xOff1;
+						let cp2x = curr.x - (curr.x > prev.x ? spread : -spread) + xOff2;
+						cp1x = Math.max(0, Math.min(parentWidth, cp1x));
+						cp2x = Math.max(0, Math.min(parentWidth, cp2x));
+
+						const cp1y = prev.y + yOff * dir;
+						const cp2y = curr.y - yOff * dir;
+
+						const segD = `M ${Math.round(prev.x)} ${Math.round(prev.y)} C ${Math.round(cp1x)} ${Math.round(cp1y)}, ${Math.round(cp2x)} ${Math.round(cp2y)}, ${Math.round(curr.x)} ${Math.round(curr.y)}`;
+						pathSegments.push(segD);
+
+						tempPath.setAttribute("d", segD);
+						segmentLengths.push(tempPath.getTotalLength());
+					}
+				} finally {
+					document.body.removeChild(tempPath);
+				}
 			}
 		}
+
+		viewBoxStr = `0 0 ${parentWidth} ${parentHeight}`;
 
 		mountsReady = true;
 		await tick();
 
+		// Collect path elements for entry sequence
+		/** @type {SVGPathElement[]} */
+		const wavePaths = /** @type {SVGPathElement[]} */ (Array.from(parentEl.querySelectorAll('[data-path-seg]')));
+
+		// Pass only heading + top nodes to entry sequence for standard activation
+		/** @type {SVGElement[]} */
+		const activationNodeEls = /** @type {SVGElement[]} */ (nodeEls.filter((_, idx) => idx === 0 || idx % 2 === 1));
+
+		// Hide bottom nodes before entry sequence (entry sequence won't handle them)
+		for (let i = 0; i < nodeCount - 1; i++) {
+			const el = nodeEls[2 + 2 * i];
+			if (el) gsap.set(el, { scale: 0, opacity: 0 });
+		}
+
 		cleanup = /** @type {(() => void) | undefined} */ (await experiencesEntrySequence({
 			sectionsParent: /** @type {HTMLElement} */ (sectionsParent),
-			wavePath: wavePathEl,
-			nodeEls: /** @type {SVGElement[]} */ (/** @type {unknown} */ (nodeEls)),
+			wavePaths,
+			nodeEls: activationNodeEls,
 			contentWraps: /** @type {HTMLElement[]} */ (contentWraps),
 			segmentLengths,
 			reducedMotion
 		}));
+
+		// Bottom node activation on scroll
+		if (reducedMotion) {
+			for (let i = 0; i < nodeCount - 1; i++) {
+				const el = nodeEls[2 + 2 * i];
+				if (el) gsap.set(el, { scale: 1, opacity: 1 });
+			}
+		} else {
+			const { ScrollTrigger } = await import("gsap/ScrollTrigger");
+			/** @type {import("gsap/ScrollTrigger").ScrollTrigger[]} */
+			const bottomTriggers = [];
+			for (let i = 0; i < nodeCount - 1; i++) {
+				const section = sectionEls[i];
+				const botIdx = 2 + 2 * i;
+				const st = ScrollTrigger.create({
+					trigger: section,
+					start: "top 20%",
+					once: true,
+					onEnter: () => {
+						const el = nodeEls[botIdx];
+						if (el) gsap.to(el, { scale: 1, opacity: 1, duration: 1.2, ease: "power2.out" });
+					}
+				});
+				bottomTriggers.push(st);
+			}
+			const prevCleanup = cleanup;
+			cleanup = () => {
+				prevCleanup?.();
+				bottomTriggers.forEach((st) => st.kill());
+			};
+		}
 
 		// --- Dot grid with Perlin noise ---
 		await tick();
@@ -339,14 +406,12 @@ onDestroy(() => {
 			viewBox={viewBoxStr}
 			preserveAspectRatio="xMidYMid meet"
 		>
-			<path
-				bind:this={wavePathEl}
-				d={pathD}
-				fill="none"
-				stroke="var(--color-c-accent-0)"
-				stroke-width="3"
-				stroke-opacity="0.35"
-			/>
+			{#each pathSegments as d, i}
+				<path d={d} data-path-seg={i}
+					fill="none" stroke="var(--color-c-accent-0)"
+					stroke-width="3" stroke-opacity="0.35"
+				/>
+			{/each}
 			{#each nodePositions as pos, i}
 				<circle
 					bind:this={nodeEls[i]}

@@ -3,7 +3,7 @@ import { gsap } from "gsap";
 /**
  * @param {{
  *   sectionsParent: HTMLElement,
- *   wavePath: SVGPathElement | null | undefined,
+ *   wavePaths: SVGPathElement[],
  *   nodeEls: SVGElement[],
  *   contentWraps: HTMLElement[],
  *   segmentLengths: number[],
@@ -14,7 +14,7 @@ import { gsap } from "gsap";
 export async function experiencesEntrySequence(config) {
 	const {
 		sectionsParent,
-		wavePath,
+		wavePaths = [],
 		nodeEls = [],
 		contentWraps = [],
 		segmentLengths = [],
@@ -23,15 +23,17 @@ export async function experiencesEntrySequence(config) {
 
 	if (!sectionsParent || !contentWraps.length) return;
 
-	const pathLength = wavePath ? wavePath.getTotalLength() : 0;
-
-	// initial state — path starts at 0% drawn
-	if (wavePath) gsap.set(wavePath, { strokeDasharray: pathLength, strokeDashoffset: pathLength });
+	// initial state — all paths hidden; corrected to scroll position below (prevents snap)
+	for (const p of wavePaths) {
+		if (p) gsap.set(p, { strokeDasharray: p.getTotalLength(), strokeDashoffset: p.getTotalLength() });
+	}
 	gsap.set(nodeEls, { scale: 0, opacity: 0 });
 	gsap.set(contentWraps, { y: 0, opacity: 0 });
 
 	if (reducedMotion) {
-		if (wavePath) gsap.set(wavePath, { strokeDashoffset: 0 });
+		for (const p of wavePaths) {
+			if (p) gsap.set(p, { strokeDashoffset: 0 });
+		}
 		gsap.set(nodeEls, { scale: 1, opacity: 1 });
 		gsap.set(contentWraps, { opacity: 1, y: 0 });
 		return;
@@ -45,7 +47,7 @@ export async function experiencesEntrySequence(config) {
 
 	// Path draw — per-segment progress mapping so each segment completes
 	// exactly when the corresponding section reaches its trigger point
-	if (wavePath && pathLength && segmentLengths.length) {
+	if (wavePaths.length && segmentLengths.length) {
 		const totalSegLen = segmentLengths.reduce((a, b) => a + b, 0);
 
 		// cumulative segment lengths: [0, seg0, seg0+seg1, ..., total]
@@ -88,7 +90,7 @@ export async function experiencesEntrySequence(config) {
 			end: "bottom bottom",
 			scrub: 1,
 			onUpdate: () => {
-				const sp = st.progress;
+				const sp = Math.max(0, Math.min(1, (window.scrollY - outerPageY) / (endScrollY - outerPageY)));
 				let drawProgress;
 				if (sp <= nodeTriggerProgress[0]) {
 					drawProgress = 0;
@@ -110,10 +112,75 @@ export async function experiencesEntrySequence(config) {
 						}
 					}
 				}
-				gsap.set(wavePath, { strokeDashoffset: totalSegLen * (1 - (drawProgress ?? 0)) });
+				// Single continuous path (desktop): animate total length as one unit
+				// Multiple independent paths (mobile): each animates within its segment range
+				if (wavePaths.length === 1) {
+					gsap.set(wavePaths[0], { strokeDashoffset: totalSegLen * (1 - (drawProgress ?? 0)) });
+				} else {
+					for (let i = 0; i < wavePaths.length; i++) {
+						const segWork = wavePaths[i];
+						if (!segWork) continue;
+						const segStart = cumSegLens[i] / totalSegLen;
+						const segEnd = cumSegLens[i + 1] / totalSegLen;
+						const dp = drawProgress ?? 0;
+						let local;
+						if (dp <= segStart) {
+							local = 0;
+						} else if (dp >= segEnd) {
+							local = 1;
+						} else {
+							local = (dp - segStart) / (segEnd - segStart);
+						}
+						gsap.set(segWork, { strokeDashoffset: segmentLengths[i] * (1 - local) });
+					}
+				}
 			}
 		});
 		triggers.push(st);
+
+		// Initial stroke position from current scroll (prevents snap on first scroll)
+		const initialSp = Math.max(0, Math.min(1, (window.scrollY - outerPageY) / (endScrollY - outerPageY)));
+		let drawProgress;
+		if (initialSp <= nodeTriggerProgress[0]) {
+			drawProgress = 0;
+		} else if (initialSp >= nodeTriggerProgress[nodeTriggerProgress.length - 1]) {
+			drawProgress = 1;
+		} else {
+			for (let i = 0; i < nodeTriggerProgress.length - 1; i++) {
+				if (initialSp >= nodeTriggerProgress[i] && initialSp < nodeTriggerProgress[i + 1]) {
+					if (i < numSegments) {
+						const local = (initialSp - nodeTriggerProgress[i]) /
+							(nodeTriggerProgress[i + 1] - nodeTriggerProgress[i]);
+						const drawStart = cumSegLens[i] / totalSegLen;
+						const drawEnd = cumSegLens[i + 1] / totalSegLen;
+						drawProgress = drawStart + local * (drawEnd - drawStart);
+					} else {
+						drawProgress = 1;
+					}
+					break;
+				}
+			}
+		}
+		if (wavePaths.length === 1) {
+			gsap.set(wavePaths[0], { strokeDashoffset: totalSegLen * (1 - (drawProgress ?? 0)) });
+		} else {
+			for (let i = 0; i < wavePaths.length; i++) {
+				const segWork = wavePaths[i];
+				if (!segWork) continue;
+				const segStart = cumSegLens[i] / totalSegLen;
+				const segEnd = cumSegLens[i + 1] / totalSegLen;
+				const dp = drawProgress ?? 0;
+				let local;
+				if (dp <= segStart) {
+					local = 0;
+				} else if (dp >= segEnd) {
+					local = 1;
+				} else {
+					local = (dp - segStart) / (segEnd - segStart);
+				}
+				gsap.set(segWork, { strokeDashoffset: segmentLengths[i] * (1 - local) });
+			}
+		}
 	}
 
 	// per-section: node activation + staggered content entrance
