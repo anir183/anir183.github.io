@@ -15,7 +15,11 @@ src/
 │   │   ├── cube_grid.svelte           [implemented]
 │   │   ├── preloader.svelte           [implemented]
 │   │   ├── navbar.svelte              [implemented]
-│   │   └── terminal.svelte            [implemented]
+│   │   ├── terminal.svelte            [implemented]
+│   │   └── projects/
+│   │       ├── ProjectSection.svelte  [implemented]
+│   │       ├── ProjectInfo.svelte     [implemented]
+│   │       └── ProjectCarousel.svelte [implemented]
 │   ├── gsap					[all gsap related code lives here]
 │   │   ├── sequences			[full gsap timeline sequences]
 │   │   │   ├── about_intro.svelte.js  [implemented]
@@ -53,7 +57,7 @@ src/
 	├── experiences/
 	│   └── +page.svelte         [implemented]
 	└── projects/
-	    └── +page.svelte
+	    └── +page.svelte         [implemented]
 ```
 
 ### code architecture
@@ -464,9 +468,59 @@ Template renders `type: "rich"` lines by iterating `richText` segments and wrapp
 
 **Detection pattern:** All `.svelte` files use synchronous `$state(typeof window !== 'undefined' && window.matchMedia("(prefers-reduced-motion: reduce)").matches)` so the value is correct at first render (no flash). Pure JS utility files accept a `reducedMotion` parameter from the caller. `section_snap.svelte.js` auto-detects internally since it runs client-side only.
 
-### roadmap
+### /projects showcase page
 
-<!-- current state of the project, what has been done and what is to be done -->
+Full-viewport pinned project sections with scroll-driven vertical image carousel.
+Proof of concept with placeholder data (3 copies of same image per project).
+
+**Architecture:**
+
+```
+routes/projects/+page.svelte (composer)
+├── Preloader (loadAllImages + progress)
+├── Navbar (Home, Experiences, Projects)
+├── AnimatedHeading ("Projects")
+├── ProjectSection × N (per project, keyed by project.id)
+│   ├── ProjectInfo (number, title, description, tags, button)
+│   ├── ProjectCarousel (vertical image track, $bindable imageTrackEl for GSAP)
+│   └── inline indicator dots (single-use, no separate file)
+└── Footer
+```
+
+**Component details:**
+
+`ProjectSection.svelte` — Manages its own GSAP/ScrollTrigger lifecycle:
+- Desktop (≥1024px): `lg:flex-row` — info left (w-2/5), carousel right (w-3/5) with indicator dots overlaid right edge
+- Mobile (<1024px): stacked column — info above, carousel below, no indicator
+- onMount: dynamic import ScrollTrigger, create pin + scrub timeline
+  - `end: "+=" + N * 0.6 * window.innerHeight` (60vh scroll per image)
+  - `tl.to(imageTrack, { yPercent: -(N-1)/N*100, ease: "none" })`
+  - `activeIndex = Math.round(self.progress * (N-1))` in onUpdate
+  - Reduced motion: `gsap.set` to final yPercent, no ScrollTrigger
+- Mobile: no pin — GSAP timeline with `fromTo` on `[data-project-img]` elements
+  - y:30→0, opacity:0→1, stagger 0.15, ScrollTrigger `start: "top 80%", once: true`
+- matchMedia `(max-width: 1023px)` — toggle isMobile, kill/recreate GSAP on boundary crossing
+- Cleanup: `mounted` guard + `gsapCleanup?.()` kills all triggers/timelines
+
+`ProjectInfo.svelte` — Pure display component:
+- Props: `number`, `title`, `description`, `tags`, `link`
+- Big number (`font-c-jetbrains`, clamped), title (`font-c-unbounded`), body (`font-c-ubuntu`), accent pill tags, accent link button with skew-reveal hover
+
+`ProjectCarousel.svelte` — Vertical image track:
+- Props: `images`, `activeIndex`, `imageTrackEl` (`$bindable()`)
+- Fixed height container (`h-[50vh] lg:h-[80vh]`), inner `flex flex-col` track
+- Each image div has `data-project-img={i}` for mobile scroll targeting
+- Inactive images get `brightness-50`, active gets `brightness-100` (CSS only)
+- Parent animates `imageTrackEl` via GSAP — no animation logic in this component
+
+**Data (`projects_data.svelte.js`):**
+
+Extended `Project` typedef with:
+- `number: string` — display number ("01"–"04")
+- `images: string[]` — multiple screenshots per project (3 each, placeholder copies)
+- `link: string` — case study URL (placeholder "#" for proof of concept)
+
+### roadmap
 
 [x] preloader component (basic Loading... overlay with animated dots)
 [x] navbar component (fixed nav with logo, links, theme toggle)
@@ -523,5 +577,6 @@ Template renders `type: "rich"` lines by iterating `richText` segments and wrapp
 [x] experiences section: mouse proximity interaction (RAF‑throttled pointermove, 150px radius, scale(3.5) + accent‑color on active dots, per‑dot active‑state tracking, 1s CSS transition for hover/restore)
 [x] experiences section: year as section side header (`exp.period.slice(0, 4)`, absolutely positioned on opposite side from content, hidden mobile, SVG clip‑path `backdrop-filter: blur(8px)` masked to exact character glyphs, GSAP char‑stagger entrance `y: 30→0` `opacity: 0→0.1` duration 1 stagger 0.3, SVG path raised to z‑20 above backdrop‑blur
 [x] experiences section: two-node system unified across all sizes. Desktop: top/bottom nodes centered on year header, curved bezier through 2N-1 nodes, 2 raw segments merged per experience. Mobile: separate straight path segments, through-text skipped. Bottom node activation split from entry sequence (separate ScrollTrigger) for both sizes.
+[x] /projects showcase page: pinned per-project sections with scroll-driven image carousel, ProjectSection/ProjectInfo/ProjectCarousel components, 60vh-per-image scroll distance, mobile fallback without pinning
 [ ] route structure for navigation
 [ ] content / data files
