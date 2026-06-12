@@ -600,14 +600,21 @@
 	});
 
 	onMount(() => {
-		isMobile = window.innerWidth < LG_BREAKPOINT;
+		const mql = window.matchMedia(`(max-width: ${LG_BREAKPOINT - 1}px)`);
+		isMobile = mql.matches;
+		const onMqlChange = (/** @type {MediaQueryListEvent} */ e) => (isMobile = e.matches);
+		mql.addEventListener("change", onMqlChange);
+
 		if (reducedMotion) {
-			return;
+			return () => mql.removeEventListener("change", onMqlChange);
 		}
 
 		requestAnimationFrame(() => initAnimations());
 
-		return killAll;
+		return () => {
+			mql.removeEventListener("change", onMqlChange);
+			killAll();
+		};
 	});
 </script>
 

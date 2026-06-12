@@ -37,6 +37,14 @@
 
 	let tileIndices = $derived(Array.from({ length: rows * cols }, (_, i) => i));
 
+	/** @type {ResizeObserver | null} */
+	let ro = null;
+	/** @type {ReturnType<typeof setTimeout> | undefined} */
+	let roTimer;
+	/** @type {boolean} */
+	let rebuildingGrid = false;
+	let resizeKey = $state(0);
+
 	function computeGridDimensions() {
 		if (!gridEl) return;
 		const w = gridEl.clientWidth;
@@ -242,7 +250,7 @@
 		staggerRotateTiles(cubes, cols, rows, onTransitionComplete, reducedMotion);
 	}
 
-	onMount(async () => {
+	async function setupGrid() {
 		computeGridDimensions();
 		await tick();
 
@@ -267,11 +275,46 @@
 		}
 
 		if (activeImage) {
-			const loaded = await ensureImageLoaded(activeImage);
-			if (loaded) {
-				paintFaces(activeImage, "front");
-			}
+			paintFaces(activeImage, "front");
+			paintFaces(activeImage, "rear");
 		}
+	}
+
+	function rebuildCubeGrid() {
+		if (rebuildingGrid || !gridEl) return;
+		rebuildingGrid = true;
+
+		const oldCols = cols;
+		const oldRows = rows;
+		computeGridDimensions();
+
+		if (cols === oldCols && rows === oldRows) {
+			if (activeImage) {
+				paintFaces(activeImage, "front");
+				paintFaces(activeImage, "rear");
+			}
+			rebuildingGrid = false;
+			return;
+		}
+
+		stopBreathing();
+		gridEl.removeEventListener("mousemove", onGridMove);
+		gridEl.removeEventListener("mouseleave", onGridLeave);
+
+		revealCount = 0;
+		isAnimating = false;
+		queuedImage = null;
+		resizeKey++;
+		setupGrid().finally(() => { rebuildingGrid = false; });
+	}
+
+	onMount(async () => {
+		await setupGrid();
+		ro = new ResizeObserver(() => {
+			clearTimeout(roTimer);
+			roTimer = setTimeout(rebuildCubeGrid, 50);
+		});
+		if (gridEl) ro.observe(gridEl);
 	});
 
 	$effect(() => {
@@ -288,6 +331,8 @@
 	$effect(() => {
 		return () => {
 			stopBreathing();
+			clearTimeout(roTimer);
+			ro?.disconnect();
 		};
 	});
 </script>
@@ -297,7 +342,7 @@
 	class="cube-grid h-full w-full"
 	style="perspective: 1200px; display: grid; grid-template-columns: repeat({cols}, 1fr); grid-template-rows: repeat({rows}, 1fr)"
 >
-	{#each tileIndices as i (i)}
+	{#each tileIndices as i (resizeKey + '-' + i)}
 		<div
 			data-tile-index={i}
 			class="cube-tile relative"

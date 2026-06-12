@@ -67,6 +67,11 @@
 	/** @type {(() => void) | undefined} */
 	let yearCleanup;
 
+	/** @type {(() => void) | undefined} */
+	let roCleanup;
+	/** @type {boolean} */
+	let rebuilding = false;
+
 	$effect(() => {
 		if (headingStart && mountsReady && !reducedMotion) {
 			const timeout = setTimeout(() => {
@@ -77,10 +82,10 @@
 		}
 	});
 
-	onMount(async () => {
+	async function initExperiences() {
 		await tick();
 
-		const parentEl = /** @type {HTMLElement} */ (sectionsParent?.parentElement);
+		const parentEl = /** @type {HTMLElement | null} */ (sectionsParent?.parentElement);
 		if (!parentEl) return;
 		const parentWidth = parentEl.offsetWidth;
 		const parentHeight = parentEl.offsetHeight;
@@ -419,12 +424,51 @@
 		} else if (yearEls.length) {
 			yearEls.forEach((el) => { /** @type {HTMLElement} */ (el).style.opacity = "1"; });
 		}
+	}
+
+	async function rebuildExperiences() {
+		if (rebuilding || !sectionsParent?.parentElement) return;
+		rebuilding = true;
+		try {
+			cleanup?.();
+			dotGridCleanup?.();
+			yearCleanup?.();
+			mountsReady = false;
+			pathSegments = [];
+			nodePositions = [];
+			viewBoxStr = "0 0 100 100";
+			await tick();
+			await initExperiences();
+		} finally {
+			rebuilding = false;
+		}
+	}
+
+	onMount(async () => {
+		await initExperiences();
+
+		const parentEl = sectionsParent?.parentElement;
+		if (!parentEl) return;
+
+		/** @type {ReturnType<typeof setTimeout> | undefined} */
+		let resizeTimer;
+		const ro = new ResizeObserver(() => {
+			clearTimeout(resizeTimer);
+			resizeTimer = setTimeout(rebuildExperiences, 100);
+		});
+		ro.observe(parentEl);
+
+		roCleanup = () => {
+			clearTimeout(resizeTimer);
+			ro.disconnect();
+		};
 	});
 
 onDestroy(() => {
 	cleanup?.();
 	dotGridCleanup?.();
 	yearCleanup?.();
+	roCleanup?.();
 });
 </script>
 

@@ -77,13 +77,13 @@
 				if (reducedMotion) {
 					gsap.set(navLinesStore, { y: "0%" });
 					gsap.set(themeBtn, { opacity: 1, scale: 1 });
-					if (hamburgerBtn && window.innerWidth < LG_BREAKPOINT) gsap.set(hamburgerBtn, { opacity: 1, scale: 1 });
+					if (hamburgerBtn) gsap.set(hamburgerBtn, { opacity: 1, scale: 1 });
 					return;
 				}
 
 				gsap.set(navLinesStore, { opacity: 0, y: "125%", willChange: "transform" });
 				gsap.set(themeBtn, { opacity: 0, scale: 0.8 });
-				if (hamburgerBtn && window.innerWidth < LG_BREAKPOINT) {
+				if (hamburgerBtn) {
 					gsap.set(hamburgerBtn, { opacity: 0, scale: 0.8 });
 				}
 			})
@@ -123,7 +123,7 @@
 					{ opacity: 1, scale: 1, duration: 0.5, ease: "power3.out" },
 					0
 				);
-				if (hamburgerBtn && window.innerWidth < LG_BREAKPOINT) {
+				if (hamburgerBtn) {
 					tl.fromTo(
 						hamburgerBtn,
 						{ opacity: 0, scale: 0.8 },

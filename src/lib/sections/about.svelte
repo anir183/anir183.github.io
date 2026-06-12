@@ -29,7 +29,10 @@
 
 	onMount(() => {
 		const isTouch = window.matchMedia("(pointer: coarse)").matches;
-		isMobile = window.innerWidth < LG_BREAKPOINT;
+		const mql = window.matchMedia(`(max-width: ${LG_BREAKPOINT - 1}px)`);
+		isMobile = mql.matches;
+		const onMqlChange = (/** @type {MediaQueryListEvent} */ e) => (isMobile = e.matches);
+		mql.addEventListener("change", onMqlChange);
 
 		const sceneEl = sceneContainer;
 
@@ -114,6 +117,7 @@
 		}
 
 		return () => {
+			mql.removeEventListener("change", onMqlChange);
 			layerFloatTween?.kill();
 			cleanupParallax?.();
 		};

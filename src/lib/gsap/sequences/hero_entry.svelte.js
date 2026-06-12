@@ -138,7 +138,7 @@ export async function heroEntrySequence(config) {
 		}
 		if (logoEl) gsap.set(logoEl, { opacity: 1, x: 0 });
 		if (themeButton) gsap.set(themeButton, { opacity: 1, scale: 1 });
-		if (hamburgerButton && window.innerWidth < LG_BREAKPOINT) {
+		if (hamburgerButton) {
 			gsap.set(hamburgerButton, { opacity: 1, scale: 1 });
 		}
 		console.log("[heroEntry] reduced motion — skipping animation");
@@ -254,7 +254,7 @@ export async function heroEntrySequence(config) {
 		"<0.2"
 	);
 
-	if (hamburgerButton && window.innerWidth < LG_BREAKPOINT) {
+	if (hamburgerButton) {
 		tl.fromTo(
 			hamburgerButton,
 			{
