@@ -97,7 +97,7 @@
 		if (headingWrapper) {
 			const wrapperRect = headingWrapper.getBoundingClientRect();
 			const parentRect = parentEl.getBoundingClientRect();
-			headingNodeY = wrapperRect.bottom - parentRect.top + 32;
+			headingNodeY = wrapperRect.bottom - parentRect.top + 26;
 		}
 		const headingNode = {
 			x: parentWidth * 0.5,
@@ -115,7 +115,7 @@
 		if (isMobile) {
 			const parentRect = parentEl.getBoundingClientRect();
 			const cx = parentWidth * 0.5;
-			const pad = 40;
+			const pad = 32;
 
 			// Node positions: heading + top_i for all, bot_i except last — all centered
 			let prevY = headingNodeY;
@@ -134,7 +134,7 @@
 			}
 		} else {
 			const parentRect = parentEl.getBoundingClientRect();
-			const pad = 40;
+			const pad = 32;
 			for (let i = 0; i < nodeCount; i++) {
 				const yearEl = sectionEls[i].querySelector('[data-el="year"]');
 				if (yearEl) {
@@ -172,9 +172,9 @@
 						const rX2 = s / 2147483647;
 
 						const yMul = 0.7 + 0.6 * rY;
-						const baseYOff = window.innerHeight * 0.08;
+						const baseYOff = window.innerHeight * 0.064;
 						const yOff = baseYOff * yMul;
-						const xRandScale = 0.05;
+						const xRandScale = 0.04;
 						const xOff1 = (rX1 * 2 - 1) * parentWidth * xRandScale;
 						const xOff2 = (rX2 * 2 - 1) * parentWidth * xRandScale;
 
@@ -267,7 +267,7 @@
 		dotGrid.className = "dot-grid";
 
 		const noise2D = createNoise2D(42);
-		const spacing = 48;
+		const spacing = 38;
 		const cw = dotContainer.offsetWidth;
 		const ch = dotContainer.offsetHeight;
 
@@ -309,7 +309,7 @@
 
 		// Mouse proximity
 		if (!reducedMotion) {
-			const radius = 150;
+			const radius = 120;
 			const radiusSq = radius * radius;
 			/** @type {number | null} */
 			let rafId = null;

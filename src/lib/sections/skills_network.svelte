@@ -88,7 +88,7 @@
 			const mx = (a.x + b.x) / 2;
 			const my = (a.y + b.y) / 2;
 			const cx = mx;
-			const cy = my + 20;
+			const cy = my + 16;
 			return `M ${a.x} ${a.y} Q ${cx} ${cy} ${b.x} ${b.y}`;
 		})
 	);
@@ -104,7 +104,7 @@
 			if (!a || !b) return null;
 			const mx = (a.x + b.x) / 2;
 			const my = (a.y + b.y) / 2;
-			return { from: a, to: b, cx: mx, cy: my + 20 };
+			return { from: a, to: b, cx: mx, cy: my + 16 };
 		})
 	);
 
@@ -127,8 +127,8 @@
 		const ry = screenPt.y - containerRect.top;
 		const cw = containerRect.width;
 
-		const tooltipW = 320;
-		const gap = 20;
+		const tooltipW = 256;
+		const gap = 16;
 		const flip = rx + gap + tooltipW > cw - 16;
 
 		return {

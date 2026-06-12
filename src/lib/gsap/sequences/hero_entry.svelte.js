@@ -60,7 +60,7 @@ export async function heroEntrySequence(config) {
 		if (logoEl) {
 			gsap.set(logoEl, {
 				opacity: 0,
-				x: -20
+				x: -16
 			});
 		}
 
@@ -70,9 +70,9 @@ export async function heroEntrySequence(config) {
 		});
 	}
 
-	const INTRO_IMG_SPREAD = 1200;
-	const introImgScale = 0.85;
-	const introImgGap = 40;
+	const INTRO_IMG_SPREAD = 960;
+	const introImgScale = 0.68;
+	const introImgGap = 32;
 	const introImgRotations = [-15, 5, -7.5, 10, -2.5];
 
 	assert(introImages.length > 0, "introImages should have at least one image");

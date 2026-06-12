@@ -27,7 +27,7 @@
 	let firstEffectRun = true;
 
 	// proximity dimming
-	const DIM_FAR = 100;
+	const DIM_FAR = 80;
 	const DIM_STRENGTH = 0.15;
 
 	/** @type {number[]} */
@@ -200,7 +200,7 @@
 	function startBreathing() {
 		tileMeta.forEach((t) => {
 			const tw = gsap.to(t.el, {
-				z: gsap.utils.random(-40, 100),
+				z: gsap.utils.random(-32, 80),
 				rotationZ: gsap.utils.random(-0.5, 0.5),
 				duration: gsap.utils.random(1.5, 3),
 				repeat: -1,

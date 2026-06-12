@@ -328,7 +328,7 @@ export const skillConnections = [
 function computePositions(arr) {
 	const xPad = 0.08;
 	const yPad = 0.08;
-	const minPx = 80;
+	const minPx = 64;
 	const minPxSq = minPx * minPx;
 	const vw = 1000;
 	const vh = 700;
