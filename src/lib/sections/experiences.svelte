@@ -523,10 +523,11 @@ onDestroy(() => {
 		border-radius: 50%;
 		background: var(--color-c-border);
 		opacity: var(--dot-opacity, 0.15);
-		transition: transform 1s ease, background 1s ease;
+		transition: transform 2s ease, background 2s ease;
 		will-change: transform;
 	}
 	:global(.dot-grid .dot.active) {
+		transition: transform 0.1s ease, background 0.1s ease;
 		transform: scale(2);
 		background: var(--color-c-accent-0);
 		opacity: 0.5;
