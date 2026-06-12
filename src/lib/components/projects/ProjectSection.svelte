@@ -38,24 +38,38 @@
 			if (!mounted || !sectionEl) return;
 
 			if (reducedMotion) {
-				if (imageTrackEl && hasMultipleImages) {
-					const maxYPct = -((images.length - 1) / images.length) * 100;
-					gsap.set(imageTrackEl, { yPercent: maxYPct });
+				if (hasMultipleImages) {
+					const imgWraps = [...sectionEl.querySelectorAll("[data-project-img]")];
+					if (imgWraps.length >= 2) {
+						gsap.set(imgWraps[0], { flexGrow: 4.67 });
+					}
 				}
 				return;
 			}
 
-			if (!nowMobile && hasMultipleImages && imageTrackEl) {
+			if (!nowMobile && hasMultipleImages) {
 				import("gsap/ScrollTrigger").then(({ ScrollTrigger }) => {
-					if (!mounted || !sectionEl || !imageTrackEl) return;
+					if (!mounted || !sectionEl) return;
 
 					gsap.registerPlugin(ScrollTrigger);
 
-					const scrollDistance = Math.round(images.length * 0.6 * window.innerHeight);
-					const maxYPct = -((images.length - 1) / images.length) * 100;
+					const imgWraps = /** @type {HTMLElement[]} */ ([
+						...sectionEl.querySelectorAll("[data-project-img]")
+					]);
+					const n = imgWraps.length;
+					if (n < 2) return;
 
-					const tl = gsap.timeline();
-					tl.to(imageTrackEl, { yPercent: maxYPct, ease: "none" });
+					const scrollDistance = Math.round(images.length * 0.4 * window.innerHeight);
+					const seg = 1 / (n - 1);
+
+					const tl = gsap.timeline({ ease: "none" });
+					tl.set(imgWraps[0], { flexGrow: 4.67 }, 0);
+
+					for (let i = 0; i < n - 1; i++) {
+						const startPos = i * seg;
+						tl.to(imgWraps[i], { flexGrow: 1, duration: seg }, startPos);
+						tl.to(imgWraps[i + 1], { flexGrow: 4.67, duration: seg }, startPos);
+					}
 
 					const st = ScrollTrigger.create({
 						trigger: sectionEl,
@@ -65,7 +79,7 @@
 						scrub: 1,
 						animation: tl,
 						onUpdate: (self) => {
-							activeIndex = Math.round(self.progress * (images.length - 1));
+							activeIndex = Math.round(self.progress * (n - 1));
 						}
 					});
 
@@ -138,14 +152,16 @@
 		/>
 	</div>
 
-	<div class="relative mt-8 lg:mt-0 lg:w-3/5">
-		<ProjectCarousel
-			images={images}
-			bind:imageTrackEl
-			{activeIndex}
-		/>
+	<div class="relative mt-8 flex items-stretch gap-3 lg:mt-0 lg:w-3/5">
+		<div class="flex-1 min-w-0">
+			<ProjectCarousel
+				images={images}
+				bind:imageTrackEl
+				{activeIndex}
+			/>
+		</div>
 		<div
-			class="absolute right-4 top-1/2 z-10 hidden -translate-y-1/2 flex-col items-center gap-3 lg:flex"
+			class="hidden flex-col items-center justify-center gap-3 lg:flex"
 		>
 			{#each images as _, i}
 				<div
