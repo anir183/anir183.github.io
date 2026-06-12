@@ -59,7 +59,7 @@
 					const n = imgWraps.length;
 					if (n < 2) return;
 
-					const scrollDistance = Math.round(images.length * 0.4 * window.innerHeight);
+					const scrollDistance = Math.round(images.length * 0.3 * window.innerHeight);
 					const seg = 1 / (n - 1);
 
 					const tl = gsap.timeline({ ease: "none" });
@@ -140,6 +140,7 @@
 
 <section
 	bind:this={sectionEl}
+	id="project-{project?.id}"
 	class="relative w-full px-5 py-12 lg:flex lg:min-h-screen lg:items-center lg:px-10 lg:py-20"
 >
 	<div class="lg:w-2/5 lg:pr-8">

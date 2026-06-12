@@ -13,7 +13,8 @@
 		STAGGER_FAST,
 		AnimatedHeading,
 		ProjectSection,
-		projects
+		projects,
+		createSectionSnap
 	} from "$lib";
 
 	let reducedMotion = $state(browser && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
@@ -30,6 +31,9 @@
 
 	/** @type {gsap.core.Timeline | undefined} */
 	let navTl;
+
+	/** @type {(() => void) | undefined} */
+	let cleanupSnap;
 
 	let headingStart = $state(false);
 
@@ -135,12 +139,14 @@
 			.finally(() => {
 				if (!mounted) return;
 				document.body.classList.remove(BODY_SCROLL_LOCK);
+				cleanupSnap = createSectionSnap();
 				setTimeout(() => { headingStart = true; }, 3000);
 			});
 
 		return () => {
 			mounted = false;
 			navTl?.kill();
+			cleanupSnap?.();
 			document.body.classList.remove(BODY_SCROLL_LOCK);
 		};
 	});
@@ -158,7 +164,7 @@
 
 <Navbar bind:navEl bind:themeBtn bind:hamburgerBtn {navItems} />
 
-<section class="relative z-10 flex min-h-screen items-center px-5 max-lg:px-3">
+<section id="projects-heading" class="relative z-10 flex min-h-screen items-center px-5 max-lg:px-3">
 	<div class="mx-auto w-full max-w-4xl">
 		<AnimatedHeading
 			tag="h2"
