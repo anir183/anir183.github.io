@@ -71,10 +71,12 @@
 >
 	<!-- mobile heading -->
 	<div
-		class="pt-16 pb-3 px-5 bg-c-bg-0 lg:hidden"
+		class="pt-20 pb-4 px-5 bg-c-bg-0 lg:hidden"
 	>
 		<AnimatedHeading
 			tag="h2"
+			start={true}
+			reducedMotion={reducedMotion}
 			class="font-c-unbounded text-3xl max-sm:text-xl font-black text-c-neutral-0"
 		>
 			Open a <span class="text-c-accent-0">social</span>.

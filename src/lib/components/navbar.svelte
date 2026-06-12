@@ -150,18 +150,18 @@
 		>
 			<span
 				class="absolute left-1/2 block h-0.5 w-6 -translate-x-1/2 rounded-full bg-c-neutral-0 transition-all duration-300"
-				class:top-[10px]={!mobileMenuOpen}
-				class:top-[19px]={mobileMenuOpen}
+				class:top-[8px]={!mobileMenuOpen}
+				class:top-[15px]={mobileMenuOpen}
 				class:rotate-45={mobileMenuOpen}
 			></span>
 			<span
-				class="absolute top-[19px] left-1/2 block h-0.5 w-6 -translate-x-1/2 rounded-full bg-c-neutral-0 transition-all duration-300"
+				class="absolute top-[15px] left-1/2 block h-0.5 w-6 -translate-x-1/2 rounded-full bg-c-neutral-0 transition-all duration-300"
 				class:opacity-0={mobileMenuOpen}
 			></span>
 			<span
 				class="absolute left-1/2 block h-0.5 w-6 -translate-x-1/2 rounded-full bg-c-neutral-0 transition-all duration-300"
-				class:top-[28px]={!mobileMenuOpen}
-				class:top-[19px]={mobileMenuOpen}
+				class:top-[22px]={!mobileMenuOpen}
+				class:top-[15px]={mobileMenuOpen}
 				class:-rotate-45={mobileMenuOpen}
 			></span>
 		</button>
