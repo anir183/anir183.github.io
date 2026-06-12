@@ -94,11 +94,11 @@
 
 <footer
 	bind:this={footerEl}
-	class="border-t border-c-border/10 bg-c-bg-0 px-6 py-8 text-xs text-c-neutral-1/60 min-[1100px]:px-16 min-[1100px]:py-10 min-[1100px]:text-xs"
+	class="border-t border-c-border/10 bg-c-bg-0 px-5 py-6 text-xs text-c-neutral-1/60 min-[1100px]:px-12 min-[1100px]:py-8 min-[1100px]:text-xs"
 >
-	<div class="grid grid-cols-1 gap-10 min-[1100px]:grid-cols-3 min-[1100px]:gap-6">
+	<div class="grid grid-cols-1 gap-8 min-[1100px]:grid-cols-3 min-[1100px]:gap-5">
 		<!-- left: image licensing -->
-		<div class="flex flex-col gap-3 min-[1100px]:text-left">
+		<div class="flex flex-col gap-2.5 min-[1100px]:text-left">
 			<h3 class="font-c-bebas text-xs tracking-widest text-c-neutral-0/40 min-[1100px]:text-xs">
 				Image Credits
 			</h3>
@@ -168,11 +168,11 @@
 		</div>
 
 		<!-- middle: license + joke -->
-		<div class="flex flex-col gap-3 min-[1100px]:text-center">
+		<div class="flex flex-col gap-2.5 min-[1100px]:text-center">
 			<h3 class="font-c-bebas text-xs tracking-widest text-c-neutral-0/40 min-[1100px]:text-xs">
 				License
 			</h3>
-			<div class="flex flex-col gap-1 min-[1100px]:flex-1 min-[1100px]:justify-between">
+			<div class="flex flex-col gap-0.5 min-[1100px]:flex-1 min-[1100px]:justify-between">
 				<p class="leading-relaxed">
 					This site is
 					<a
@@ -194,11 +194,11 @@
 		</div>
 
 		<!-- right: nav links -->
-		<div class="flex flex-col gap-3 min-[1100px]:text-right">
+		<div class="flex flex-col gap-2.5 min-[1100px]:text-right">
 			<h3 class="font-c-bebas text-xs tracking-widest text-c-neutral-0/40 min-[1100px]:text-xs">
 				Navigate
 			</h3>
-			<div class="flex flex-col gap-1.5 min-[1100px]:items-end">
+			<div class="flex flex-col gap-1 min-[1100px]:items-end">
 				{#each pageLinks as link (link.label)}
 					<a
 						href={link.href}

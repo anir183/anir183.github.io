@@ -429,8 +429,8 @@ onDestroy(() => {
 </script>
 
 <div class="relative">
-	<section id="experiences-heading" class="relative z-10 flex min-h-screen items-center px-6 max-lg:px-4">
-		<div class="mx-auto w-full max-w-6xl">
+	<section id="experiences-heading" class="relative z-10 flex min-h-screen items-center px-5 max-lg:px-3">
+		<div class="mx-auto w-full max-w-4xl">
 			<AnimatedHeading tag="h2" start={headingStart} {reducedMotion} class="font-c-unbounded text-5xl max-sm:text-2xl font-black text-center lg:text-7xl"
 			>Experiences</AnimatedHeading>
 		</div>
@@ -465,11 +465,11 @@ onDestroy(() => {
 			<section
 				bind:this={sectionEls[i]}
 				id="experience-{i}"
-				class="relative z-10 flex min-h-screen items-center px-6 max-lg:px-4"
+				class="relative z-10 flex min-h-screen items-center px-5 max-lg:px-3"
 			>
 				<div
 					bind:this={contentWraps[i]}
-					class="w-full max-w-lg opacity-0 will-change-transform
+					class="w-full max-w-sm opacity-0 will-change-transform
 						{i % 2 === 0
 							? 'max-lg:mx-auto lg:ml-[10vw] lg:mr-auto'
 							: 'max-lg:mx-auto lg:mr-[10vw] lg:ml-auto'
@@ -478,17 +478,17 @@ onDestroy(() => {
 				<h3 class="text-4xl font-black text-c-neutral-0 font-c-unbounded leading-tight lg:text-5xl xl:text-6xl">
 					{exp.role}
 				</h3>
-				<div data-el="company" class="mt-2 flex items-baseline gap-6 flex-wrap">
+				<div data-el="company" class="mt-1.5 flex items-baseline gap-5 flex-wrap">
 					<p class="text-base font-semibold text-c-accent-0 font-c-ubuntu tracking-wide lg:text-xl">{exp.company}</p>
 					<span class="shrink-0 text-base text-c-neutral-1/40 font-c-jetbrains lg:text-xl">{exp.period}</span>
 				</div>
-				<p data-el="desc" class="mt-6 text-xs leading-relaxed text-c-neutral-1 font-c-ubuntu lg:text-sm max-w-prose">
+				<p data-el="desc" class="mt-5 text-xs leading-relaxed text-c-neutral-1 font-c-ubuntu lg:text-sm max-w-prose">
 					{exp.description}
 				</p>
 				{#if exp.tags?.length}
-					<div data-el="tags" class="mt-6 flex flex-wrap gap-2">
+					<div data-el="tags" class="mt-5 flex flex-wrap gap-1.5">
 						{#each exp.tags as tag}
-							<span class="rounded-full border border-c-accent-0/15 px-3 py-1 text-xs text-c-accent-0 font-c-ubuntu">
+							<span class="rounded-full border border-c-accent-0/15 px-2.5 py-0.5 text-xs text-c-accent-0 font-c-ubuntu">
 								{tag}
 							</span>
 						{/each}

@@ -619,7 +619,7 @@
 >
 	<!-- mobile heading -->
 	<div
-		class="pt-20 pb-4 px-6 bg-c-bg-0 lg:hidden"
+		class="pt-16 pb-3 px-5 bg-c-bg-0 lg:hidden"
 	>
 		<AnimatedHeading
 			tag="h2"
@@ -631,7 +631,7 @@
 
 	<!-- SVG graph panel (left on desktop, top on mobile) -->
 	<div
-		class="flex w-full items-center justify-center px-4 max-lg:flex-1 lg:sticky lg:top-0 lg:h-screen lg:w-3/5 lg:px-8"
+		class="flex w-full items-center justify-center px-3 max-lg:flex-1 lg:sticky lg:top-0 lg:h-screen lg:w-3/5 lg:px-6"
 	>
 	<div bind:this={svgContainerEl} class="relative h-full w-full">
 			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
@@ -721,9 +721,9 @@
 					transition:fade={{ duration: reducedMotion ? 0 : 120 }}
 				>
 					<div
-						class="w-80 rounded-2xl border border-c-border/40 bg-c-bg-2/90 px-6 py-5 shadow-lg backdrop-blur-xl"
+						class="w-64 rounded-2xl border border-c-border/40 bg-c-bg-2/90 px-5 py-4 shadow-lg backdrop-blur-xl"
 					>
-						<div class="flex items-center gap-3">
+						<div class="flex items-center gap-2.5">
 							<span class="text-3xl">{activeSkill.icon}</span>
 							<div>
 								<p class="font-c-unbounded text-sm font-bold text-c-neutral-0">
@@ -737,11 +737,11 @@
 							</div>
 						</div>
 						<p
-							class="mt-3 font-c-ubuntu text-xs leading-relaxed text-c-neutral-1"
+							class="mt-2.5 font-c-ubuntu text-xs leading-relaxed text-c-neutral-1"
 						>
 							{activeSkill.description}
 						</p>
-						<div class="mt-3">
+						<div class="mt-2.5">
 							<span
 								class="font-c-bebas text-xs tracking-widest text-c-neutral-1 uppercase"
 							>
@@ -749,10 +749,10 @@
 							</span>
 						</div>
 						{#if activeSkill.relatedTechnologies.length > 0}
-							<div class="mt-3 flex flex-wrap gap-1.5">
+							<div class="mt-2.5 flex flex-wrap gap-1">
 								{#each activeSkill.relatedTechnologies as tech (tech)}
 									<span
-										class="rounded-full border border-c-border/30 px-2.5 py-0.5 font-c-ubuntu text-xs text-c-neutral-0"
+										class="rounded-full border border-c-border/30 px-2 py-0.5 font-c-ubuntu text-xs text-c-neutral-0"
 									>
 										{tech}
 									</span>
@@ -767,7 +767,7 @@
 
 	<!-- content panel (right on desktop, bottom on mobile) -->
 	<div
-		class="flex w-full flex-col justify-center gap-6 px-6 max-lg:py-8 bg-c-bg-0 lg:w-2/5 lg:gap-10 lg:px-12 lg:py-24 lg:pl-16"
+		class="flex w-full flex-col justify-center gap-5 px-5 max-lg:py-6 bg-c-bg-0 lg:w-2/5 lg:gap-8 lg:px-10 lg:py-20 lg:pl-12"
 	>
 		<AnimatedHeading
 			tag="h2"
@@ -789,7 +789,7 @@
 
 		<AccentLink
 			href={resolve("/experiences")}
-			class="-translate-x-3 px-4 py-1.5 font-c-unbounded text-xs max-sm:text-xs font-bold max-lg:pointer-events-auto lg:text-sm"
+			class="-translate-x-3 px-3 py-1 font-c-unbounded text-xs max-sm:text-xs font-bold max-lg:pointer-events-auto lg:text-sm"
 			bind:el={buttonEl}
 		>
 			Experiences
@@ -801,7 +801,7 @@
 {#if mobileDetailSkill}
 	<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 	<div
-		class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-6"
+		class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-5"
 		onclick={closeMobileDetail}
 		onkeydown={(e) => e.key === "Escape" && closeMobileDetail()}
 		role="dialog"
@@ -810,13 +810,13 @@
 	>
 		<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 		<div
-			class="w-full max-w-lg rounded-2xl border border-c-border/40 bg-c-bg-0 p-10 shadow-xl backdrop-blur-xl"
+			class="w-full max-w-sm rounded-2xl border border-c-border/40 bg-c-bg-0 p-8 shadow-xl backdrop-blur-xl"
 			role="document"
 			onclick={(e) => e.stopPropagation()}
 			onkeydown={() => {}}
 			transition:scale={{ start: reducedMotion ? 1 : 0.92, duration: reducedMotion ? 0 : 150 }}
 		>
-			<div class="flex items-center gap-4">
+			<div class="flex items-center gap-3">
 				<span class="text-4xl">{mobileDetailSkill.icon}</span>
 				<div>
 					<h3 class="font-c-unbounded text-xl text-c-neutral-0">
@@ -829,10 +829,10 @@
 					</span>
 				</div>
 			</div>
-			<p class="mt-4 font-c-ubuntu text-sm leading-relaxed text-c-neutral-1">
+			<p class="mt-3 font-c-ubuntu text-sm leading-relaxed text-c-neutral-1">
 				{mobileDetailSkill.description}
 			</p>
-			<div class="mt-4">
+			<div class="mt-3">
 				<span
 					class="font-c-bebas text-xs tracking-widest text-c-neutral-1 uppercase"
 				>
@@ -843,16 +843,16 @@
 				</p>
 			</div>
 			{#if mobileDetailSkill.relatedTechnologies.length > 0}
-				<div class="mt-4">
+				<div class="mt-3">
 					<span
 						class="font-c-bebas text-xs tracking-widest text-c-neutral-1 uppercase"
 					>
 						Related
 					</span>
-					<div class="mt-2 flex flex-wrap gap-2">
+					<div class="mt-1.5 flex flex-wrap gap-1.5">
 						{#each mobileDetailSkill.relatedTechnologies as tech (tech)}
 							<span
-								class="rounded-full border border-c-border/30 px-3 py-1 font-c-ubuntu text-xs text-c-neutral-0"
+								class="rounded-full border border-c-border/30 px-2.5 py-0.5 font-c-ubuntu text-xs text-c-neutral-0"
 							>
 								{tech}
 							</span>

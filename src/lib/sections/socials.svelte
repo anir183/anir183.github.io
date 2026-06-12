@@ -67,11 +67,11 @@
 	bind:this={sectionEl}
 	use:inertOffscreen
 	id="socials"
-	class="flex min-h-screen w-full flex-col lg:flex-row lg:gap-16"
+	class="flex min-h-screen w-full flex-col lg:flex-row lg:gap-12"
 >
 	<!-- mobile heading -->
 	<div
-		class="pt-20 pb-4 px-6 bg-c-bg-0 lg:hidden"
+		class="pt-16 pb-3 px-5 bg-c-bg-0 lg:hidden"
 	>
 		<AnimatedHeading
 			tag="h2"
@@ -83,7 +83,7 @@
 
 	<!-- terminal panel (middle on mobile, left on desktop) -->
 	<div
-		class="flex w-full px-4 max-lg:flex-1 max-lg:items-stretch max-lg:justify-start max-lg:py-8 lg:sticky lg:top-0 lg:order-1 lg:h-screen lg:w-3/5 lg:items-center lg:justify-center lg:px-16"
+		class="flex w-full px-3 max-lg:flex-1 max-lg:items-stretch max-lg:justify-start max-lg:py-6 lg:sticky lg:top-0 lg:order-1 lg:h-screen lg:w-3/5 lg:items-center lg:justify-center lg:px-12"
 	>
 		<div class="w-full max-lg:flex max-lg:flex-1 max-lg:flex-col">
 			<Terminal bind:playEntry={terminalPlay} {socials} />
@@ -92,7 +92,7 @@
 
 	<!-- content panel (bottom on mobile with gradient, right on desktop) -->
 	<div
-		class="flex w-full flex-col justify-center gap-6 px-6 max-lg:py-8 bg-c-bg-0 lg:order-2 lg:w-2/5 lg:gap-10 lg:px-16 lg:py-24 lg:pl-16"
+		class="flex w-full flex-col justify-center gap-5 px-5 max-lg:py-6 bg-c-bg-0 lg:order-2 lg:w-2/5 lg:gap-8 lg:px-12 lg:py-20 lg:pl-12"
 	>
 		<AnimatedHeading
 			tag="h2"
@@ -114,12 +114,12 @@
 
 		<div
 			bind:this={linksEl}
-			class="flex flex-wrap items-center gap-2"
+			class="flex flex-wrap items-center gap-1.5"
 		>
 			{#each socials as s (s.id)}
 				<AccentLink
 					href={s.url}
-					class="-translate-x-3 px-4 py-1.5 font-c-unbounded text-xs max-sm:text-xs font-bold lg:text-sm"
+					class="-translate-x-3 px-3 py-1 font-c-unbounded text-xs max-sm:text-xs font-bold lg:text-sm"
 				>
 					{s.name}
 				</AccentLink>

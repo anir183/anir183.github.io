@@ -1312,14 +1312,14 @@ let isMobileDevice = $state(false);
 	onblur={onBlur}
 >
 	<div
-		class="flex w-full items-center gap-3 px-5 py-3 max-lg:px-4 max-lg:py-2.5"
+		class="flex w-full items-center gap-2.5 px-4 py-2.5 max-lg:px-3 max-lg:py-2"
 	>
-		<div class="flex gap-1.5">
-			<span class="h-3 w-3 rounded-full bg-c-error max-lg:h-2.5 max-lg:w-2.5"
+		<div class="flex gap-1">
+			<span class="h-2.5 w-2.5 rounded-full bg-c-error max-lg:h-2 max-lg:w-2"
 			></span>
-			<span class="h-3 w-3 rounded-full bg-c-warning max-lg:h-2.5 max-lg:w-2.5"
+			<span class="h-2.5 w-2.5 rounded-full bg-c-warning max-lg:h-2 max-lg:w-2"
 			></span>
-			<span class="h-3 w-3 rounded-full bg-c-success max-lg:h-2.5 max-lg:w-2.5"
+			<span class="h-2.5 w-2.5 rounded-full bg-c-success max-lg:h-2 max-lg:w-2"
 			></span>
 		</div>
 		<span
@@ -1331,7 +1331,7 @@ let isMobileDevice = $state(false);
 	<div class="border-t border-c-border/10"></div>
 	<div
 		bind:this={outputEl}
-		class="flex flex-col overflow-y-auto px-5 py-4 font-c-jetbrains text-xs leading-relaxed text-c-neutral-0 max-lg:max-h-[55vh] max-lg:min-h-[30vh] max-lg:px-4 max-lg:py-3 max-lg:text-xs lg:h-[55vh]"
+		class="flex flex-col overflow-y-auto px-4 py-3 font-c-jetbrains text-xs leading-relaxed text-c-neutral-0 max-lg:max-h-[55vh] max-lg:min-h-[30vh] max-lg:px-3 max-lg:py-2.5 max-lg:text-xs lg:h-[55vh]"
 	>
 		{#each lines as line (line.id)}
 			{#if line.type === "help"}
@@ -1383,14 +1383,14 @@ let isMobileDevice = $state(false);
 					{/each}
 				</div>
 			{:else if line.type === "prompt"}
-				<div class="mt-4 text-c-neutral-1/60">{line.text}</div>
+				<div class="mt-3 text-c-neutral-1/60">{line.text}</div>
 			{:else if line.cls}
 				<div class="whitespace-pre {line.cls}">{line.text}</div>
 			{:else}
 				<div class="whitespace-pre text-c-neutral-1">{line.text}</div>
 			{/if}
 		{/each}
-		<div class="mt-4 flex items-center gap-2 text-xs max-lg:text-xs">
+		<div class="mt-3 flex items-center gap-1.5 text-xs max-lg:text-xs">
 			{#if awaitingConfirm}
 				<span class="text-c-warning">(y/N): </span>
 			{:else}
@@ -1430,13 +1430,13 @@ let isMobileDevice = $state(false);
 						bind:this={completionPopupEl}
 						role="listbox"
 						tabindex="-1"
-						class="absolute left-0 max-h-40 overflow-y-auto rounded-lg border border-c-border/20 bg-c-bg-1 py-1 shadow-xl {popupAbove ? 'bottom-full mb-2' : 'top-full mt-2'}"
+						class="absolute left-0 max-h-40 overflow-y-auto rounded-lg border border-c-border/20 bg-c-bg-1 py-0.5 shadow-xl {popupAbove ? 'bottom-full mb-1.5' : 'top-full mt-1.5'}"
 						onmousedown={(e) => e.stopPropagation()}
 					>
 						{#each tabCompletions as comp, i}
 							<button
 								data-idx={i}
-								class="block w-full whitespace-nowrap px-3 py-0.5 text-left font-c-jetbrains text-xs transition-colors {i === tabCompletionIdx ? 'bg-c-accent-0/10 text-c-accent-0' : 'text-c-neutral-0'}"
+								class="block w-full whitespace-nowrap px-2.5 py-0.5 text-left font-c-jetbrains text-xs transition-colors {i === tabCompletionIdx ? 'bg-c-accent-0/10 text-c-accent-0' : 'text-c-neutral-0'}"
 								onmousedown={(e) => {
 									e.preventDefault();
 									currentInput = applyCompletion(currentInput, comp);

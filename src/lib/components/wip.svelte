@@ -201,7 +201,7 @@
 		bind:logoEl
 	/>
 
-	<div class="flex flex-1 flex-col items-center justify-center gap-6 px-4 text-center">
+	<div class="flex flex-1 flex-col items-center justify-center gap-5 px-3 text-center">
 		<div
 			bind:this={wipHeading}
 			class="font-c-unbounded text-7xl font-black text-c-accent-0 max-sm:text-5xl"
@@ -217,10 +217,10 @@
 		</p>
 	</div>
 
-	<div bind:this={ctaEl} class="flex justify-center pb-12">
+	<div bind:this={ctaEl} class="flex justify-center pb-10">
 		<AccentLink
 			href="/"
-			class="-translate-x-3 px-4 py-1.5 font-c-unbounded text-xs font-bold lg:text-sm"
+			class="-translate-x-3 px-3 py-1 font-c-unbounded text-xs font-bold lg:text-sm"
 		>
 			Back Home
 		</AccentLink>

@@ -46,7 +46,7 @@
 	{/each}
 
 	<div
-		class="hero-content absolute bottom-0 left-0 z-10 box-border w-full p-8 max-intro:px-6 max-intro:pb-8"
+		class="hero-content absolute bottom-0 left-0 z-10 box-border w-full p-6 max-intro:px-5 max-intro:pb-6"
 	>
 		<div class="hero-header max-w-[70%] max-intro:max-w-full">
 			<h1

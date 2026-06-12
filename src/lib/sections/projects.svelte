@@ -64,7 +64,7 @@
 	id="projects"
 >
 	<div
-		class="max-lg:absolute max-lg:top-0 max-lg:left-0 max-lg:z-20 max-lg:w-full max-lg:bg-gradient-to-b max-lg:from-c-bg-0/90 max-lg:via-c-bg-0/60 max-lg:to-transparent max-lg:px-6 max-lg:pt-24 max-lg:pb-12 lg:hidden"
+		class="max-lg:absolute max-lg:top-0 max-lg:left-0 max-lg:z-20 max-lg:w-full max-lg:bg-gradient-to-b max-lg:from-c-bg-0/90 max-lg:via-c-bg-0/60 max-lg:to-transparent max-lg:px-5 max-lg:pt-20 max-lg:pb-10 lg:hidden"
 	>
 		<AnimatedHeading
 			tag="h2"
@@ -77,7 +77,7 @@
 </div>
 
 	<div
-		class="flex w-full flex-col justify-center px-8 py-16 max-lg:pointer-events-none max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:z-10 max-lg:w-full max-lg:justify-end max-lg:bg-[linear-gradient(45deg,color-mix(in_oklch,var(--color-c-bg-0)_95%,transparent)_0%,color-mix(in_oklch,var(--color-c-bg-0)_95%,transparent)_25%,transparent_70%)] max-lg:px-6 max-lg:pt-72 max-sm:pt-48 max-lg:pb-8 lg:w-2/5 lg:gap-10 lg:px-12 lg:py-24 lg:pl-16"
+		class="flex w-full flex-col justify-center px-6 py-12 max-lg:pointer-events-none max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:z-10 max-lg:w-full max-lg:justify-end max-lg:bg-[linear-gradient(45deg,color-mix(in_oklch,var(--color-c-bg-0)_95%,transparent)_0%,color-mix(in_oklch,var(--color-c-bg-0)_95%,transparent)_25%,transparent_70%)] max-lg:px-5 max-lg:pt-56 max-sm:pt-40 max-lg:pb-6 lg:w-2/5 lg:gap-8 lg:px-10 lg:py-20 lg:pl-12"
 	>
 		<div class="max-lg:hidden">
 			<AnimatedHeading
@@ -92,7 +92,7 @@
 
 		<ul
 			bind:this={projectListEl}
-			class="mt-12 flex flex-col gap-4 max-lg:pointer-events-auto"
+			class="mt-10 flex flex-col gap-3 max-lg:pointer-events-auto"
 		>
 			{#each projects as project (project.id)}
 				<li>
@@ -108,7 +108,7 @@
 						>
 							{project.tags.join(" · ")}
 						</span>
-						<h3 class="mt-1 font-c-ubuntu text-xl max-sm:text-sm font-bold lg:text-2xl">
+						<h3 class="mt-0.5 font-c-ubuntu text-xl max-sm:text-sm font-bold lg:text-2xl">
 							{project.name}
 						</h3>
 					</button>
@@ -118,7 +118,7 @@
 
 		<AccentLink
 			href={resolve("/projects")}
-			class="-translate-x-3 translate-y-0.5 px-4 py-1.5 font-c-unbounded text-sm font-bold max-lg:pointer-events-auto max-lg:mt-6 max-lg:self-start max-sm:text-xs"
+			class="-translate-x-3 translate-y-0.5 px-3 py-1 font-c-unbounded text-sm font-bold max-lg:pointer-events-auto max-lg:mt-5 max-lg:self-start max-sm:text-xs"
 			bind:el={ctaEl}
 		>
 			More Projects
@@ -127,7 +127,7 @@
 
 	<div
 		bind:this={gridContainerEl}
-		class="sticky bottom-0 flex h-[50vh] w-full items-center justify-center max-lg:static max-lg:h-screen max-lg:p-12 max-sm:px-6 max-sm:py-10 lg:top-0 lg:h-screen lg:w-3/5 lg:pr-16"
+		class="sticky bottom-0 flex h-[50vh] w-full items-center justify-center max-lg:static max-lg:h-screen max-lg:p-10 max-sm:px-5 max-sm:py-8 lg:top-0 lg:h-screen lg:w-3/5 lg:pr-12"
 	>
 		{#each projects as project (project.id)}
 			<img

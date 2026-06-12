@@ -79,7 +79,7 @@
 
 <nav
 	bind:this={navEl}
-	class="fixed top-0 left-0 z-30 flex w-full items-center justify-between border-b px-8 py-4 transition-all duration-500 max-lg:px-6 max-lg:py-3 {scrolled
+	class="fixed top-0 left-0 z-30 flex w-full items-center justify-between border-b px-6 py-3 transition-all duration-500 max-lg:px-5 max-lg:py-2.5 {scrolled
 		? 'border-c-border/20 bg-c-bg-0/70 backdrop-blur-xl'
 		: 'border-transparent'}"
 >
@@ -89,7 +89,7 @@
 		class="flex shrink-0 items-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)]"
 		aria-label="anir183"
 	>
-		<div class="relative h-10 w-10 translate-y-[1px] max-lg:h-9 max-lg:w-9">
+		<div class="relative h-8 w-8 translate-y-[1px] max-lg:h-7 max-lg:w-7">
 			<img
 				src="/assets/branding/logo_light.svg"
 				alt=""
@@ -109,11 +109,11 @@
 		</div>
 	</a>
 
-	<div class="mr-8 ml-auto flex items-center gap-2 max-lg:hidden">
+	<div class="mr-6 ml-auto flex items-center gap-1.5 max-lg:hidden">
 		{#each navItems as item (item.label)}
 			<a
 				href={item.href}
-				class="group relative overflow-hidden px-7 py-3 no-underline"
+				class="group relative overflow-hidden px-6 py-2.5 no-underline"
 			>
 				<span
 					class="relative inline-flex items-center overflow-hidden font-c-bebas text-sm font-bold tracking-widest text-c-neutral-0 transition-colors duration-200 group-hover:text-c-bg-0"
@@ -126,12 +126,12 @@
 			</a>
 		{/each}
 	</div>
-	<div class="flex items-center gap-2">
+	<div class="flex items-center gap-1.5">
 		<button
 			bind:this={themeBtn}
 			onclick={toggleTheme}
 			aria-label="Toggle theme"
-			class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-c-border/40 bg-c-bg-2/30 text-sm text-c-neutral-0 opacity-0 backdrop-blur-xl transition-all duration-300 hover:border-c-border hover:bg-c-bg-2/50 max-lg:h-9 max-lg:w-9"
+			class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-c-border/40 bg-c-bg-2/30 text-sm text-c-neutral-0 opacity-0 backdrop-blur-xl transition-all duration-300 hover:border-c-border hover:bg-c-bg-2/50 max-lg:h-7 max-lg:w-7"
 		>
 			<img
 				src={theme.current === themes.DARK
@@ -145,21 +145,21 @@
 		<button
 			bind:this={hamburgerBtn}
 			onclick={() => (mobileMenuOpen = !mobileMenuOpen)}
-			class="relative ml-2 h-10 w-10 cursor-pointer opacity-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)] lg:hidden"
+			class="relative ml-1.5 h-8 w-8 cursor-pointer opacity-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)] lg:hidden"
 			aria-label="Toggle menu"
 		>
 			<span
-				class="absolute left-1/2 block h-0.5 w-7 -translate-x-1/2 rounded-full bg-c-neutral-0 transition-all duration-300"
+				class="absolute left-1/2 block h-0.5 w-6 -translate-x-1/2 rounded-full bg-c-neutral-0 transition-all duration-300"
 				class:top-[10px]={!mobileMenuOpen}
 				class:top-[19px]={mobileMenuOpen}
 				class:rotate-45={mobileMenuOpen}
 			></span>
 			<span
-				class="absolute top-[19px] left-1/2 block h-0.5 w-7 -translate-x-1/2 rounded-full bg-c-neutral-0 transition-all duration-300"
+				class="absolute top-[19px] left-1/2 block h-0.5 w-6 -translate-x-1/2 rounded-full bg-c-neutral-0 transition-all duration-300"
 				class:opacity-0={mobileMenuOpen}
 			></span>
 			<span
-				class="absolute left-1/2 block h-0.5 w-7 -translate-x-1/2 rounded-full bg-c-neutral-0 transition-all duration-300"
+				class="absolute left-1/2 block h-0.5 w-6 -translate-x-1/2 rounded-full bg-c-neutral-0 transition-all duration-300"
 				class:top-[28px]={!mobileMenuOpen}
 				class:top-[19px]={mobileMenuOpen}
 				class:-rotate-45={mobileMenuOpen}
@@ -180,23 +180,23 @@
 		<div
 			bind:this={mobilePanelEl}
 			tabindex="-1"
-			class="absolute top-0 right-0 flex h-full w-80 flex-col items-center justify-center bg-c-bg-0 shadow-2xl outline-none max-sm:w-full"
+			class="absolute top-0 right-0 flex h-full w-64 flex-col items-center justify-center bg-c-bg-0 shadow-2xl outline-none max-sm:w-full"
 			transition:fly={{ duration: reducedMotion ? 0 : 250, x: reducedMotion ? 0 : 400 }}
 		>
 			<button
 				onclick={() => (mobileMenuOpen = false)}
 				aria-label="Close menu"
-				class="absolute top-6 right-6 z-20 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-c-border/40 bg-c-bg-2/30 text-sm text-c-neutral-0 transition-all duration-300 hover:border-c-border hover:bg-c-bg-2/50"
+				class="absolute top-6 right-6 z-20 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-c-border/40 bg-c-bg-2/30 text-sm text-c-neutral-0 transition-all duration-300 hover:border-c-border hover:bg-c-bg-2/50"
 			>
 				✕
 			</button>
 
-			<div bind:this={mobileLinksEl} class="flex flex-col items-center gap-6">
+			<div bind:this={mobileLinksEl} class="flex flex-col items-center gap-5">
 		{#each navItems as item (item.label)}
 				<a
 					href={item.href}
 					onclick={() => (mobileMenuOpen = false)}
-					class="group relative px-8 py-4 no-underline"
+					class="group relative px-6 py-3 no-underline"
 				>
 					<span
 						class="relative inline-flex items-center overflow-hidden font-c-unbounded text-3xl font-black tracking-wide text-c-neutral-0 transition-colors duration-200 group-hover:text-c-bg-0"

@@ -128,7 +128,7 @@
 >
 	<!-- mobile heading -->
 	<div
-		class="pt-20 pb-4 px-6 bg-c-bg-0 lg:hidden"
+		class="pt-16 pb-3 px-5 bg-c-bg-0 lg:hidden"
 	>
 		<AnimatedHeading
 			tag="h2"
@@ -140,7 +140,7 @@
 
 	<!-- scene panel (middle on mobile, sticky right on desktop) -->
 	<div
-		class="flex w-full justify-center px-4 max-lg:flex-1 max-lg:items-center lg:sticky lg:top-0 lg:order-2 lg:h-screen lg:w-1/2 lg:items-center lg:px-8"
+		class="flex w-full justify-center px-3 max-lg:flex-1 max-lg:items-center lg:sticky lg:top-0 lg:order-2 lg:h-screen lg:w-1/2 lg:items-center lg:px-6"
 	>
 		<div class="w-full max-w-[60%] max-sm:max-w-[75%] max-lg:h-auto max-lg:aspect-[2160/2668] lg:h-full lg:max-h-[70vh]">
 			<AboutScene bind:sceneEl={sceneContainer} />
@@ -149,7 +149,7 @@
 
 	<!-- content panel (absolute bottom on mobile, left on desktop) -->
 	<div
-		class="flex w-full flex-col justify-center gap-6 px-6 max-lg:py-8 bg-c-bg-0 lg:order-1 lg:w-1/2 lg:gap-10 lg:px-16 lg:py-24 lg:pl-16"
+		class="flex w-full flex-col justify-center gap-5 px-5 max-lg:py-6 bg-c-bg-0 lg:order-1 lg:w-1/2 lg:gap-8 lg:px-12 lg:py-20 lg:pl-12"
 	>
 		<AnimatedHeading
 			tag="h2"
@@ -170,16 +170,16 @@
 			crafting responsive UIs to designing resilient backend services.
 		</p>
 
-		<div bind:this={ctaEl} class="flex flex-wrap items-center gap-4">
+		<div bind:this={ctaEl} class="flex flex-wrap items-center gap-3">
 			<AccentLink
 				href="https://github.com/anir183"
-				class="-translate-x-3 px-4 py-1.5 font-c-unbounded text-xs max-sm:text-xs font-bold lg:text-sm"
+				class="-translate-x-3 px-3 py-1 font-c-unbounded text-xs max-sm:text-xs font-bold lg:text-sm"
 			>
 				GitHub
 			</AccentLink>
 			<AccentLink
 				href="/assets/resume.pdf"
-				class="-translate-x-3 px-4 py-1.5 font-c-unbounded text-xs max-sm:text-xs font-bold lg:text-sm"
+				class="-translate-x-3 px-3 py-1 font-c-unbounded text-xs max-sm:text-xs font-bold lg:text-sm"
 			>
 				Resume
 			</AccentLink>
