@@ -53,12 +53,12 @@
 				bind:this={heroH1}
 				class="
 					font-c-unbounded
-					text-[clamp(3.5rem,8vw,9rem)]
+					text-[clamp(2.75rem,6.4vw,7rem)]
 					leading-[0.9]
 					font-black
 					text-c-neutral-0
 					drop-shadow-[0_4px_24px_var(--color-c-shadow)]
-					max-intro:text-[clamp(3rem,14vw,6rem)]
+					max-intro:text-[clamp(2.25rem,11.2vw,4.75rem)]
 				"
 			>
 				Hello!<br />

@@ -132,7 +132,7 @@
 	>
 		<AnimatedHeading
 			tag="h2"
-			class="font-c-unbounded text-4xl max-sm:text-2xl font-black text-c-neutral-0"
+			class="font-c-unbounded text-3xl max-sm:text-xl font-black text-c-neutral-0"
 		>
 			A little bit about <span class="text-c-accent-0">me</span>.
 		</AnimatedHeading>
@@ -155,14 +155,14 @@
 			tag="h2"
 			start={!isMobile}
 			reducedMotion={reducedMotion}
-			class="font-c-unbounded text-3xl font-black text-c-neutral-0 max-lg:hidden lg:text-6xl"
+			class="font-c-unbounded text-2xl font-black text-c-neutral-0 max-lg:hidden lg:text-5xl"
 		>
 			A little bit about <span class="text-c-accent-0">me</span>.
 		</AnimatedHeading>
 
 		<p
 			bind:this={paraEl}
-			class="font-c-ubuntu text-xl max-sm:text-base leading-relaxed text-c-neutral-1 lg:text-2xl"
+			class="font-c-ubuntu text-base max-sm:text-xs leading-relaxed text-c-neutral-1 lg:text-xl"
 		>
 			B.Tech Computer Science student specializing in Cyber Security. Passionate
 			about low-level systems, modern web engineering, and creating fast
@@ -173,13 +173,13 @@
 		<div bind:this={ctaEl} class="flex flex-wrap items-center gap-4">
 			<AccentLink
 				href="https://github.com/anir183"
-				class="-translate-x-3 px-4 py-1.5 font-c-unbounded text-base max-sm:text-sm font-bold lg:text-lg"
+				class="-translate-x-3 px-4 py-1.5 font-c-unbounded text-xs max-sm:text-xs font-bold lg:text-sm"
 			>
 				GitHub
 			</AccentLink>
 			<AccentLink
 				href="/assets/resume.pdf"
-				class="-translate-x-3 px-4 py-1.5 font-c-unbounded text-base max-sm:text-sm font-bold lg:text-lg"
+				class="-translate-x-3 px-4 py-1.5 font-c-unbounded text-xs max-sm:text-xs font-bold lg:text-sm"
 			>
 				Resume
 			</AccentLink>

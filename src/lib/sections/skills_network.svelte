@@ -623,7 +623,7 @@
 	>
 		<AnimatedHeading
 			tag="h2"
-			class="font-c-unbounded text-4xl max-sm:text-2xl font-black text-c-neutral-0"
+			class="font-c-unbounded text-3xl max-sm:text-xl font-black text-c-neutral-0"
 		>
 			Some <span class="text-c-accent-0">skills</span> I have honed.
 		</AnimatedHeading>
@@ -705,7 +705,7 @@
 						<text
 							text-anchor="middle"
 							dominant-baseline="central"
-							class="pointer-events-none fill-c-neutral-0 text-base select-none max-lg:text-3xl"
+							class="pointer-events-none fill-c-neutral-0 text-xs select-none max-lg:text-2xl"
 						>
 							{skill.icon}
 						</text>
@@ -724,26 +724,26 @@
 						class="w-80 rounded-2xl border border-c-border/40 bg-c-bg-2/90 px-6 py-5 shadow-lg backdrop-blur-xl"
 					>
 						<div class="flex items-center gap-3">
-							<span class="text-4xl">{activeSkill.icon}</span>
+							<span class="text-3xl">{activeSkill.icon}</span>
 							<div>
-								<p class="font-c-unbounded text-lg font-bold text-c-neutral-0">
+								<p class="font-c-unbounded text-sm font-bold text-c-neutral-0">
 									{activeSkill.name}
 								</p>
 								<span
-									class="font-c-bebas text-sm tracking-widest text-c-neutral-1 uppercase"
+									class="font-c-bebas text-xs tracking-widest text-c-neutral-1 uppercase"
 								>
 									{activeSkill.category}
 								</span>
 							</div>
 						</div>
 						<p
-							class="mt-3 font-c-ubuntu text-base leading-relaxed text-c-neutral-1"
+							class="mt-3 font-c-ubuntu text-xs leading-relaxed text-c-neutral-1"
 						>
 							{activeSkill.description}
 						</p>
 						<div class="mt-3">
 							<span
-								class="font-c-bebas text-sm tracking-widest text-c-neutral-1 uppercase"
+								class="font-c-bebas text-xs tracking-widest text-c-neutral-1 uppercase"
 							>
 								{activeSkill.experience}
 							</span>
@@ -752,7 +752,7 @@
 							<div class="mt-3 flex flex-wrap gap-1.5">
 								{#each activeSkill.relatedTechnologies as tech (tech)}
 									<span
-										class="rounded-full border border-c-border/30 px-2.5 py-0.5 font-c-ubuntu text-sm text-c-neutral-0"
+										class="rounded-full border border-c-border/30 px-2.5 py-0.5 font-c-ubuntu text-xs text-c-neutral-0"
 									>
 										{tech}
 									</span>
@@ -773,14 +773,14 @@
 			tag="h2"
 			start={!isMobile}
 			reducedMotion={reducedMotion}
-			class="font-c-unbounded text-3xl font-black text-c-neutral-0 max-lg:hidden lg:text-6xl"
+			class="font-c-unbounded text-2xl font-black text-c-neutral-0 max-lg:hidden lg:text-5xl"
 		>
 			Some <span class="text-c-accent-0">skills</span> I have honed.
 		</AnimatedHeading>
 
 		<p
 			bind:this={paraEl}
-			class="font-c-ubuntu text-xl max-sm:text-base leading-relaxed text-c-neutral-1 lg:text-2xl"
+			class="font-c-ubuntu text-base max-sm:text-xs leading-relaxed text-c-neutral-1 lg:text-xl"
 		>
 			A collection of technologies and tools I've worked with across frontend
 			and backend development, cloud infrastructure, and design. Each node
@@ -789,7 +789,7 @@
 
 		<AccentLink
 			href={resolve("/experiences")}
-			class="-translate-x-3 px-4 py-1.5 font-c-unbounded text-base max-sm:text-sm font-bold max-lg:pointer-events-auto lg:text-lg"
+			class="-translate-x-3 px-4 py-1.5 font-c-unbounded text-xs max-sm:text-xs font-bold max-lg:pointer-events-auto lg:text-sm"
 			bind:el={buttonEl}
 		>
 			Experiences
@@ -817,42 +817,42 @@
 			transition:scale={{ start: reducedMotion ? 1 : 0.92, duration: reducedMotion ? 0 : 150 }}
 		>
 			<div class="flex items-center gap-4">
-				<span class="text-5xl">{mobileDetailSkill.icon}</span>
+				<span class="text-4xl">{mobileDetailSkill.icon}</span>
 				<div>
-					<h3 class="font-c-unbounded text-2xl text-c-neutral-0">
+					<h3 class="font-c-unbounded text-xl text-c-neutral-0">
 						{mobileDetailSkill.name}
 					</h3>
 					<span
-						class="font-c-bebas text-base tracking-widest text-c-neutral-1 uppercase"
+						class="font-c-bebas text-xs tracking-widest text-c-neutral-1 uppercase"
 					>
 						{mobileDetailSkill.category}
 					</span>
 				</div>
 			</div>
-			<p class="mt-4 font-c-ubuntu text-lg leading-relaxed text-c-neutral-1">
+			<p class="mt-4 font-c-ubuntu text-sm leading-relaxed text-c-neutral-1">
 				{mobileDetailSkill.description}
 			</p>
 			<div class="mt-4">
 				<span
-					class="font-c-bebas text-base tracking-widest text-c-neutral-1 uppercase"
+					class="font-c-bebas text-xs tracking-widest text-c-neutral-1 uppercase"
 				>
 					Experience
 				</span>
-				<p class="font-c-ubuntu text-lg text-c-neutral-0">
+				<p class="font-c-ubuntu text-sm text-c-neutral-0">
 					{mobileDetailSkill.experience}
 				</p>
 			</div>
 			{#if mobileDetailSkill.relatedTechnologies.length > 0}
 				<div class="mt-4">
 					<span
-						class="font-c-bebas text-base tracking-widest text-c-neutral-1 uppercase"
+						class="font-c-bebas text-xs tracking-widest text-c-neutral-1 uppercase"
 					>
 						Related
 					</span>
 					<div class="mt-2 flex flex-wrap gap-2">
 						{#each mobileDetailSkill.relatedTechnologies as tech (tech)}
 							<span
-								class="rounded-full border border-c-border/30 px-3 py-1 font-c-ubuntu text-base text-c-neutral-0"
+								class="rounded-full border border-c-border/30 px-3 py-1 font-c-ubuntu text-xs text-c-neutral-0"
 							>
 								{tech}
 							</span>

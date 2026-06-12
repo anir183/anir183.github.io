@@ -197,14 +197,14 @@
 	<div class="flex flex-1 flex-col items-center justify-center gap-8 px-4 text-center">
 		<h1
 			bind:this={title}
-			class="relative z-10 font-c-unbounded text-8xl font-black tracking-tight text-c-error max-lg:text-6xl"
+			class="relative z-10 font-c-unbounded text-7xl font-black tracking-tight text-c-error max-lg:text-5xl"
 		>
 			{error}
 		</h1>
 
 		<p
 			bind:this={subtitle}
-			class="relative z-10 max-w-xl font-c-ubuntu text-2xl text-c-neutral-1 max-lg:text-lg"
+			class="relative z-10 max-w-xl font-c-ubuntu text-xl text-c-neutral-1 max-lg:text-sm"
 		>
 			{details}
 		</p>
@@ -214,14 +214,14 @@
 		{#if reload}
 			<AccentButton
 				onclick={() => location.reload()}
-				class="-translate-x-3 px-4 py-1.5 font-c-unbounded text-base font-bold underline lg:text-lg"
+				class="-translate-x-3 px-4 py-1.5 font-c-unbounded text-xs font-bold underline lg:text-sm"
 			>
 				Reload Site
 			</AccentButton>
 		{:else}
 			<AccentLink
 				href="/"
-				class="-translate-x-3 px-4 py-1.5 font-c-unbounded text-base font-bold lg:text-lg"
+				class="-translate-x-3 px-4 py-1.5 font-c-unbounded text-xs font-bold lg:text-sm"
 			>
 				Back to Home
 			</AccentLink>

@@ -94,12 +94,12 @@
 
 <footer
 	bind:this={footerEl}
-	class="border-t border-c-border/10 bg-c-bg-0 px-6 py-8 text-xs text-c-neutral-1/60 min-[1100px]:px-16 min-[1100px]:py-10 min-[1100px]:text-base"
+	class="border-t border-c-border/10 bg-c-bg-0 px-6 py-8 text-xs text-c-neutral-1/60 min-[1100px]:px-16 min-[1100px]:py-10 min-[1100px]:text-xs"
 >
 	<div class="grid grid-cols-1 gap-10 min-[1100px]:grid-cols-3 min-[1100px]:gap-6">
 		<!-- left: image licensing -->
 		<div class="flex flex-col gap-3 min-[1100px]:text-left">
-			<h3 class="font-c-bebas text-sm tracking-widest text-c-neutral-0/40 min-[1100px]:text-base">
+			<h3 class="font-c-bebas text-xs tracking-widest text-c-neutral-0/40 min-[1100px]:text-xs">
 				Image Credits
 			</h3>
 			<p>
@@ -169,7 +169,7 @@
 
 		<!-- middle: license + joke -->
 		<div class="flex flex-col gap-3 min-[1100px]:text-center">
-			<h3 class="font-c-bebas text-sm tracking-widest text-c-neutral-0/40 min-[1100px]:text-base">
+			<h3 class="font-c-bebas text-xs tracking-widest text-c-neutral-0/40 min-[1100px]:text-xs">
 				License
 			</h3>
 			<div class="flex flex-col gap-1 min-[1100px]:flex-1 min-[1100px]:justify-between">
@@ -195,7 +195,7 @@
 
 		<!-- right: nav links -->
 		<div class="flex flex-col gap-3 min-[1100px]:text-right">
-			<h3 class="font-c-bebas text-sm tracking-widest text-c-neutral-0/40 min-[1100px]:text-base">
+			<h3 class="font-c-bebas text-xs tracking-widest text-c-neutral-0/40 min-[1100px]:text-xs">
 				Navigate
 			</h3>
 			<div class="flex flex-col gap-1.5 min-[1100px]:items-end">

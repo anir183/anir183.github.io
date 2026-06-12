@@ -70,7 +70,7 @@
 			tag="h2"
 			start={true}
 			reducedMotion={reducedMotion}
-		class="font-c-unbounded text-4xl max-sm:text-2xl font-black text-c-neutral-0"
+		class="font-c-unbounded text-3xl max-sm:text-xl font-black text-c-neutral-0"
 	>
 		<span class="text-c-accent-0">Projects</span> I have built.
 	</AnimatedHeading>
@@ -84,7 +84,7 @@
 				tag="h2"
 				start={true}
 				reducedMotion={reducedMotion}
-				class="font-c-unbounded text-4xl font-black text-c-neutral-0 lg:text-6xl"
+				class="font-c-unbounded text-3xl font-black text-c-neutral-0 lg:text-5xl"
 			>
 				<span class="text-c-accent-0">Projects</span> I have built.
 			</AnimatedHeading>
@@ -104,11 +104,11 @@
 						aria-pressed={activeProject?.id === project.id}
 					>
 						<span
-							class="font-c-bebas text-sm font-bold tracking-widest text-c-neutral-1"
+							class="font-c-bebas text-xs font-bold tracking-widest text-c-neutral-1"
 						>
 							{project.tags.join(" · ")}
 						</span>
-						<h3 class="mt-1 font-c-ubuntu text-2xl max-sm:text-lg font-bold lg:text-3xl">
+						<h3 class="mt-1 font-c-ubuntu text-xl max-sm:text-sm font-bold lg:text-2xl">
 							{project.name}
 						</h3>
 					</button>
@@ -118,7 +118,7 @@
 
 		<AccentLink
 			href={resolve("/projects")}
-			class="-translate-x-3 translate-y-0.5 px-4 py-1.5 font-c-unbounded text-lg font-bold max-lg:pointer-events-auto max-lg:mt-6 max-lg:self-start max-sm:text-sm"
+			class="-translate-x-3 translate-y-0.5 px-4 py-1.5 font-c-unbounded text-sm font-bold max-lg:pointer-events-auto max-lg:mt-6 max-lg:self-start max-sm:text-xs"
 			bind:el={ctaEl}
 		>
 			More Projects

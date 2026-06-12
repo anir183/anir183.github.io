@@ -204,14 +204,14 @@
 	<div class="flex flex-1 flex-col items-center justify-center gap-6 px-4 text-center">
 		<div
 			bind:this={wipHeading}
-			class="font-c-unbounded text-8xl font-black text-c-accent-0 max-sm:text-6xl"
+			class="font-c-unbounded text-7xl font-black text-c-accent-0 max-sm:text-5xl"
 		>
 			WIP
 		</div>
 
 		<p
 			bind:this={description}
-			class="max-w-md font-c-ubuntu text-lg leading-relaxed text-c-neutral-1 max-sm:text-base"
+			class="max-w-md font-c-ubuntu text-sm leading-relaxed text-c-neutral-1 max-sm:text-xs"
 		>
 			This page is under construction. Check back later for updates.
 		</p>
@@ -220,7 +220,7 @@
 	<div bind:this={ctaEl} class="flex justify-center pb-12">
 		<AccentLink
 			href="/"
-			class="-translate-x-3 px-4 py-1.5 font-c-unbounded text-base font-bold lg:text-lg"
+			class="-translate-x-3 px-4 py-1.5 font-c-unbounded text-xs font-bold lg:text-sm"
 		>
 			Back Home
 		</AccentLink>

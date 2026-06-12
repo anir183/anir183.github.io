@@ -431,7 +431,7 @@ onDestroy(() => {
 <div class="relative">
 	<section id="experiences-heading" class="relative z-10 flex min-h-screen items-center px-6 max-lg:px-4">
 		<div class="mx-auto w-full max-w-6xl">
-			<AnimatedHeading tag="h2" start={headingStart} {reducedMotion} class="font-c-unbounded text-6xl max-sm:text-3xl font-black text-center lg:text-8xl"
+			<AnimatedHeading tag="h2" start={headingStart} {reducedMotion} class="font-c-unbounded text-5xl max-sm:text-2xl font-black text-center lg:text-7xl"
 			>Experiences</AnimatedHeading>
 		</div>
 	</section>
@@ -475,20 +475,20 @@ onDestroy(() => {
 							: 'max-lg:mx-auto lg:mr-[10vw] lg:ml-auto'
 						}"
 				>
-				<h3 class="text-5xl font-black text-c-neutral-0 font-c-unbounded leading-tight lg:text-6xl xl:text-7xl">
+				<h3 class="text-4xl font-black text-c-neutral-0 font-c-unbounded leading-tight lg:text-5xl xl:text-6xl">
 					{exp.role}
 				</h3>
 				<div data-el="company" class="mt-2 flex items-baseline gap-6 flex-wrap">
-					<p class="text-xl font-semibold text-c-accent-0 font-c-ubuntu tracking-wide lg:text-2xl">{exp.company}</p>
-					<span class="shrink-0 text-xl text-c-neutral-1/40 font-c-jetbrains lg:text-2xl">{exp.period}</span>
+					<p class="text-base font-semibold text-c-accent-0 font-c-ubuntu tracking-wide lg:text-xl">{exp.company}</p>
+					<span class="shrink-0 text-base text-c-neutral-1/40 font-c-jetbrains lg:text-xl">{exp.period}</span>
 				</div>
-				<p data-el="desc" class="mt-6 text-base leading-relaxed text-c-neutral-1 font-c-ubuntu lg:text-lg max-w-prose">
+				<p data-el="desc" class="mt-6 text-xs leading-relaxed text-c-neutral-1 font-c-ubuntu lg:text-sm max-w-prose">
 					{exp.description}
 				</p>
 				{#if exp.tags?.length}
 					<div data-el="tags" class="mt-6 flex flex-wrap gap-2">
 						{#each exp.tags as tag}
-							<span class="rounded-full border border-c-accent-0/15 px-3 py-1 text-sm text-c-accent-0 font-c-ubuntu">
+							<span class="rounded-full border border-c-accent-0/15 px-3 py-1 text-xs text-c-accent-0 font-c-ubuntu">
 								{tag}
 							</span>
 						{/each}
@@ -499,7 +499,7 @@ onDestroy(() => {
 				class="absolute top-1/2 -translate-y-1/2 pointer-events-none z-10 hidden lg:block
 					{i % 2 === 0 ? 'right-[5vw]' : 'left-[5vw]'}"
 			>
-				<span data-el="year" class="block font-c-jetbrains text-[clamp(3rem,15vw,12rem)] font-black text-c-neutral-2 leading-none select-none">
+				<span data-el="year" class="block font-c-jetbrains text-[clamp(2.25rem,12vw,9.5rem)] font-black text-c-neutral-2 leading-none select-none">
 					{exp.period.slice(0, 4)}
 				</span>
 			</div>

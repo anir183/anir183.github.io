@@ -75,7 +75,7 @@
 	>
 		<AnimatedHeading
 			tag="h2"
-			class="font-c-unbounded text-4xl max-sm:text-2xl font-black text-c-neutral-0"
+			class="font-c-unbounded text-3xl max-sm:text-xl font-black text-c-neutral-0"
 		>
 			Open a <span class="text-c-accent-0">social</span>.
 		</AnimatedHeading>
@@ -98,14 +98,14 @@
 			tag="h2"
 			start={true}
 			reducedMotion={reducedMotion}
-			class="font-c-unbounded text-3xl font-black text-c-neutral-0 max-lg:hidden lg:text-6xl"
+			class="font-c-unbounded text-2xl font-black text-c-neutral-0 max-lg:hidden lg:text-5xl"
 		>
 			Open a <span class="text-c-accent-0">social</span>.
 		</AnimatedHeading>
 
 		<p
 			bind:this={paraEl}
-			class="font-c-ubuntu text-xl max-sm:text-base leading-relaxed text-c-neutral-1 lg:text-2xl"
+			class="font-c-ubuntu text-base max-sm:text-xs leading-relaxed text-c-neutral-1 lg:text-xl"
 		>
 			If you want to reach me, here are some social I am available on. Send a
 			ping my way and I'll reply when I'm available. You will probably have the
@@ -119,7 +119,7 @@
 			{#each socials as s (s.id)}
 				<AccentLink
 					href={s.url}
-					class="-translate-x-3 px-4 py-1.5 font-c-unbounded text-base max-sm:text-sm font-bold lg:text-lg"
+					class="-translate-x-3 px-4 py-1.5 font-c-unbounded text-xs max-sm:text-xs font-bold lg:text-sm"
 				>
 					{s.name}
 				</AccentLink>

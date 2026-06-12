@@ -116,7 +116,7 @@
 				class="group relative overflow-hidden px-7 py-3 no-underline"
 			>
 				<span
-					class="relative inline-flex items-center overflow-hidden font-c-bebas text-lg font-bold tracking-widest text-c-neutral-0 transition-colors duration-200 group-hover:text-c-bg-0"
+					class="relative inline-flex items-center overflow-hidden font-c-bebas text-sm font-bold tracking-widest text-c-neutral-0 transition-colors duration-200 group-hover:text-c-bg-0"
 				>
 					<span
 						class="absolute inset-0 translate-y-full -skew-x-6 bg-c-accent-0 transition-transform duration-[400ms] ease-out group-hover:translate-y-0"
@@ -131,7 +131,7 @@
 			bind:this={themeBtn}
 			onclick={toggleTheme}
 			aria-label="Toggle theme"
-			class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-c-border/40 bg-c-bg-2/30 text-lg text-c-neutral-0 opacity-0 backdrop-blur-xl transition-all duration-300 hover:border-c-border hover:bg-c-bg-2/50 max-lg:h-9 max-lg:w-9"
+			class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-c-border/40 bg-c-bg-2/30 text-sm text-c-neutral-0 opacity-0 backdrop-blur-xl transition-all duration-300 hover:border-c-border hover:bg-c-bg-2/50 max-lg:h-9 max-lg:w-9"
 		>
 			<img
 				src={theme.current === themes.DARK
@@ -186,7 +186,7 @@
 			<button
 				onclick={() => (mobileMenuOpen = false)}
 				aria-label="Close menu"
-				class="absolute top-6 right-6 z-20 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-c-border/40 bg-c-bg-2/30 text-lg text-c-neutral-0 transition-all duration-300 hover:border-c-border hover:bg-c-bg-2/50"
+				class="absolute top-6 right-6 z-20 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-c-border/40 bg-c-bg-2/30 text-sm text-c-neutral-0 transition-all duration-300 hover:border-c-border hover:bg-c-bg-2/50"
 			>
 				✕
 			</button>
@@ -199,7 +199,7 @@
 					class="group relative px-8 py-4 no-underline"
 				>
 					<span
-						class="relative inline-flex items-center overflow-hidden font-c-unbounded text-4xl font-black tracking-wide text-c-neutral-0 transition-colors duration-200 group-hover:text-c-bg-0"
+						class="relative inline-flex items-center overflow-hidden font-c-unbounded text-3xl font-black tracking-wide text-c-neutral-0 transition-colors duration-200 group-hover:text-c-bg-0"
 					>
 						<span
 							class="absolute inset-0 translate-y-full -skew-x-6 bg-c-accent-0 transition-transform duration-[400ms] ease-out group-hover:translate-y-0"

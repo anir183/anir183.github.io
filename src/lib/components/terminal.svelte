@@ -1331,12 +1331,12 @@ let isMobileDevice = $state(false);
 	<div class="border-t border-c-border/10"></div>
 	<div
 		bind:this={outputEl}
-		class="flex flex-col overflow-y-auto px-5 py-4 font-c-jetbrains text-sm leading-relaxed text-c-neutral-0 max-lg:max-h-[55vh] max-lg:min-h-[30vh] max-lg:px-4 max-lg:py-3 max-lg:text-xs lg:h-[55vh]"
+		class="flex flex-col overflow-y-auto px-5 py-4 font-c-jetbrains text-xs leading-relaxed text-c-neutral-0 max-lg:max-h-[55vh] max-lg:min-h-[30vh] max-lg:px-4 max-lg:py-3 max-lg:text-xs lg:h-[55vh]"
 	>
 		{#each lines as line (line.id)}
 			{#if line.type === "help"}
 				<div
-					class="w-fit max-w-full font-c-jetbrains text-sm max-lg:text-xs"
+					class="w-fit max-w-full font-c-jetbrains text-xs max-lg:text-xs"
 					onclick={onHelpClick}
 					role="presentation"
 				>
@@ -1372,7 +1372,7 @@ let isMobileDevice = $state(false);
 				</div>
 			{:else if line.type === "pre"}
 				<div
-					class="font-c-jetbrains text-sm leading-relaxed whitespace-pre max-lg:text-xs {line.cls}"
+					class="font-c-jetbrains text-xs leading-relaxed whitespace-pre max-lg:text-xs {line.cls}"
 				>
 					{line.text}
 				</div>
@@ -1390,7 +1390,7 @@ let isMobileDevice = $state(false);
 				<div class="whitespace-pre text-c-neutral-1">{line.text}</div>
 			{/if}
 		{/each}
-		<div class="mt-4 flex items-center gap-2 text-sm max-lg:text-xs">
+		<div class="mt-4 flex items-center gap-2 text-xs max-lg:text-xs">
 			{#if awaitingConfirm}
 				<span class="text-c-warning">(y/N): </span>
 			{:else}
@@ -1436,7 +1436,7 @@ let isMobileDevice = $state(false);
 						{#each tabCompletions as comp, i}
 							<button
 								data-idx={i}
-								class="block w-full whitespace-nowrap px-3 py-0.5 text-left font-c-jetbrains text-sm transition-colors {i === tabCompletionIdx ? 'bg-c-accent-0/10 text-c-accent-0' : 'text-c-neutral-0'}"
+								class="block w-full whitespace-nowrap px-3 py-0.5 text-left font-c-jetbrains text-xs transition-colors {i === tabCompletionIdx ? 'bg-c-accent-0/10 text-c-accent-0' : 'text-c-neutral-0'}"
 								onmousedown={(e) => {
 									e.preventDefault();
 									currentInput = applyCompletion(currentInput, comp);

@@ -45,7 +45,7 @@
 	class="fixed inset-0 z-100 flex flex-col items-center justify-center bg-c-bg-0"
 >
 	<p
-		class="text-fade font-c-unbounded text-2xl text-c-neutral-0"
+		class="text-fade font-c-unbounded text-xl text-c-neutral-0"
 		role="status"
 		aria-live="polite"
 	>
