@@ -89,7 +89,7 @@
 		class="flex shrink-0 items-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)]"
 		aria-label="anir183"
 	>
-		<div class="relative h-8 w-8 translate-y-[1px] max-lg:h-7 max-lg:w-7">
+		<div class="relative h-8 w-8 max-lg:h-7 max-lg:w-7">
 			<img
 				src="/assets/branding/logo_light.svg"
 				alt=""
@@ -138,7 +138,7 @@
 					? "/assets/icons/sun_light.svg"
 					: "/assets/icons/moon_dark.svg"}
 				alt=""
-				class="block h-[14px] w-[14px]"
+				class="block h-[14px] w-[14px] -translate-x-[0.7px] -translate-y-[0.7px] lg:translate-x-[0.5px] lg:translate-y-[0.5px]"
 			/>
 		</button>
 
