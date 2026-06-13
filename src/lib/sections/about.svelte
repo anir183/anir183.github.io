@@ -90,8 +90,6 @@
 
 		/** @type {gsap.core.Tween | undefined} */
 		let layerFloatTween;
-		/** @type {IntersectionObserver | null} */
-		let floatObserver = null;
 		if (!reducedMotion && layers.length) {
 			gsap.set(layers, { "--fy": 0 });
 			const floatLayers = layers.filter(
@@ -105,12 +103,6 @@
 					yoyo: true,
 					ease: "sine.inOut"
 				});
-				if (sectionEl) {
-					floatObserver = new IntersectionObserver(([entry]) => {
-						layerFloatTween?.paused(!entry.isIntersecting);
-					}, { threshold: 0 });
-					floatObserver.observe(sectionEl);
-				}
 			}
 		}
 
@@ -127,7 +119,6 @@
 		return () => {
 			mql.removeEventListener("change", onMqlChange);
 			layerFloatTween?.kill();
-			floatObserver?.disconnect();
 			cleanupParallax?.();
 		};
 	});

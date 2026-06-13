@@ -31,9 +31,6 @@
 		)
 	);
 
-	/** @type {IntersectionObserver | null} */
-	let sectionObserver = null;
-
 	let floatTweens = /** @type {gsap.core.Tween[]} */ ([]);
 	let packetTweens = /** @type {gsap.core.Tween[]} */ ([]);
 	let pulseTween = /** @type {gsap.core.Tween | null} */ (null);
@@ -293,17 +290,6 @@
 		});
 	}
 
-	function setupOffscreenPause() {
-		if (!sectionEl || sectionObserver) return;
-		const tweens = [...floatTweens, ...packetTweens];
-		if (!tweens.length) return;
-		sectionObserver = new IntersectionObserver(([entry]) => {
-			const paused = !entry.isIntersecting;
-			for (const t of tweens) t.paused(paused);
-		}, { threshold: 0 });
-		sectionObserver.observe(sectionEl);
-	}
-
 	/**
 	 * @param {string} id
 	 */
@@ -452,8 +438,6 @@
 		scrollTrigger?.kill();
 		packetEls.forEach((el) => el.remove());
 		packetEls = [];
-		sectionObserver?.disconnect();
-		sectionObserver = null;
 	}
 
 	async function initAnimations() {
@@ -557,7 +541,6 @@
 			if (!reducedMotion) {
 				startFloats();
 				startPackets();
-				setupOffscreenPause();
 			}
 		});
 

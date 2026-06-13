@@ -582,22 +582,3 @@ Extended `Project` typedef with:
 [x] /projects showcase page: pinned per-project sections with scroll-driven image carousel, ProjectSection/ProjectInfo/ProjectCarousel components, 60vh-per-image scroll distance, mobile fallback without pinning
 [ ] route structure for navigation
 [ ] content / data files
-
-### performance optimizations (2026-06-13)
-
-**Critical fixes:**
-- Removed `will-change: transform, opacity` from `.dot` in `dot_grid.svelte` — was creating ~1000–6000+ GPU compositing layers for each dot, overwhelming the GPU
-- Removed `willChange: "transform"` from GSAP configs in 6 files (`hero_entry.svelte.js`, `footer.svelte`, `crash.svelte`, `wip.svelte`, `projects/+page.svelte`, `experiences/+page.svelte`) — GSAP already auto‑manages `will-change` during active tweens, manual override created unnecessary layers
-
-**Cube grid proximity dimming (`cube_grid.svelte`):**
-- Cached tile center positions (normalized 0‑1 per col/row) on init/resize instead of computing `getBoundingClientRect` + `tileCenter()` per tile on every mousemove
-- Throttled mousemove handler with `requestAnimationFrame` (one proximity check per frame)
-- Replaced `Math.hypot()` with squared‑distance check (`dx*dx + dy*dy < farSq`)
-
-**Dot grid pointer handler (`dot_grid.svelte`):**
-- Already rAF‑throttled (no change needed), `will-change` removal was the main fix
-
-**Off‑screen perpetual tween pausing:**
-- `skills_network.svelte`: IntersectionObserver pauses/resumes all float and packet tweens (including SVG `getPointAtLength` calls in packet `onUpdate`) when the section scrolls off‑screen
-- `cube_grid.svelte`: IntersectionObserver pauses/resumes 144 breathing tweens (`z`/`rotationZ` with `repeat: -1`) when off‑screen
-- `about.svelte`: IntersectionObserver pauses/resumes the layer float tween (`--fy` yoyo) when off‑screen

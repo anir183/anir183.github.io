@@ -65,7 +65,8 @@ export async function heroEntrySequence(config) {
 		}
 
 		gsap.set([...navLines, ...headlineLines], {
-			y: "125%"
+			y: "125%",
+			willChange: "transform"
 		});
 	}
 

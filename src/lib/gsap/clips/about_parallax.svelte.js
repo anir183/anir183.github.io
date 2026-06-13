@@ -20,14 +20,6 @@ export function createParallax({
 }) {
 	if (reducedMotion || !container || !layers.length) return () => {};
 
-	// Cache container rect to avoid forced layout reads per pointermove
-	let cachedRect = container.getBoundingClientRect();
-	const ro = new ResizeObserver(() => { cachedRect = container.getBoundingClientRect(); });
-	ro.observe(container);
-	// Keep rect fresh during scroll (position changes without resize)
-	function onScroll() { cachedRect = container.getBoundingClientRect(); }
-	window.addEventListener("scroll", onScroll, { passive: true });
-
 	// Animate CSS custom properties so the inline transform (with perspective)
 	// stays intact — avoids GSAP overwriting the transform string.
 	const tweenOpts = { duration, ease: "power3.out" };
@@ -45,7 +37,7 @@ export function createParallax({
 	 * @param {PointerEvent} e
 	 */
 	function onPointerMove(e) {
-		const rect = cachedRect;
+		const rect = container.getBoundingClientRect();
 		const cx = rect.width / 2;
 		const cy = rect.height / 2;
 		const nx = (e.clientX - rect.left - cx) / cx;
@@ -74,8 +66,6 @@ export function createParallax({
 	return () => {
 		container.removeEventListener("pointermove", onPointerMove);
 		container.removeEventListener("pointerleave", onPointerLeave);
-		window.removeEventListener("scroll", onScroll);
-		ro.disconnect();
 		for (const p of pairs) {
 			p.toPX(0);
 			p.toPY(0);

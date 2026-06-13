@@ -233,6 +233,7 @@
 		background: var(--color-c-border);
 		opacity: var(--dot-opacity, 0.15);
 		transition: transform 0.4s ease, background 0.1s ease, opacity 0.4s ease;
+		will-change: transform, opacity;
 	}
 	:global(.dot-grid .dot.active) {
 		transition: transform 0.1s ease, background 0.1s ease, opacity 0.1s ease;

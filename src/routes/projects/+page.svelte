@@ -81,7 +81,7 @@
 					return;
 				}
 
-				gsap.set(navLinesStore, { opacity: 0, y: "125%" });
+				gsap.set(navLinesStore, { opacity: 0, y: "125%", willChange: "transform" });
 				gsap.set(themeBtn, { opacity: 0, scale: 0.8 });
 				if (hamburgerBtn) {
 					gsap.set(hamburgerBtn, { opacity: 0, scale: 0.8 });

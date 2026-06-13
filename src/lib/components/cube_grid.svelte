@@ -24,9 +24,6 @@
 	/** @type {gsap.core.Tween[]} */
 	let breathingTweens = [];
 
-	/** @type {IntersectionObserver | null} */
-	let breathingObserver = null;
-
 	let firstEffectRun = true;
 
 	// proximity dimming
@@ -37,14 +34,6 @@
 	let tileApplied = [];
 	/** @type {boolean[]} */
 	let tileWasNear = [];
-
-	/** @type {{ cx: number, cy: number }[]} */
-	let cachedTileCenters = [];
-
-	/** @type {number | null} */
-	let moveRafId = null;
-	let lastMoveX = 0;
-	let lastMoveY = 0;
 
 	let tileIndices = $derived(Array.from({ length: rows * cols }, (_, i) => i));
 
@@ -148,34 +137,31 @@
 		});
 	}
 
-	/** @param {MouseEvent} e */
-	function onGridMove(e) {
-		lastMoveX = e.clientX;
-		lastMoveY = e.clientY;
-		if (moveRafId) return;
-		moveRafId = requestAnimationFrame(processGridMove);
+	/**
+	 * @param {number} i
+	 * @param {DOMRect} gridRect
+	 */
+	function tileCenter(i, gridRect) {
+		const tw = gridRect.width / cols;
+		const th = gridRect.height / rows;
+		const col = i % cols;
+		const row = Math.floor(i / cols);
+		return {
+			x: gridRect.left + col * tw + tw / 2,
+			y: gridRect.top + row * th + th / 2
+		};
 	}
 
-	function processGridMove() {
-		moveRafId = null;
+	/** @param {MouseEvent} e */
+	function onGridMove(e) {
 		if (!gridEl) return;
 		const gridRect = gridEl.getBoundingClientRect();
-		const gx = gridRect.left;
-		const gy = gridRect.top;
-		const gw = gridRect.width;
-		const gh = gridRect.height;
-
-		const farSq = DIM_FAR * DIM_FAR;
 
 		for (let i = 0; i < tileMeta.length; i++) {
-			const c = cachedTileCenters[i];
-			const cx = gx + c.cx * gw;
-			const cy = gy + c.cy * gh;
-			const dx = lastMoveX - cx;
-			const dy = lastMoveY - cy;
-			const distSq = dx * dx + dy * dy;
+			const c = tileCenter(i, gridRect);
+			const dist = Math.hypot(e.clientX - c.x, e.clientY - c.y);
 
-			if (distSq < farSq) {
+			if (dist < DIM_FAR) {
 				tileWasNear[i] = true;
 				if (tileApplied[i] !== DIM_STRENGTH) {
 					tileApplied[i] = DIM_STRENGTH;
@@ -232,24 +218,11 @@
 			});
 			breathingTweens.push(tw);
 		});
-		setupBreathingOffscreenPause();
 	}
 
 	function stopBreathing() {
 		breathingTweens.forEach((t) => t.kill());
 		breathingTweens = [];
-		breathingObserver?.disconnect();
-		breathingObserver = null;
-	}
-
-	function setupBreathingOffscreenPause() {
-		if (!gridEl || breathingObserver) return;
-		const parent = gridEl.closest("section") || gridEl;
-		breathingObserver = new IntersectionObserver(([entry]) => {
-			const paused = !entry.isIntersecting;
-			for (const t of breathingTweens) t.paused(paused);
-		}, { threshold: 0 });
-		breathingObserver.observe(parent);
 	}
 
 	function onTransitionComplete() {
@@ -301,11 +274,6 @@
 			};
 		});
 
-		cachedTileCenters = tileMeta.map(t => ({
-			cx: (t.col + 0.5) / cols,
-			cy: (t.row + 0.5) / rows
-		}));
-
 		if (!reducedMotion) {
 			startBreathing();
 			initProximityDim();
@@ -319,7 +287,6 @@
 	function rebuildCubeGrid() {
 		if (rebuildingGrid || !gridEl) return;
 		rebuildingGrid = true;
-		if (moveRafId) { cancelAnimationFrame(moveRafId); moveRafId = null; }
 
 		const oldCols = cols;
 		const oldRows = rows;
@@ -392,7 +359,6 @@
 
 	$effect(() => {
 		return () => {
-			if (moveRafId) cancelAnimationFrame(moveRafId);
 			stopBreathing();
 			clearTimeout(roTimer);
 			ro?.disconnect();
@@ -409,7 +375,7 @@
 		<div
 			data-tile-index={i}
 			class="cube-tile relative"
-			style="transform-style: preserve-3d"
+			style="transform-style: preserve-3d; will-change: transform"
 		>
 			<div class="cube h-full w-full" style="transform-style: preserve-3d">
 				<div

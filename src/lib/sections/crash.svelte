@@ -81,7 +81,8 @@
 		const detailsLines = [...subtitle.querySelectorAll(".line")];
 
 		gsap.set([...titleLines, ...detailsLines], {
-			y: "125%"
+			y: "125%",
+			willChange: "transform"
 		});
 
 		if (ctaEl) gsap.set(ctaEl, { y: 16, opacity: 0 });

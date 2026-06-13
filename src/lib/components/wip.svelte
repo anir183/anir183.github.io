@@ -98,7 +98,8 @@
 
 		if (logoEl) gsap.set(logoEl, { opacity: 0, x: -16 });
 		gsap.set([...navLines, ...headingLines, ...descLines], {
-			y: "125%"
+			y: "125%",
+			willChange: "transform"
 		});
 		if (themeBtn) gsap.set(themeBtn, { opacity: 0, scale: 0.8 });
 		if (hamburgerBtn) gsap.set(hamburgerBtn, { opacity: 0, scale: 0.8 });

@@ -60,7 +60,7 @@
 						splitInstances = splits;
 
 						const allLines = [...el.querySelectorAll(".line")];
-						gsap.set(allLines, { y: "125%" });
+						gsap.set(allLines, { y: "125%", willChange: "transform" });
 
 						tl = gsap.timeline();
 						tl.to(el, {
