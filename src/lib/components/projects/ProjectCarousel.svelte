@@ -12,7 +12,8 @@
 <div data-carousel-viewport="mobile" class="flex flex-1 w-full flex-col gap-2 min-h-0 lg:hidden">
 	<div
 		data-project-img={0}
-		class="relative flex-1 overflow-hidden rounded-xl min-h-0"
+		class="relative flex-1 overflow-hidden rounded-xl min-h-0 cursor-pointer"
+		onclick={() => handleDesktopImgClick?.(activeIndex)}
 	>
 		<img
 			src={images[activeIndex]}

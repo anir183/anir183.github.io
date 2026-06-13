@@ -19,6 +19,7 @@
 	/** @type {HTMLElement | undefined} */
 	let imageTrackEl = $state();
 	let activeIndex = $state(0);
+	let showLightbox = $state(false);
 	let isMobile = $state(false);
 	let imgWrapsRef = $state(/** @type {HTMLElement[]} */ ([]));
 	let flexScrollTrigger = /** @type {import("gsap/ScrollTrigger").ScrollTrigger | undefined} */ (undefined);
@@ -34,6 +35,10 @@
 	 * @param {number} i
 	 */
 	function handleDesktopImgClick(i) {
+		if (i === activeIndex) {
+			showLightbox = true;
+			return;
+		}
 		activeIndex = i;
 		const wraps = imgWrapsRef;
 		if (!wraps.length) return;
@@ -340,4 +345,26 @@
 		{/if}
 	</div>
 </section>
+
+{#if showLightbox}
+	<div
+		class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 cursor-pointer"
+		onclick={() => showLightbox = false}
+		onkeydown={(e) => e.key === "Escape" && (showLightbox = false)}
+		role="button"
+		tabindex="0"
+	>
+		<button
+			class="absolute top-4 right-4 text-white text-2xl font-bold leading-none cursor-pointer z-10"
+			onclick={() => showLightbox = false}
+		>&times;</button>
+		<img
+			src={images[activeIndex]}
+			alt=""
+			class="max-h-[90vh] max-w-[90vw] object-contain cursor-default"
+			onclick={(e) => e.stopPropagation()}
+			draggable={false}
+		/>
+	</div>
+{/if}
 </div>
