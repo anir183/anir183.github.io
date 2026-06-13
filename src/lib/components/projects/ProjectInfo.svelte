@@ -25,7 +25,7 @@
 		{title}
 	</h3>
 
-	<p data-pi="desc" class="text-xs leading-relaxed text-c-neutral-1 font-c-ubuntu lg:text-sm max-w-prose">
+	<p data-pi="desc" class="text-base max-sm:text-xs leading-relaxed text-c-neutral-1 font-c-ubuntu lg:text-xl max-w-prose">
 		{description}
 	</p>
 

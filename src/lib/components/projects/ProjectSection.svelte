@@ -237,7 +237,7 @@
 		>
 			{project?.name}
 		</h3>
-		<p data-pi="desc" class="mt-2 max-w-prose text-xs leading-relaxed text-c-neutral-1 font-c-ubuntu">
+		<p data-pi="desc" class="mt-2 max-w-prose text-base max-sm:text-xs leading-relaxed text-c-neutral-1 font-c-ubuntu">
 			{project?.description}
 		</p>
 	</div>
