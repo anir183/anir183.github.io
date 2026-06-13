@@ -127,6 +127,11 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Home — anir183</title>
+</svelte:head>
+
+
 {#if preloaderVisible}
 	<div transition:fade={{ duration: reducedMotion ? 0 : 500 }} class="relative z-50">
 		<Preloader bind:progress bind:done={preloaderDone} />
