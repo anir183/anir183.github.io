@@ -27,7 +27,7 @@
 	/** @type {(() => void) | undefined} */
 	let gsapCleanup;
 
-	let images = $derived(project?.images ?? []);
+	let images = $derived((isMobile ? project?.imagesMobile : project?.images) ?? []);
 	let hasMultipleImages = $derived(images.length >= 2);
 
 	/**
