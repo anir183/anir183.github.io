@@ -7,24 +7,13 @@
  * @returns {() => void}
  */
 export function createSectionSnap(options = {}) {
-	const { threshold = 0.3, snapDelay: optSnapDelay, cooldown = 600, selector = "section[id], .hero" } =
+	const { threshold = 0.3, snapDelay = 150, cooldown = 600, selector = "section[id], .hero" } =
 		options;
-
-	// Use longer debounce on mobile to let momentum fully settle
-	const isMobile = window.innerWidth < 1024;
-	const snapDelay = optSnapDelay ?? (isMobile ? 300 : 150);
 
 	const sections = [...document.querySelectorAll(selector)];
 	if (!sections.length) return () => {};
 
 	const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-	const lastSection = sections[sections.length - 1];
-	const BOTTOM_TOLERANCE = 50;
-
-	/** @returns {boolean} */
-	function isNearBottom() {
-		return window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - BOTTOM_TOLERANCE;
-	}
 
 	/** @type {ReturnType<typeof setTimeout> | undefined} */
 	let timeout;
@@ -40,10 +29,6 @@ export function createSectionSnap(options = {}) {
 		const snapThreshold = vh * threshold;
 
 		for (const section of sections) {
-			// Don't snap to the last section unless already near the bottom —
-			// prevents momentum scroll from snapping to the final section prematurely
-			if (section === lastSection && !isNearBottom()) continue;
-
 			const r = section.getBoundingClientRect();
 
 			if (r.top > 0 && r.top < snapThreshold) {
@@ -58,7 +43,8 @@ export function createSectionSnap(options = {}) {
 
 			if (r.bottom > vh - snapThreshold && r.bottom < vh + snapThreshold) {
 				// Don't snap at the absolute bottom — allows scrolling past to footer
-				if (isNearBottom()) continue;
+				const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 1;
+				if (atBottom) continue;
 				snapping = true;
 				lastSnap = now;
 				section.scrollIntoView({ behavior: reducedMotion ? "instant" : "smooth", block: "start" });
