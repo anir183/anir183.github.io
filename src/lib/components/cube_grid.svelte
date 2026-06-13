@@ -208,7 +208,7 @@
 	function startBreathing() {
 		tileMeta.forEach((t) => {
 			const tw = gsap.to(t.el, {
-				z: gsap.utils.random(-32, 80),
+				z: gsap.utils.random(-12, 30),
 				rotationZ: gsap.utils.random(-0.5, 0.5),
 				duration: gsap.utils.random(1.5, 3),
 				repeat: -1,
