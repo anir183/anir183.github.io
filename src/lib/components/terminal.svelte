@@ -1112,7 +1112,12 @@ let isMobileDevice = $state(false);
 		function onVpResize() {
 			if (!isMobileDevice || !terminalEl || !window.visualViewport) return;
 			const h = window.visualViewport.height;
-			if (h < prevVpHeight) terminalEl.scrollIntoView({ block: "nearest" });
+			if (h < prevVpHeight) {
+				const rect = terminalEl.getBoundingClientRect();
+				if (rect.bottom < 0 || rect.top > h) {
+					terminalEl.scrollIntoView({ block: "nearest" });
+				}
+			}
 			prevVpHeight = h;
 		}
 		window.visualViewport?.addEventListener("resize", onVpResize);
@@ -1303,7 +1308,7 @@ let isMobileDevice = $state(false);
 
 <div
 	bind:this={terminalEl}
-	class="flex flex-col overflow-hidden rounded-2xl border-2 bg-c-bg-1/50 backdrop-blur-sm transition-colors duration-300 outline-none max-lg:flex-1 {focused ? 'border-c-accent-0/15' : 'border-transparent'}"
+		class="flex flex-col overflow-hidden rounded-2xl border-2 bg-c-bg-1/50 backdrop-blur-sm transition-colors duration-300 outline-none max-lg:flex-1 max-lg:min-h-0 {focused ? 'border-c-accent-0/15' : 'border-transparent'}"
 	tabindex="-1"
 	role="application"
 	aria-label="Terminal"
@@ -1331,7 +1336,7 @@ let isMobileDevice = $state(false);
 	<div class="border-t border-c-border/10"></div>
 	<div
 		bind:this={outputEl}
-		class="flex flex-col overflow-y-auto px-4 py-3 font-c-jetbrains text-xs leading-relaxed text-c-neutral-0 max-lg:max-h-[55vh] max-lg:min-h-[30vh] max-lg:px-3 max-lg:py-2.5 max-lg:text-xs lg:h-[55vh]"
+		class="flex flex-col overflow-y-auto px-4 py-3 font-c-jetbrains text-xs leading-relaxed text-c-neutral-0 max-lg:flex-1 max-lg:min-h-0 max-lg:px-3 max-lg:py-2.5 max-lg:text-xs lg:h-[55vh]"
 	>
 		{#each lines as line (line.id)}
 			{#if line.type === "help"}

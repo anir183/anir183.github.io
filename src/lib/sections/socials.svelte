@@ -67,7 +67,7 @@
 	bind:this={sectionEl}
 	use:inertOffscreen
 	id="socials"
-	class="flex min-h-screen w-full flex-col lg:flex-row lg:gap-12"
+	class="flex w-full flex-col max-lg:h-screen lg:min-h-screen lg:flex-row lg:gap-12"
 >
 	<!-- mobile heading -->
 	<div
@@ -85,16 +85,16 @@
 
 	<!-- terminal panel (middle on mobile, left on desktop) -->
 	<div
-		class="flex w-full px-3 max-lg:flex-1 max-lg:items-stretch max-lg:justify-start max-lg:py-6 lg:sticky lg:top-0 lg:order-1 lg:h-screen lg:w-3/5 lg:items-center lg:justify-center lg:px-12"
+		class="flex w-full px-3 max-lg:flex-1 max-lg:min-h-0 max-lg:items-stretch max-lg:justify-start max-lg:py-6 lg:sticky lg:top-0 lg:order-1 lg:h-screen lg:w-3/5 lg:items-center lg:justify-center lg:px-12"
 	>
-		<div class="w-full max-lg:flex max-lg:flex-1 max-lg:flex-col">
+		<div class="w-full max-lg:flex max-lg:flex-1 max-lg:min-h-0 max-lg:flex-col">
 			<Terminal bind:playEntry={terminalPlay} {socials} />
 		</div>
 	</div>
 
 	<!-- content panel (bottom on mobile with gradient, right on desktop) -->
 	<div
-		class="flex w-full flex-col justify-center gap-5 px-5 max-lg:py-6 bg-c-bg-0 lg:order-2 lg:w-2/5 lg:gap-8 lg:px-12 lg:py-20 lg:pl-12"
+		class="flex w-full flex-col justify-center gap-5 px-5 max-lg:overflow-y-auto max-lg:py-6 bg-c-bg-0 lg:order-2 lg:w-2/5 lg:gap-8 lg:px-12 lg:py-20 lg:pl-12"
 	>
 		<AnimatedHeading
 			tag="h2"
