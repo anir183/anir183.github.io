@@ -17,12 +17,36 @@
 	let imageTrackEl = $state();
 	let activeIndex = $state(0);
 	let isMobile = $state(false);
+	let imgWrapsRef = $state(/** @type {HTMLElement[]} */ ([]));
+	let flexScrollTrigger = /** @type {import("gsap/ScrollTrigger").ScrollTrigger | undefined} */ (undefined);
+	let flexTimeline = /** @type {gsap.core.Timeline | undefined} */ (undefined);
 
 	/** @type {(() => void) | undefined} */
 	let gsapCleanup;
 
 	let images = $derived(project?.images ?? []);
 	let hasMultipleImages = $derived(images.length >= 2);
+
+	/**
+	 * @param {number} i
+	 */
+	function handleDesktopImgClick(i) {
+		activeIndex = i;
+		const wraps = imgWrapsRef;
+		if (!wraps.length) return;
+
+		if (flexTimeline && flexScrollTrigger) {
+			const n = wraps.length;
+			const progress = i / (n - 1);
+			flexTimeline.progress(progress);
+			const targetScroll = flexScrollTrigger.start + progress * (flexScrollTrigger.end - flexScrollTrigger.start);
+			window.scrollTo({ top: targetScroll, behavior: "instant" });
+		} else {
+			wraps.forEach((wrap, j) => {
+				gsap.set(wrap, { flexGrow: j === i ? 4.67 : 1 });
+			});
+		}
+	}
 
 	onMount(() => {
 		let mounted = true;
@@ -43,6 +67,7 @@
 			const imgWraps = /** @type {HTMLElement[]} */ ([
 				...sectionEl.querySelectorAll(`[data-carousel-viewport="${carouselViewport}"] [data-project-img]`)
 			]);
+			imgWrapsRef = imgWraps;
 
 			if (reducedMotion) {
 				if (hasMultipleImages && !nowMobile) {
@@ -174,7 +199,12 @@
 							}
 						});
 
+						flexScrollTrigger = st;
+						flexTimeline = flexTl;
+
 						gsapCleanup = () => {
+							flexScrollTrigger = undefined;
+							flexTimeline = undefined;
 							st.kill();
 							flexTl.kill();
 							entrySt?.kill();
@@ -249,6 +279,7 @@
 			bind:imageTrackEl
 			bind:activeIndex
 			{isMobile}
+			{handleDesktopImgClick}
 		/>
 	</div>
 

@@ -3,7 +3,8 @@
 		images = /** @type {string[]} */ ([]),
 		activeIndex = $bindable(0),
 		imageTrackEl = $bindable(),
-		isMobile = false
+		isMobile = false,
+		handleDesktopImgClick = /** @type {((i: number) => void) | undefined} */ (undefined)
 	} = $props();
 </script>
 
@@ -47,10 +48,15 @@
 		class="relative flex h-full w-full flex-col gap-3"
 	>
 		{#each images as src, i}
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
 			<div
 				data-project-img={i}
-				class="relative flex-1 overflow-hidden rounded-xl min-h-0 transition-[filter] duration-500"
+				class="relative flex-1 overflow-hidden rounded-xl min-h-0 transition-[filter] duration-500 cursor-pointer"
 				class:brightness-[0.35]={i !== activeIndex}
+				onclick={() => handleDesktopImgClick?.(i)}
+				onkeydown={(e) => e.key === "Enter" && handleDesktopImgClick?.(i)}
+				role="button"
+				tabindex="0"
 			>
 				<img
 					src={src}
