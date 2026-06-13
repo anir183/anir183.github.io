@@ -4,7 +4,6 @@
 	import { goto } from "$app/navigation";
 	import {
 		segmentLsShort, segmentLsLong,
-		segmentGitStatus, segmentGitCommit, segmentGitPush, segmentGitLog,
 		segmentBashrc, segmentQuotes,
 		segmentGrepLine,
 		segmentDate,
@@ -21,23 +20,23 @@
 
 	/** @type {{ cmd: string, desc: string, url?: string, name?: string, text?: string }[]} */
 	let commandDefs = $derived([
-		{ cmd: "help", desc: "Show available commands" },
-		{ cmd: "whoami", desc: "Display the current user" },
-		{ cmd: "date", desc: "Show current date and time" },
-		{ cmd: "ls", desc: "List directory contents" },
-		{ cmd: "cd", desc: "Change directory" },
-		{ cmd: "pwd", desc: "Print working directory" },
-		{ cmd: "cat", desc: "Display file contents" },
-		{ cmd: "grep", desc: "Search file contents" },
-		{ cmd: "git", desc: "Version control simulation" },
-		{ cmd: "echo", desc: "Echo back the input" },
-		{ cmd: "ascii", desc: "Show a random ASCII art" },
-		{ cmd: "clear", desc: "Clear the terminal" },
-		{ cmd: "sudo", desc: "Are you sure?" },
-		{ cmd: "exit", desc: "Exit the terminal" },
+		{ cmd: "help", desc: "show available commands" },
+		{ cmd: "whoami", desc: "display the current user" },
+		{ cmd: "date", desc: "show current date and time" },
+		{ cmd: "ls", desc: "list directory contents" },
+		{ cmd: "cd", desc: "change directory" },
+		{ cmd: "pwd", desc: "print working directory" },
+		{ cmd: "cat", desc: "display file contents" },
+		{ cmd: "grep", desc: "search file contents" },
+		{ cmd: "git", desc: "version control simulation" },
+		{ cmd: "echo", desc: "echo back the input" },
+		{ cmd: "ascii", desc: "show a random ascii art" },
+		{ cmd: "clear", desc: "clear the terminal" },
+		{ cmd: "sudo", desc: "are you sure?" },
+		{ cmd: "exit", desc: "exit the terminal" },
 		...socials.map((s) => ({
 			cmd: s.id,
-			desc: `Open ${s.name}`,
+			desc: `open ${s.name}`,
 			url: s.url,
 			name: s.name
 		}))
@@ -259,21 +258,22 @@
 		},
 		"/home/guest/skills": {
 			type: "file",
-			content:
-				"Languages: JavaScript, TypeScript, Python, Rust, C/C++\nFrontend: Svelte, React, Tailwind CSS, GSAP\nBackend: Node.js, Express, PostgreSQL, Redis\nDevOps: Docker, Linux, CI/CD, Cloudflare"
 		},
 		"/home/guest/projects": {
 			type: "file",
-			content: "More projects coming soon..."
 		},
 		"/home/guest/about": {
 			type: "file",
-			content: "A passionate developer building things for the web."
 		},
 		"/home/guest/diary": {
 			type: "file",
-			content:
-				"Day 1: They said learn web dev they said.\nDay 2: spent 6 hours debugging a missing semicolon.\nDay 32: finally understand closures. or do i.\nDay 69: why does npm install take 47 years.\nDay 100: i am become developer, destroyer of prod."
+			content: [
+				"Day 1: They said learn web dev they said.",
+				"Day 2: spent 6 hours debugging a missing semicolon.",
+				"Day 32: finally understand closures. or do i.",
+				"Day 69: why does npm install take 47 years.",
+				"Day 100: i am become developer, destroyer of prod."
+			].join("\n")
 		},
 		"/home/guest/.bashrc": {
 			type: "file",
@@ -282,13 +282,15 @@
 				"alias ll='ls -alF'",
 				"alias la='ls -A'",
 				"alias l='ls -CF'",
+				"",
 				"alias grep='grep --color=auto'",
+				"",
 				"alias g='git'",
 				"alias gs='git status'",
 				"alias gc='git commit'",
 				"alias gp='git push'",
 				"alias gl='git log --oneline --graph'",
-
+				"",
 				"alias please='sudo !!'",
 				"alias ..='cd ..'",
 				"alias ...='cd ../..'"
@@ -317,9 +319,7 @@
 		},
 		"/home/guest/memes/67": {
 			type: "file",
-			content: [
-				"*sighs* i need help."
-			].join("\n")
+			content: "*sighs* i need help.\n"
 		},
 		"/home/guest/memes/anime": {
 			type: "file",
@@ -417,7 +417,8 @@
 				"- \"It works on my machine\" is the most dangerous phrase in tech.",
 				"- Half of the internet is held together by duct tape and Stack Overflow.",
 				"- The bug is always in the last place you look... because you stop after finding it.",
-				"- Tabs are actually superior to spaces (but dont tell anyone I said that)."
+				"- Tabs are actually superior to spaces (but dont tell anyone I said that).",
+				"- Forget about touching it. If it works, don't even look at it wrong!"
 			].join("\n")
 		},
 		"/home/guest/quotes": {
@@ -521,8 +522,18 @@
 		},
 		"/home/guest/easter/matrix": {
 			type: "file",
-			content:
-				"Wake up, Neo...\n\nThe Matrix has you...\n\nFollow the white rabbit.\n\nKnock, knock, Neo.\n\nYou take the blue pill — the story ends, you wake up in your bed and believe whatever you want to believe.\nYou take the red pill — you stay in Wonderland and I show you how deep the rabbit hole goes."
+			content: [
+				"Wake up, Neo...",
+				"",
+				"The Matrix has you...",
+				"",
+				"Follow the white rabbit.",
+				"",
+				"Knock, knock, Neo.",
+				"",
+				"You take the blue pill — the story ends, you wake up in your bed and believe whatever you want to believe.",
+				"You take the red pill — you stay in Wonderland and I show you how deep the rabbit hole goes."
+			].join("\n")
 		},
 		"/home/guest/easter/coffee": {
 			type: "file",
@@ -874,24 +885,12 @@ let isMobileDevice = $state(false);
 
 		if (cmd === "git") {
 			const args = ((raw ?? currentInput).slice(4).trim() || "").split(/\s+/).filter(Boolean);
-			const sub = args[0];
-			if (sub === "status") {
-				addRichLine(segmentGitStatus("On branch main\nYour branch is up to date with 'origin/main'.\n\nnothing to commit, working tree clean"));
-			} else if (sub === "commit") {
-				const rest = args.slice(1).join(" ");
-				const m = rest.match(/-m\s+['\"](.+)['\"]/);
-				addRichLine(segmentGitCommit(`[main ${Math.random().toString(36).slice(2, 8)}] ${m ? m[1] : "commit"}\n 1 file changed, 1 insertion(+)`));
-			} else if (sub === "push") {
-				addRichLine(segmentGitPush("Everything up-to-date"));
-			} else if (sub === "log") {
-				const rest = args.slice(1).join(" ");
-				if (rest.includes("--oneline") && rest.includes("--graph")) {
-					addRichLine(segmentGitLog(["* a1b2c3d feat: add new feature", "* e4f5g6h fix: resolve critical bug", "* i7j8k9l chore: update dependencies", "* m0n1o2p refactor: clean up code", "* q3r4s5t docs: update readme"].join("\n")));
-				} else {
-					addRichLine(segmentGitLog("commit a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t\nAuthor: Guest <guest@portfolio-183>\nDate:   today\n\n    feat: add new feature"));
-				}
+			if (args[0] === "init") {
+				addLine("text", "user \"guest\" is not allowed to create git repositories. contact admin.", "text-c-error");
+			} else if (args[0]) {
+				addLine("text", "fatal: not a git repository (or any of the parent directories): .git", "text-c-error");
 			} else {
-				addRichLine(segmentGitLog("usage: git <command> [<args>]\n\nAvailable commands:\n  status   Show working tree status\n  commit   Record changes\n  push     Push to remote\n  log      Show commit logs"));
+				addLine("text", "usage: git <command> [<args>]\n\nAvailable commands:\n  init     Create an empty git repository\n  status   Show working tree status\n  commit   Record changes\n  push     Push to remote\n  log      Show commit logs", "text-c-neutral-1");
 			}
 			return;
 		}
