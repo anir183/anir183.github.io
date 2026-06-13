@@ -18,6 +18,7 @@ export { default as AboutScene } from "./components/about_scene.svelte";
 export { default as Terminal } from "./components/terminal.svelte";
 export { default as Wip } from "./components/wip.svelte";
 export { default as Footer } from "./components/footer.svelte";
+export { default as DotGrid } from "./components/dot_grid.svelte";
 export { default as ProjectSection } from "./components/projects/ProjectSection.svelte";
 export { default as ProjectInfo } from "./components/projects/ProjectInfo.svelte";
 export { default as ProjectCarousel } from "./components/projects/ProjectCarousel.svelte";

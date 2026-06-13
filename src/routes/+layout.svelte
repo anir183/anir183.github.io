@@ -6,7 +6,7 @@
 	import { browser } from "$app/environment";
 	import { beforeNavigate, afterNavigate, goto } from "$app/navigation";
 
-	import { initTheme, assert_failure, Crash, markSpaNavigation } from "$lib";
+	import { initTheme, assert_failure, Crash, markSpaNavigation, DotGrid } from "$lib";
 
 	let { children } = $props();
 
@@ -82,6 +82,7 @@
 	/>
 {:else}
 	<div class="relative min-h-screen overflow-x-clip bg-c-bg-0 text-c-neutral-0 antialiased">
+		<DotGrid {reducedMotion} />
 		{@render children()}
 	</div>
 {/if}
