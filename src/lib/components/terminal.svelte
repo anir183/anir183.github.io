@@ -1111,11 +1111,11 @@ let isMobileDevice = $state(false);
 		let prevVpHeight = window.visualViewport?.height ?? window.innerHeight;
 		function onVpResize() {
 			if (!isMobileDevice || !terminalEl || !window.visualViewport) return;
-			const h = window.visualViewport.height;
-			if (h < prevVpHeight && focused) {
-				terminalEl.scrollIntoView({ block: "nearest" });
-			}
-			prevVpHeight = h;
+			// const h = window.visualViewport.height;
+			// if (h < prevVpHeight && focused) {
+			// 	terminalEl.scrollIntoView({ block: "nearest" });
+			// }
+			// prevVpHeight = h;
 		}
 		window.visualViewport?.addEventListener("resize", onVpResize);
 
