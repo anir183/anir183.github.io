@@ -24,6 +24,8 @@
 	/** @type {HTMLDivElement | undefined} */
 	let gridContainerEl = $state();
 
+	let entryActive = $state(true);
+
 	onMount(() => {
 		const mql = window.matchMedia("(max-width: 1023px)");
 		isMobile = mql.matches;
@@ -51,7 +53,8 @@
 				ctaButton: ctaEl,
 				gridContainer: gridContainerEl,
 				sectionEl,
-				reducedMotion
+				reducedMotion,
+				onEntryComplete: () => { entryActive = false; }
 			});
 		});
 	});
@@ -146,7 +149,7 @@
 		<div
 			class="aspect-video max-h-[80vh] w-full max-w-[90%] max-lg:aspect-auto max-lg:h-full max-lg:max-h-none max-lg:max-w-none"
 		>
-			<CubeGrid activeImage={activeImageSrc} />
+			<CubeGrid activeImage={activeImageSrc} bind:entryActive />
 		</div>
 	</div>
 </section>

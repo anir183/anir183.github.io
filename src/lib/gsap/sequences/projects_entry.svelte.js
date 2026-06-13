@@ -6,7 +6,8 @@ import { gsap } from "gsap";
  *   ctaButton: HTMLElement | null | undefined,
  *   gridContainer: HTMLElement | null | undefined,
  *   sectionEl: HTMLElement | null | undefined,
- *   reducedMotion?: boolean
+ *   reducedMotion?: boolean,
+ *   onEntryComplete?: () => void
  * }} config
  */
 export async function projectsEntrySequence(config) {
@@ -37,7 +38,9 @@ export async function projectsEntrySequence(config) {
 
 	const dur = reducedMotion ? 0 : undefined;
 
-	const tl = gsap.timeline();
+	const tl = gsap.timeline({
+		onComplete: () => config.onEntryComplete?.()
+	});
 
 	tl.to(projectItems, {
 		y: 0,
@@ -62,8 +65,9 @@ export async function projectsEntrySequence(config) {
 	}
 
 	if (tiles.length) {
-		tl.to(
+		tl.fromTo(
 			tiles,
+			{ rotationY: 180 },
 			{
 				rotationY: 0,
 				duration: dur ?? 2,

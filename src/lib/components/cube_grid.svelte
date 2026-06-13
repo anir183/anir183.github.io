@@ -3,7 +3,7 @@
 	import { gsap } from "gsap";
 	import { staggerRotateTiles } from "$lib";
 
-	let { activeImage = null } = $props();
+	let { activeImage = null, entryActive = $bindable(true) } = $props();
 
 	let reducedMotion = $state(typeof window !== 'undefined' && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
@@ -247,6 +247,11 @@
 		paintFaces(image, hiddenFace);
 
 		const cubes = tileMeta.map((t) => t.el);
+		const baseRotation = revealCount % 2 === 0 ? 0 : 180;
+		cubes.forEach(cube => {
+			gsap.killTweensOf(cube, "rotationY");
+			gsap.set(cube, { rotationY: baseRotation });
+		});
 		staggerRotateTiles(cubes, cols, rows, onTransitionComplete, reducedMotion);
 	}
 
@@ -276,7 +281,6 @@
 
 		if (activeImage) {
 			paintFaces(activeImage, "front");
-			paintFaces(activeImage, "rear");
 		}
 	}
 
@@ -291,7 +295,11 @@
 		if (cols === oldCols && rows === oldRows) {
 			if (activeImage) {
 				paintFaces(activeImage, "front");
-				paintFaces(activeImage, "rear");
+			}
+			stopBreathing();
+			if (!reducedMotion) {
+				startBreathing();
+				initProximityDim();
 			}
 			rebuildingGrid = false;
 			return;
@@ -305,7 +313,15 @@
 		isAnimating = false;
 		queuedImage = null;
 		resizeKey++;
-		setupGrid().finally(() => { rebuildingGrid = false; });
+		setupGrid().finally(() => {
+			const baseRot = revealCount % 2 === 0 ? 0 : 180;
+			gsap.set(tileMeta.map(t => t.el), { rotationY: baseRot });
+			if (!reducedMotion) {
+				stopBreathing();
+				startBreathing();
+			}
+			rebuildingGrid = false;
+		});
 	}
 
 	onMount(async () => {
@@ -323,8 +339,21 @@
 			firstEffectRun = false;
 			return;
 		}
+		if (entryActive) {
+			if (img) queuedImage = img;
+			return;
+		}
 		if (img && tileMeta.length > 0) {
 			transitionTo(img);
+		}
+	});
+
+	$effect(() => {
+		if (entryActive) return;
+		if (queuedImage) {
+			const q = queuedImage;
+			queuedImage = null;
+			transitionTo(q);
 		}
 	});
 
