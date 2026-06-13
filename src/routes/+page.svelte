@@ -101,6 +101,12 @@
 					return entryTl.then();
 				});
 			})
+			.then(() => {
+				const imgs = /** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll(".intro-img"));
+				imgs.forEach((img) => {
+					if (!img.classList.contains("z-1")) img.style.display = "none";
+				});
+			})
 			.catch((/** @type {Error} */ err) => {
 				console.warn("[page] hero animation failed:", err);
 				preloaderVisible = false;
