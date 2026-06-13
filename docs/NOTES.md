@@ -513,6 +513,8 @@ routes/projects/+page.svelte (composer)
 - Inactive images get `brightness-50`, active gets `brightness-100` (CSS only)
 - Parent animates `imageTrackEl` via GSAP — no animation logic in this component
 
+**Text entry animation:** Desktop ProjectInfo + mobile Row 1/Row 3 elements animate with staggered `y: 40/24/16/12 → 0`, `opacity: 0 → 1`, `power3.out` 0.6s, `i * 0.12` stagger at 0.2s. Uses `data-pi` attributes scoped to `data-content-panel` markers to avoid animating hidden elements. ScrollTrigger `start` unified to `"top 20%"` (matches all other sections).
+
 **Data (`projects_data.svelte.js`):**
 
 Extended `Project` typedef with:

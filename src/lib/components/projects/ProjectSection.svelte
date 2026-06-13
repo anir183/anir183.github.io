@@ -39,9 +39,13 @@
 
 			if (!mounted || !sectionEl) return;
 
+			const carouselViewport = nowMobile ? "mobile" : "desktop";
+			const imgWraps = /** @type {HTMLElement[]} */ ([
+				...sectionEl.querySelectorAll(`[data-carousel-viewport="${carouselViewport}"] [data-project-img]`)
+			]);
+
 			if (reducedMotion) {
-				if (hasMultipleImages) {
-					const imgWraps = [...sectionEl.querySelectorAll("[data-project-img]")];
+				if (hasMultipleImages && !nowMobile) {
 					if (imgWraps.length >= 2) {
 						gsap.set(imgWraps[0], { flexGrow: 4.67 });
 					}
@@ -49,47 +53,144 @@
 				return;
 			}
 
-			if (!nowMobile && hasMultipleImages) {
+			if (!imgWraps.length) return;
+
+			const isDesktop = !nowMobile && hasMultipleImages;
+
+			// Entry animation — set initial state
+			gsap.set(imgWraps, {
+				opacity: 0,
+				...(isDesktop ? { y: 40 } : {})
+			});
+
+			const entryTl = gsap.timeline({ paused: true });
+
+			if (isDesktop) {
+				entryTl.to(imgWraps, {
+					opacity: 1,
+					y: 0,
+					duration: 1.0,
+				stagger: 0.3,
+				ease: "power3.out"
+			}, "+=0.2");
+			} else {
+				entryTl.to(imgWraps, {
+					opacity: 1,
+					duration: 1.0,
+					stagger: 0.2,
+					ease: "power3.out"
+				}, "+=0.2");
+			}
+
+			// Text content entry animation
+			const contentPanelSel = nowMobile
+				? "[data-content-panel=mobile-header] [data-pi], [data-content-panel=mobile-footer] [data-pi]"
+				: "[data-content-panel=desktop] [data-pi], [data-pi=indicators]";
+			const contentEls = /** @type {HTMLElement[]} */ ([
+				...sectionEl.querySelectorAll(contentPanelSel)
+			]);
+			if (contentEls.length) {
+				const yMap = /** @type {Record<string, number>} */ ({
+					number: 40,
+					title: 40,
+					desc: 24,
+					tags: 16,
+					link: 12,
+					indicators: 12
+				});
+				contentEls.forEach((el) => {
+					const role = el.getAttribute("data-pi") || "";
+					const yVal = yMap[role] ?? 24;
+					gsap.set(el, { y: yVal, opacity: 0 });
+				});
+				contentEls.forEach((el, i) => {
+					entryTl.to(el, {
+						y: 0,
+						opacity: 1,
+						duration: 0.6,
+						ease: "power3.out"
+					}, 0.2 + i * 0.12);
+				});
+			}
+
+			// Check if section is already in the viewport
+			const rect = sectionEl.getBoundingClientRect();
+			const vh = window.innerHeight;
+			const isVisible = rect.top < vh && rect.bottom > 0;
+			/** @type {import("gsap/ScrollTrigger").ScrollTrigger | undefined} */
+		let entrySt;
+
+			if (isVisible) {
+				// Already in view — play entry immediately (no ScrollTrigger)
+				// FlexGrow (desktop) still needs ScrollTrigger
+			} else {
+				// Below the fold — import ScrollTrigger for entry + (optionally) flexGrow
+			}
+
+			const needsScrollTrigger = isDesktop && imgWraps.length >= 2;
+
+			if (needsScrollTrigger || !isVisible) {
 				import("gsap/ScrollTrigger").then(({ ScrollTrigger }) => {
 					if (!mounted || !sectionEl) return;
-
 					gsap.registerPlugin(ScrollTrigger);
 
-					const imgWraps = /** @type {HTMLElement[]} */ ([
-						...sectionEl.querySelectorAll("[data-project-img]")
-					]);
-					const n = imgWraps.length;
-					if (n < 2) return;
-
-					const scrollDistance = Math.round(images.length * 0.3 * window.innerHeight);
-					const seg = 1 / (n - 1);
-
-					const tl = gsap.timeline({ ease: "none" });
-					tl.set(imgWraps[0], { flexGrow: 4.67 }, 0);
-
-					for (let i = 0; i < n - 1; i++) {
-						const startPos = i * seg;
-						tl.to(imgWraps[i], { flexGrow: 1, duration: seg }, startPos);
-						tl.to(imgWraps[i + 1], { flexGrow: 4.67, duration: seg }, startPos);
+					// Entry ScrollTrigger (only if not yet visible)
+					if (!isVisible) {
+						entrySt = ScrollTrigger.create({
+							trigger: sectionEl,
+							start: "top 20%",
+							once: true,
+							animation: entryTl
+						});
+					} else {
+						// Already in view — play entry immediately
+						entryTl.play();
 					}
 
-					const st = ScrollTrigger.create({
-						trigger: sectionEl,
-						pin: true,
-						start: "top top",
-						end: "+=" + scrollDistance,
-						scrub: 1,
-						animation: tl,
-						onUpdate: (self) => {
-							activeIndex = Math.round(self.progress * (n - 1));
-						}
-					});
+					// Desktop flexGrow pin+scrub
+					if (isDesktop && imgWraps.length >= 2) {
+						const n = imgWraps.length;
+						const scrollDistance = Math.round(images.length * 0.3 * window.innerHeight);
+						const seg = 1 / (n - 1);
 
-					gsapCleanup = () => {
-						st.kill();
-						tl.kill();
-					};
+						const flexTl = gsap.timeline({ ease: "none" });
+						flexTl.set(imgWraps[0], { flexGrow: 4.67 }, 0);
+
+						for (let i = 0; i < n - 1; i++) {
+							const startPos = i * seg;
+							flexTl.to(imgWraps[i], { flexGrow: 1, duration: seg }, startPos);
+							flexTl.to(imgWraps[i + 1], { flexGrow: 4.67, duration: seg }, startPos);
+						}
+
+						const st = ScrollTrigger.create({
+							trigger: sectionEl,
+							pin: true,
+							start: "top top",
+							end: "+=" + scrollDistance,
+							scrub: 1,
+							animation: flexTl,
+							onUpdate: (self) => {
+								activeIndex = Math.round(self.progress * (n - 1));
+							}
+						});
+
+						gsapCleanup = () => {
+							st.kill();
+							flexTl.kill();
+							entrySt?.kill();
+							entryTl.kill();
+						};
+					} else {
+						gsapCleanup = () => {
+							entrySt?.kill();
+							entryTl.kill();
+						};
+					}
 				});
+			} else {
+				// Visible on mobile (or single-image) — play entry immediately
+				entryTl.play();
+				gsapCleanup = () => { entryTl.kill(); };
 			}
 		}
 
@@ -112,7 +213,7 @@
 	class="relative w-full lg:flex lg:min-h-screen lg:items-center lg:px-10 lg:py-20 max-lg:flex max-lg:min-h-screen max-lg:flex-col"
 >
 	<!-- DESKTOP: ProjectInfo left panel -->
-	<div class="lg:w-2/5 lg:pr-8 max-lg:hidden">
+	<div data-content-panel="desktop" class="lg:w-2/5 lg:pr-8 max-lg:hidden">
 		<ProjectInfo
 			number={project?.number ?? ""}
 			title={project?.name ?? ""}
@@ -123,24 +224,26 @@
 	</div>
 
 	<!-- MOBILE: Row 1 — number, title, description -->
-	<div class="pt-20 pb-4 px-5 bg-c-bg-0 lg:hidden">
+	<div data-content-panel="mobile-header" class="pt-20 pb-4 px-5 bg-c-bg-0 lg:hidden">
 		<span
+			data-pi="number"
 			class="block font-c-jetbrains text-[clamp(1.5rem,6vw,3rem)] font-black text-c-accent-0/60 leading-none select-none"
 		>
 			{project?.number}
 		</span>
 		<h3
+			data-pi="title"
 			class="mt-1 font-c-unbounded text-[clamp(1.5rem,5vw,2.75rem)] font-black leading-tight text-c-neutral-0"
 		>
 			{project?.name}
 		</h3>
-		<p class="mt-2 max-w-prose text-xs leading-relaxed text-c-neutral-1 font-c-ubuntu">
+		<p data-pi="desc" class="mt-2 max-w-prose text-xs leading-relaxed text-c-neutral-1 font-c-ubuntu">
 			{project?.description}
 		</p>
 	</div>
 
 	<!-- Carousel area: right on desktop, middle on mobile -->
-	<div class="flex max-lg:flex-1 max-lg:px-5 lg:w-3/5 lg:h-[80vh]">
+	<div class="flex max-lg:flex-1 max-lg:px-5 lg:w-3/5 lg:h-[70vh]">
 		<ProjectCarousel
 			images={images}
 			bind:imageTrackEl
@@ -151,6 +254,7 @@
 
 	<!-- DESKTOP: Dot indicators -->
 	<div
+		data-pi="indicators"
 		class="hidden flex-col items-center justify-center gap-3 lg:flex lg:ml-4"
 	>
 		{#each images as _, i}
@@ -161,9 +265,9 @@
 	</div>
 
 	<!-- MOBILE: Row 3 — tags + button -->
-	<div class="py-6 px-5 bg-c-bg-0 lg:hidden">
+	<div data-content-panel="mobile-footer" class="py-6 px-5 bg-c-bg-0 lg:hidden">
 		{#if project?.tags?.length}
-			<div class="flex flex-wrap gap-1.5">
+			<div data-pi="tags" class="flex flex-wrap gap-1.5">
 				{#each project.tags as tag}
 					<span
 						class="rounded-full border border-c-accent-0/15 px-2.5 py-0.5 text-xs text-c-accent-0 font-c-ubuntu"
@@ -174,9 +278,11 @@
 			</div>
 		{/if}
 		{#if project?.link}
-			<AccentLink href={project.link} class="mt-3 -translate-x-3 px-3 py-1 font-c-unbounded text-xs font-bold">
-				View Project
-			</AccentLink>
+			<div data-pi="link">
+				<AccentLink href={project.link} class="mt-3 -translate-x-3 px-3 py-1 font-c-unbounded text-xs font-bold">
+					View Project
+				</AccentLink>
+			</div>
 		{/if}
 	</div>
 </section>
