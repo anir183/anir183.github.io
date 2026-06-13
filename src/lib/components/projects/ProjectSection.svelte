@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from "svelte";
+	import { onMount, tick } from "svelte";
 	import { gsap } from "gsap";
 	import ProjectInfo from "./ProjectInfo.svelte";
 	import ProjectCarousel from "./ProjectCarousel.svelte";
@@ -13,6 +13,9 @@
 
 	/** @type {HTMLElement | undefined} */
 	let sectionEl = $state();
+	/** @type {HTMLElement | undefined} */
+	let wrapperEl = $state();
+	let wrapperHeight = $state(/** @type {number | null} */ (null));
 	/** @type {HTMLElement | undefined} */
 	let imageTrackEl = $state();
 	let activeIndex = $state(0);
@@ -54,7 +57,7 @@
 		const mql = window.matchMedia("(max-width: 1023px)");
 		isMobile = mql.matches;
 
-		function rebuild() {
+		async function rebuild() {
 			gsapCleanup?.();
 			gsapCleanup = undefined;
 
@@ -155,6 +158,18 @@
 			const needsScrollTrigger = isDesktop && imgWraps.length >= 2;
 
 			if (needsScrollTrigger || !isVisible) {
+				// Wait for DOM to be fully settled before measuring section height
+				await tick();
+				await new Promise(r => requestAnimationFrame(r));
+
+				// Compute wrapper height for CSS sticky pin
+				if (isDesktop && imgWraps.length >= 2) {
+					const scrollDist = Math.round(images.length * 0.3 * window.innerHeight);
+					wrapperHeight = sectionEl.offsetHeight + scrollDist;
+				} else {
+					wrapperHeight = null;
+				}
+
 				import("gsap/ScrollTrigger").then(({ ScrollTrigger }) => {
 					if (!mounted || !sectionEl) return;
 					gsap.registerPlugin(ScrollTrigger);
@@ -188,8 +203,7 @@
 						}
 
 						const st = ScrollTrigger.create({
-							trigger: sectionEl,
-							pin: true,
+							trigger: wrapperEl,
 							start: "top top",
 							end: "+=" + scrollDistance,
 							scrub: 1,
@@ -216,9 +230,13 @@
 							entryTl.kill();
 						};
 					}
+
+					// Recalculate pin-spacers once custom fonts are rendered
+					document.fonts.ready.then(() => ScrollTrigger.refresh());
 				});
 			} else {
 				// Visible on mobile (or single-image) — play entry immediately
+				wrapperHeight = null;
 				entryTl.play();
 				gsapCleanup = () => { entryTl.kill(); };
 			}
@@ -237,10 +255,15 @@
 	});
 </script>
 
+<div
+	bind:this={wrapperEl}
+	class="relative"
+	style="height: {wrapperHeight != null ? wrapperHeight + 'px' : ''}"
+>
 <section
 	bind:this={sectionEl}
 	id="project-{project?.id}"
-	class="relative w-full lg:flex lg:min-h-screen lg:items-center lg:px-10 lg:py-20 max-lg:flex max-lg:min-h-screen max-lg:flex-col"
+	class="w-full max-lg:static lg:sticky lg:top-0 lg:flex lg:min-h-screen lg:items-center lg:px-10 lg:py-20 max-lg:flex max-lg:min-h-screen max-lg:flex-col"
 >
 	<!-- DESKTOP: ProjectInfo left panel -->
 	<div data-content-panel="desktop" class="lg:w-2/5 lg:pr-8 max-lg:hidden">
@@ -317,3 +340,4 @@
 		{/if}
 	</div>
 </section>
+</div>
