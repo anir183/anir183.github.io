@@ -105,64 +105,70 @@
 			<p>
 				Images used on this site fall under the
 				<a
-					href="https://pixabay.com/service/license-summary/"
+					href="https://pixabay.com"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="transition-colors hover:text-c-accent-0/75"
+				>Pixabay</a>
+				<a
+					href="https://pixabay.com/service/license-summary"
 					target="_blank"
 					rel="noopener noreferrer"
 					class="text-c-accent-0/55 transition-colors hover:text-c-accent-0/75"
-				>Pixabay Content License</a>.
+				>Content License</a>.
 			</p>
 			<div class="space-y-1 leading-relaxed">
 				<p>
-					Image by <a
-						href="https://pixabay.com/users/soultrain-7283580/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=8214498"
+					<a
+						href="https://pixabay.com/photos/sunset-skyscrapers-buildings-city-8214498"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="transition-colors hover:text-c-accent-0/75"
+					>"Sunset Skyscrapers Buildings City"</a> by <a
+						href="https://pixabay.com/users/soultrain-7283580"
 						target="_blank"
 						rel="noopener noreferrer"
 						class="text-c-accent-0/55 transition-colors hover:text-c-accent-0/75"
-					>Denis Fedotov</a> from <a
-						href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=8214498"
-						target="_blank"
-						rel="noopener noreferrer"
-						class="text-c-accent-0/55 transition-colors hover:text-c-accent-0/75"
-					>Pixabay</a>
+					>Denis Fedotov</a>
 				</p>
 				<p>
-					Image by <a
-						href="https://pixabay.com/users/freephotocc-2275370/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=1478822"
+					<a
+						href="https://pixabay.com/photos/laptop-coffee-notebook-pen-glasses-1478822"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="transition-colors hover:text-c-accent-0/75"
+					>"Laptop Coffee Notebook Pen Glasses"</a> by <a
+						href="https://pixabay.com/users/freephotocc-2275370"
 						target="_blank"
 						rel="noopener noreferrer"
 						class="text-c-accent-0/55 transition-colors hover:text-c-accent-0/75"
-					>Free Photos</a> from <a
-						href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=1478822"
-						target="_blank"
-						rel="noopener noreferrer"
-						class="text-c-accent-0/55 transition-colors hover:text-c-accent-0/75"
-					>Pixabay</a>
+					>Free Photos</a>
 				</p>
 				<p>
-					Image by <a
-						href="https://pixabay.com/users/julius_silver-4371822/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=4936672"
+					<a
+						href="https://pixabay.com/photos/austria-fog-nature-landscape-4936672"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="transition-colors hover:text-c-accent-0/75"
+					>"Austria Fog Nature"</a> by <a
+						href="https://pixabay.com/users/julius_silver-4371822"
 						target="_blank"
 						rel="noopener noreferrer"
 						class="text-c-accent-0/55 transition-colors hover:text-c-accent-0/75"
-					>Julius Silver</a> from <a
-						href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=4936672"
-						target="_blank"
-						rel="noopener noreferrer"
-						class="text-c-accent-0/55 transition-colors hover:text-c-accent-0/75"
-					>Pixabay</a>
+					>Julius Silver</a>
 				</p>
 				<p>
-					Image by <a
-						href="https://pixabay.com/users/chriszwettler-23331959/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=6934162"
+					<a
+						href="https://pixabay.com/photos/austria-gazebo-pavilion-landscape-6934162"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="transition-colors hover:text-c-accent-0/75"
+					>"Austria Gazebo Pavilion"</a> by <a
+						href="https://pixabay.com/users/chriszwettler-23331959"
 						target="_blank"
 						rel="noopener noreferrer"
 						class="text-c-accent-0/55 transition-colors hover:text-c-accent-0/75"
-					>chriszwettler</a> from <a
-						href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=6934162"
-						target="_blank"
-						rel="noopener noreferrer"
-						class="text-c-accent-0/55 transition-colors hover:text-c-accent-0/75"
-					>Pixabay</a>
+					>chriszwettler</a>
 				</p>
 			</div>
 		</div>
