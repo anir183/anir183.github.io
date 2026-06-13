@@ -42,7 +42,7 @@
 </div>
 
 <!-- desktop layout -->
-<div data-carousel-viewport="desktop" class="relative flex h-full w-full flex-col gap-3 max-lg:hidden">
+<div data-carousel-viewport="desktop" class="relative flex h-full w-full flex-col gap-3 max-lg:hidden" style="contain: layout style paint">
 	<div
 		bind:this={imageTrackEl}
 		class="relative flex h-full w-full flex-col gap-3"

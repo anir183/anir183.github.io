@@ -375,7 +375,7 @@
 		<div
 			data-tile-index={i}
 			class="cube-tile relative"
-			style="transform-style: preserve-3d; will-change: transform"
+			style="transform-style: preserve-3d"
 		>
 			<div class="cube h-full w-full" style="transform-style: preserve-3d">
 				<div

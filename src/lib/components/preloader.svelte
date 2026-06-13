@@ -6,11 +6,11 @@
 	let showDots = $derived(progress === undefined);
 
 	const DOT_INTERVAL_MS = 500;
-	$effect(() => {
+		$effect(() => {
 		let rafId = 0;
 		function tick() {
 			if (progress !== undefined) {
-				if (displayProgress >= 1) {
+				if (displayProgress >= 1 || progress >= 1) {
 					displayProgress = 1;
 					done = true;
 					return;

@@ -3,6 +3,7 @@
 	import { fade } from "svelte/transition";
 	import { browser } from "$app/environment";
 	import {
+		DotGrid,
 		Preloader,
 		Navbar,
 		Hero,
@@ -132,6 +133,7 @@
 	</div>
 {/if}
 
+<DotGrid headingSelector=".hero" headingFade={1} headingTransition={0} />
 <Navbar bind:navEl bind:themeBtn bind:hamburgerBtn bind:logoEl />
 <Hero bind:heroH1 />
 <Projects />

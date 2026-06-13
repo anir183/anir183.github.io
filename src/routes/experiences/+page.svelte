@@ -5,6 +5,7 @@
 	import { resolve } from "$app/paths";
 	import { gsap } from "gsap";
 	import {
+		DotGrid,
 		Navbar,
 		Footer,
 		Preloader,
@@ -81,7 +82,7 @@
 					return;
 				}
 
-				gsap.set(navLinesStore, { opacity: 0, y: "125%", willChange: "transform" });
+				gsap.set(navLinesStore, { opacity: 0, y: "125%" });
 				gsap.set(themeBtn, { opacity: 0, scale: 0.8 });
 				if (hamburgerBtn) {
 					gsap.set(hamburgerBtn, { opacity: 0, scale: 0.8 });
@@ -163,6 +164,7 @@
 	</div>
 {/if}
 
+<DotGrid headingSelector="#experiences-heading" />
 <Navbar bind:navEl bind:themeBtn bind:hamburgerBtn {navItems} />
 <ExperiencesSection {reducedMotion} {headingStart} />
 <Footer />
