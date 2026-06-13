@@ -726,7 +726,7 @@
 			{#if !isMobile && activeSkill && (hoveredId || selectedId)}
 				<div
 					class="pointer-events-none absolute z-10"
-					style="transform: translate({tooltipX}px, {tooltipY}px) translateY(-50%);"
+					style="left: 0; top: 0; transform: translate({tooltipX}px, {tooltipY}px) translateY(-50%);"
 					transition:fade={{ duration: reducedMotion ? 0 : 120 }}
 				>
 					<div
