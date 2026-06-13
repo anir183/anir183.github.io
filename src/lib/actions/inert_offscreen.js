@@ -26,6 +26,17 @@ export function inertOffscreen(element) {
 	}
 	window.addEventListener("scroll", onScroll, { passive: true });
 
+	requestAnimationFrame(() => {
+		if (isInert) {
+			const rect = element.getBoundingClientRect();
+			const vh = window.innerHeight;
+			if (rect.top < vh && rect.bottom > 0) {
+				element.inert = false;
+				isInert = false;
+			}
+		}
+	});
+
 	return {
 		destroy() {
 			observer.disconnect();
