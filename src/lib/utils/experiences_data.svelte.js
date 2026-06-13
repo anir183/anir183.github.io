@@ -12,48 +12,39 @@
 /** @type {Experience[]} */
 export const experiences = [
 	{
-		id: "exp-1",
-		role: "Senior Software Engineer",
-		company: "Tech Corp",
+		id: "btech",
+		role: "B.Tech CyberSecurity Student",
+		company: "Techno Main Salt Lake",
 		period: "2024 — Present",
 		description:
-			"Leading frontend architecture and design system development for a SaaS platform serving 50k+ users.",
-		tags: ["svelte", "typescript", "tailwind"]
+			"Learning and practising core programming concepts and system architecture practices. Getting acquainted with related concepts like Networking, DBMS, Operating Systems, Compilers, etc.",
+		tags: ["c", "python", "java", "sql", "linux"]
 	},
 	{
-		id: "exp-2",
-		role: "Full Stack Developer",
-		company: "StartupXYZ",
+		id: "backend-iic",
+		role: "Backend Developer",
+		company: "IIC TMSL",
+		period: "2024 — 2026",
+		description:
+			"Built and shipped backends for user registration and payment website for different club events. Maintained existing organisation sites from updating REST APIs to managing frontend UX.",
+		tags: ["react", "javascript", "nodejs", "express", "mongodb"]
+	},
+	{
+		id: "higher-secondary",
+		role: "Higher Secondary",
+		company: "P.B. Academic School",
 		period: "2022 — 2024",
 		description:
-			"Built and shipped core product features across the full stack, from real-time APIs to responsive UIs.",
-		tags: ["react", "node", "postgres"]
+			"Advanced usage of JAVA and Object Oriented Programming in computer science. Getting familiar with the JAVA ecosystem.",
+		tags: ["java", "javaawt", "jswing", "springboot", "maven", "gradle", "intellij"]
 	},
 	{
-		id: "exp-3",
-		role: "Backend Engineer",
-		company: "DataFlow Inc",
-		period: "2021 — 2022",
-		description:
-			"Designed and maintained microservices handling 1M+ daily requests with a focus on reliability and observability.",
-		tags: ["python", "go", "docker", "aws"]
-	},
-	{
-		id: "exp-4",
-		role: "Junior Developer",
-		company: "WebAgency Co",
-		period: "2020 — 2021",
-		description:
-			"Developed responsive client websites and internal tooling, collaborating closely with designers and PMs.",
-		tags: ["javascript", "react", "figma"]
-	},
-	{
-		id: "exp-5",
-		role: "Open Source Contributor",
-		company: "Community",
+		id: "self-teaching",
+		role: "Self-Taught",
+		company: "Independent",
 		period: "2019 — Present",
 		description:
-			"Active contributor to several open-source projects, focusing on tooling, documentation, and bug fixes.",
-		tags: ["typescript", "node", "git"]
+			"Strong grasp of procedural as well as object-oriented programming across various languages. Multi-framework proficiency. High proficiency with Linux and related tools. Experience and projects across several disciplines including Web Dev, Application Dev, System Design, Game Dev, DBMS and DevOps.",
+		tags: ["unity", "c#", "godot", "linux", "java", "c", "rust", "go", "lua", "dart", "vercel", "onrender", "javascript", "python", "sql", "flutter", "react", "svelte", "neovim"]
 	}
 ];

@@ -338,7 +338,7 @@ onDestroy(() => {
 			>
 				<div
 					bind:this={contentWraps[i]}
-					class="w-full max-w-sm opacity-0 will-change-transform
+					class="max-lg:w-full max-lg:px-5 w-[clamp(20rem,40vw,42rem)] opacity-0 will-change-transform
 						{i % 2 === 0
 							? 'max-lg:mx-auto lg:ml-[10vw] lg:mr-auto'
 							: 'max-lg:mx-auto lg:mr-[10vw] lg:ml-auto'
@@ -347,11 +347,11 @@ onDestroy(() => {
 				<h3 class="text-4xl font-black text-c-neutral-0 font-c-unbounded leading-tight lg:text-5xl xl:text-6xl">
 					{exp.role}
 				</h3>
-				<div data-el="company" class="mt-1.5 flex items-baseline gap-5 flex-wrap">
+				<div data-el="company" class="mt-1.5 flex items-baseline gap-5">
 					<p class="text-base font-semibold text-c-accent-0 font-c-ubuntu tracking-wide lg:text-xl">{exp.company}</p>
 					<span class="shrink-0 text-base text-c-neutral-1/40 font-c-jetbrains lg:text-xl">{exp.period}</span>
 				</div>
-				<p data-el="desc" class="mt-5 text-xs leading-relaxed text-c-neutral-1 font-c-ubuntu lg:text-sm max-w-prose">
+				<p data-el="desc" class="mt-5 text-base max-sm:text-xs leading-relaxed text-c-neutral-1 font-c-ubuntu lg:text-xl max-w-prose">
 					{exp.description}
 				</p>
 				{#if exp.tags?.length}
