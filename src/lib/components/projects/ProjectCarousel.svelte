@@ -12,7 +12,7 @@
 <div data-carousel-viewport="mobile" class="flex flex-1 w-full flex-col gap-2 min-h-0 lg:hidden">
 	<div
 		data-project-img={0}
-		class="relative flex-1 overflow-hidden rounded-xl min-h-0 cursor-pointer"
+		class="relative flex-1 overflow-hidden rounded-xl min-h-0 cursor-pointer bg-c-bg-0"
 		onclick={() => handleDesktopImgClick?.(activeIndex)}
 	>
 		<img
@@ -28,7 +28,7 @@
 				<button
 					data-project-img={i + 1}
 					onclick={() => activeIndex = i}
-					class="relative flex-1 overflow-hidden rounded-lg transition-all duration-300 {i === activeIndex ? 'ring-2 ring-c-accent-0' : 'opacity-60 hover:opacity-80'}"
+					class="relative flex-1 overflow-hidden rounded-lg transition-all duration-300 bg-c-bg-0 {i === activeIndex ? 'ring-2 ring-c-accent-0' : 'opacity-60 hover:opacity-80'}"
 				>
 					<img
 						src={src}
@@ -46,24 +46,26 @@
 <div data-carousel-viewport="desktop" class="relative flex h-full w-full flex-col gap-3 max-lg:hidden" style="contain: layout style paint">
 	<div
 		bind:this={imageTrackEl}
-		class="relative flex h-full w-full flex-col gap-3"
+		class="relative flex h-full w-full flex-col gap-3 p-1"
 	>
 		{#each images as src, i}
 			<!-- svelte-ignore a11y_no_static_element_interactions -->
 			<div
 				data-project-img={i}
-				class="relative flex-1 overflow-hidden rounded-xl min-h-0 transition-[filter] duration-500 cursor-pointer"
+				class="relative flex-1 rounded-xl min-h-0 transition-[filter] duration-500 cursor-pointer ring-2 {i === activeIndex ? 'ring-c-accent-0' : 'ring-c-neutral-1/80'}"
 				class:brightness-[0.35]={i !== activeIndex}
 				onclick={() => handleDesktopImgClick?.(i)}
 				onkeydown={(e) => e.key === "Enter" && handleDesktopImgClick?.(i)}
 				role="button"
 				tabindex="0"
 			>
-				<img
-					src={src}
-					alt=""
-					class="h-full w-full object-cover"
-				/>
+				<div class="absolute inset-0 overflow-hidden rounded-xl bg-c-bg-0">
+					<img
+						src={src}
+						alt=""
+						class="h-full w-full object-cover"
+					/>
+				</div>
 			</div>
 		{/each}
 	</div>
