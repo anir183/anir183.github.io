@@ -3,6 +3,7 @@
 	import { gsap } from "gsap";
 	import ProjectInfo from "./ProjectInfo.svelte";
 	import ProjectCarousel from "./ProjectCarousel.svelte";
+	import ImageLightbox from "../ImageLightbox.svelte";
 	import { AccentLink } from "$lib";
 
 
@@ -347,24 +348,6 @@
 </section>
 
 {#if showLightbox}
-	<div
-		class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 cursor-pointer"
-		onclick={() => showLightbox = false}
-		onkeydown={(e) => e.key === "Escape" && (showLightbox = false)}
-		role="button"
-		tabindex="0"
-	>
-		<button
-			class="absolute top-4 right-4 text-white text-2xl font-bold leading-none cursor-pointer z-10"
-			onclick={() => showLightbox = false}
-		>&times;</button>
-		<img
-			src={images[activeIndex]}
-			alt=""
-			class="max-h-[90vh] max-w-[90vw] object-contain cursor-default"
-			onclick={(e) => e.stopPropagation()}
-			draggable={false}
-		/>
-	</div>
+	<ImageLightbox src={images[activeIndex]} onclose={() => showLightbox = false} />
 {/if}
 </div>

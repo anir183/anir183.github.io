@@ -22,6 +22,7 @@ export { default as DotGrid } from "./components/dot_grid.svelte";
 export { default as ProjectSection } from "./components/projects/ProjectSection.svelte";
 export { default as ProjectInfo } from "./components/projects/ProjectInfo.svelte";
 export { default as ProjectCarousel } from "./components/projects/ProjectCarousel.svelte";
+export { default as ImageLightbox } from "./components/ImageLightbox.svelte";
 
 // animations
 export * from "./gsap/sequences/hero_entry.svelte.js";
