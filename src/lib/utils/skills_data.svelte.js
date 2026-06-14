@@ -15,85 +15,22 @@
 const _skills = [
 	// ── Languages ──
 	{
-		id: "javascript",
-		name: "JavaScript",
-		icon: "🟨",
-		category: "Languages",
-		description: "Dynamic language powering the modern web",
-		experience: "3 years",
-		relatedTechnologies: ["react", "svelte", "node", "expo", "express"]
-	},
-	{
 		id: "java",
 		name: "Java",
 		icon: "☕",
 		category: "Languages",
 		description: "Mature OOP language for enterprise and Android",
 		experience: "6 years",
-		relatedTechnologies: ["docker", "linux"]
+		relatedTechnologies: ["linux", "firebase"]
 	},
 	{
-		id: "c",
-		name: "C",
-		icon: "⚙️",
+		id: "javascript",
+		name: "JavaScript",
+		icon: "🟨",
 		category: "Languages",
-		description: "Low-level systems language with minimal abstraction",
-		experience: "1 year",
-		relatedTechnologies: ["rust", "linux"]
-	},
-	{
-		id: "csharp",
-		name: "C#",
-		icon: "🔷",
-		category: "Languages",
-		description: "Versatile .NET language for apps and games",
-		experience: "4 years",
-		relatedTechnologies: ["unity"]
-	},
-	{
-		id: "python",
-		name: "Python",
-		icon: "🐍",
-		category: "Languages",
-		description: "General-purpose language for data, web, and automation",
-		experience: "4 years",
-		relatedTechnologies: ["go", "docker", "linux", "flet"]
-	},
-	{
-		id: "lua",
-		name: "Lua",
-		icon: "🌙",
-		category: "Languages",
-		description: "Lightweight embeddable scripting language",
-		experience: "1 year",
-		relatedTechnologies: []
-	},
-	{
-		id: "dart",
-		name: "Dart",
-		icon: "🎯",
-		category: "Languages",
-		description: "Client-optimized language for multi-platform UIs",
-		experience: "2 years",
-		relatedTechnologies: ["flutter", "expo"]
-	},
-	{
-		id: "go",
-		name: "Go",
-		icon: "🔵",
-		category: "Languages",
-		description: "Statically typed compiled language for performant services",
-		experience: "1 year",
-		relatedTechnologies: ["python", "docker", "linux"]
-	},
-	{
-		id: "sql",
-		name: "SQL",
-		icon: "🗃️",
-		category: "Languages",
-		description: "Declarative query language for relational databases",
-		experience: "1 year",
-		relatedTechnologies: ["postgres", "sqlite", "mongodb"]
+		description: "Dynamic language powering the modern web",
+		experience: "3 years",
+		relatedTechnologies: ["react", "svelte", "node"]
 	},
 	{
 		id: "rust",
@@ -102,118 +39,200 @@ const _skills = [
 		category: "Languages",
 		description: "Memory-safe systems language with zero-cost abstractions",
 		experience: "6 months",
-		relatedTechnologies: ["go", "linux"]
+		relatedTechnologies: ["c", "linux"]
+	},
+	{
+		id: "c",
+		name: "C",
+		icon: "⚙️",
+		category: "Languages",
+		description: "Low-level systems language with minimal abstraction",
+		experience: "1 year",
+		relatedTechnologies: ["rust", "lua", "linux"]
+	},
+	{
+		id: "csharp",
+		name: "C#",
+		icon: "🔷",
+		category: "Languages",
+		description: "Versatile .NET language for apps and games",
+		experience: "4 years",
+		relatedTechnologies: ["unity", "godot"]
+	},
+	{
+		id: "lua",
+		name: "Lua",
+		icon: "🌙",
+		category: "Languages",
+		description: "Lightweight embeddable scripting language",
+		experience: "1 year",
+		relatedTechnologies: ["c"]
+	},
+	{
+		id: "python",
+		name: "Python",
+		icon: "🐍",
+		category: "Languages",
+		description: "General-purpose language for data, web, and automation",
+		experience: "4 years",
+		relatedTechnologies: ["flet", "sqlite", "linux"]
+	},
+	{
+		id: "dart",
+		name: "Dart",
+		icon: "🎯",
+		category: "Languages",
+		description: "Client-optimized language for multi-platform UIs",
+		experience: "2 years",
+		relatedTechnologies: ["flutter"]
+	},
+	{
+		id: "go",
+		name: "Go",
+		icon: "🔵",
+		category: "Languages",
+		description: "Statically typed compiled language for performant services",
+		experience: "1 year",
+		relatedTechnologies: ["linux"]
+	},
+	{
+		id: "sql",
+		name: "SQL",
+		icon: "🗃️",
+		category: "Languages",
+		description: "Declarative query language for relational databases",
+		experience: "1 year",
+		relatedTechnologies: ["postgres", "sqlite"]
 	},
 
-	// ── Frontend ──
+	// ── Web & Mobile ──
 	{
 		id: "react",
 		name: "React",
 		icon: "⚛️",
-		category: "Frontend",
+		category: "Web & Mobile",
 		description: "Declarative UI library for web and native",
 		experience: "2 years",
-		relatedTechnologies: ["javascript", "node", "expo", "svelte"]
+		relatedTechnologies: ["javascript", "node", "vercel", "firebase"]
 	},
 	{
 		id: "svelte",
 		name: "Svelte",
 		icon: "🧩",
-		category: "Frontend",
+		category: "Web & Mobile",
 		description: "Reactive component framework compiling to vanilla JS",
 		experience: "1 year",
-		relatedTechnologies: ["javascript", "node", "vercel"]
-	},
-	{
-		id: "expo",
-		name: "Expo",
-		icon: "📱",
-		category: "Frontend",
-		description: "React Native framework for cross-platform mobile apps",
-		experience: "1 year",
-		relatedTechnologies: ["react", "dart", "javascript"]
+		relatedTechnologies: ["javascript", "vercel"]
 	},
 	{
 		id: "flutter",
 		name: "Flutter",
 		icon: "💙",
-		category: "Frontend",
+		category: "Web & Mobile",
 		description: "Google's UI toolkit for natively compiled cross-platform apps",
 		experience: "2 years",
-		relatedTechnologies: ["dart", "flet"]
+		relatedTechnologies: ["dart", "flet", "firebase"]
 	},
-
-	// ── Backend ──
 	{
 		id: "node",
 		name: "Node.js",
 		icon: "🟢",
-		category: "Backend",
+		category: "Web & Mobile",
 		description: "JavaScript runtime for server-side applications",
 		experience: "3 years",
-		relatedTechnologies: ["javascript", "express", "react", "postgres", "mongodb", "firestore", "vercel", "onrender"]
+		relatedTechnologies: ["javascript", "express", "react", "postgres", "mongodb", "vercel", "onrender", "linux", "firebase"]
 	},
 	{
 		id: "express",
 		name: "Express",
 		icon: "🚂",
-		category: "Backend",
+		category: "Web & Mobile",
 		description: "Minimalist Node.js web framework for APIs and apps",
 		experience: "2 years",
-		relatedTechnologies: ["node", "postgres", "mongodb"]
-	},
-	{
-		id: "postgres",
-		name: "PostgreSQL",
-		icon: "🐘",
-		category: "Backend",
-		description: "Advanced relational database with strong ACID compliance",
-		experience: "1 year",
-		relatedTechnologies: ["node", "express", "sql"]
-	},
-	{
-		id: "sqlite",
-		name: "SQLite",
-		icon: "📄",
-		category: "Backend",
-		description: "Self-contained embedded SQL database engine",
-		experience: "2 years",
-		relatedTechnologies: ["sql", "python"]
-	},
-	{
-		id: "mongodb",
-		name: "MongoDB",
-		icon: "🍃",
-		category: "Backend",
-		description: "NoSQL document database for flexible data models",
-		experience: "2 years",
-		relatedTechnologies: ["node", "express", "sql"]
-	},
-	{
-		id: "firestore",
-		name: "Firestore",
-		icon: "🔥",
-		category: "Backend",
-		description: "Serverless NoSQL database from Firebase",
-		experience: "2 years",
-		relatedTechnologies: ["node", "expo"]
+		relatedTechnologies: ["node", "mongodb", "postgres"]
 	},
 	{
 		id: "flet",
 		name: "Flet",
 		icon: "🪶",
-		category: "Backend",
-		description: "Python framework for building Flutter UIs in Python",
+		category: "Web & Mobile",
+		description: "Python framework for building cross-platform Flutter UIs",
 		experience: "6 months",
-		relatedTechnologies: ["python", "flutter", "docker"]
+		relatedTechnologies: ["python", "flutter"]
+	},
+	{
+		id: "firebase",
+		name: "Firebase",
+		icon: "🔥",
+		category: "Web & Mobile",
+		description: "Google's app development platform with auth, database, hosting, and serverless functions",
+		experience: "2 years",
+		relatedTechnologies: ["react", "flutter", "node", "java"]
 	},
 
-	// ── DevOps ──
+	// ── Databases ──
+	{
+		id: "mongodb",
+		name: "MongoDB",
+		icon: "🍃",
+		category: "Databases",
+		description: "NoSQL document database for flexible data models",
+		experience: "2 years",
+		relatedTechnologies: ["node", "express"]
+	},
+	{
+		id: "postgres",
+		name: "PostgreSQL",
+		icon: "🐘",
+		category: "Databases",
+		description: "Advanced relational database with strong ACID compliance",
+		experience: "1 year",
+		relatedTechnologies: ["sql", "node", "express"]
+	},
+	{
+		id: "sqlite",
+		name: "SQLite",
+		icon: "📄",
+		category: "Databases",
+		description: "Self-contained embedded SQL database engine",
+		experience: "2 years",
+		relatedTechnologies: ["sql", "python"]
+	},
+
+	// ── Game Development ──
+	{
+		id: "unity",
+		name: "Unity",
+		icon: "🎮",
+		category: "Game Development",
+		description: "Cross-platform game engine for 2D and 3D games",
+		experience: "4 years",
+		relatedTechnologies: ["csharp"]
+	},
+	{
+		id: "godot",
+		name: "Godot",
+		icon: "👾",
+		category: "Game Development",
+		description: "Cross-platform open-source game engine",
+		experience: "1 year",
+		relatedTechnologies: ["csharp"]
+	},
+	// ── DevOps & Tools ──
+	{
+		id: "linux",
+		name: "Linux",
+		icon: "🐧",
+		category: "DevOps & Tools",
+		description: "Open-source OS powering servers and development environments",
+		experience: "2 years",
+		relatedTechnologies: ["c", "node", "python", "go", "java", "git", "rust"]
+	},
 	{
 		id: "git",
 		name: "Git",
 		icon: "🔀",
-		category: "DevOps",
+		category: "DevOps & Tools",
 		description: "Distributed version control for collaborative development",
 		experience: "4 years",
 		relatedTechnologies: ["github", "linux"]
@@ -222,102 +241,78 @@ const _skills = [
 		id: "github",
 		name: "GitHub",
 		icon: "🐙",
-		category: "DevOps",
+		category: "DevOps & Tools",
 		description: "Code hosting platform with CI/CD and project management",
 		experience: "4 years",
 		relatedTechnologies: ["git", "vercel", "onrender"]
 	},
 	{
-		id: "linux",
-		name: "Linux",
-		icon: "🐧",
-		category: "DevOps",
-		description: "Open-source OS powering servers and development environments",
-		experience: "2 years",
-		relatedTechnologies: ["docker", "git", "python", "go", "rust"]
-	},
-	{
 		id: "vercel",
 		name: "Vercel",
 		icon: "▲",
-		category: "DevOps",
+		category: "DevOps & Tools",
 		description: "Frontend deployment platform with edge functions",
 		experience: "1 year",
-		relatedTechnologies: ["svelte", "node", "github"]
+		relatedTechnologies: ["github", "svelte", "react", "node"]
 	},
 	{
 		id: "onrender",
 		name: "Render",
 		icon: "🔄",
-		category: "DevOps",
+		category: "DevOps & Tools",
 		description: "Cloud platform for hosting web services and databases",
 		experience: "1 year",
-		relatedTechnologies: ["node", "github", "docker"]
-	},
-	{
-		id: "docker",
-		name: "Docker",
-		icon: "🐳",
-		category: "DevOps",
-		description: "Container platform for reproducible deployment",
-		experience: "1 year",
-		relatedTechnologies: ["linux", "go", "python", "onrender"]
-	},
-
-	// ── Other ──
-	{
-		id: "unity",
-		name: "Unity",
-		icon: "🎮",
-		category: "Other",
-		description: "Cross-platform game engine for 2D and 3D games",
-		experience: "4 years",
-		relatedTechnologies: ["csharp"]
+		relatedTechnologies: ["github", "node"]
 	}
 ];
 
 /** @type {string[]} */
-export const skillCategories = ["Languages", "Frontend", "Backend", "DevOps", "Other"];
+export const skillCategories = ["Languages", "Web & Mobile", "Databases", "Game Development", "DevOps & Tools"];
 
 /** Adjacency pairs for network connections */
 export const skillConnections = [
-	// languages → direct tool/framework links
+	// languages → frameworks/techs
 	["javascript", "react"],
 	["javascript", "svelte"],
 	["javascript", "node"],
-	["javascript", "expo"],
-	["javascript", "express"],
 	["dart", "flutter"],
-	["python", "go"],
-	["python", "docker"],
-	["python", "linux"],
 	["python", "flet"],
-	["go", "docker"],
+	["python", "sqlite"],
 	["csharp", "unity"],
+	["csharp", "godot"],
+	["c", "rust"],
+	["c", "lua"],
+	["c", "linux"],
 	["sql", "postgres"],
 	["sql", "sqlite"],
-	["sql", "mongodb"],
 
-	// frontend
-	["react", "node"],
-	["react", "expo"],
-	["react", "svelte"],
-	["svelte", "node"],
-	["flutter", "flet"],
-
-	// backend
+	// web & mobile
 	["node", "express"],
-	["node", "postgres"],
 	["node", "mongodb"],
+	["node", "postgres"],
 	["node", "vercel"],
 	["node", "onrender"],
+	["node", "linux"],
+	["express", "mongodb"],
+	["express", "postgres"],
+	["react", "node"],
+	["react", "vercel"],
+	["svelte", "vercel"],
+	["flutter", "flet"],
+	["firebase", "react"],
+	["firebase", "flutter"],
+	["firebase", "node"],
+	["firebase", "java"],
 
-	// devops
+	// devops & tools
 	["git", "github"],
 	["git", "linux"],
 	["github", "vercel"],
 	["github", "onrender"],
-	["linux", "docker"]
+	["linux", "go"],
+	["linux", "java"],
+	["linux", "rust"],
+	["linux", "python"]
 ];
 
 /**
