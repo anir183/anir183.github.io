@@ -147,54 +147,38 @@
 				});
 			}
 
-			// Check if section is already in the viewport
-			const rect = sectionEl.getBoundingClientRect();
-			const vh = window.innerHeight;
-			const isVisible = rect.top < vh && rect.bottom > 0;
+			// Always use ScrollTrigger for entry — handles scroll restoration timing correctly
 			/** @type {import("gsap/ScrollTrigger").ScrollTrigger | undefined} */
 		let entrySt;
 
-			if (isVisible) {
-				// Already in view — play entry immediately (no ScrollTrigger)
-				// FlexGrow (desktop) still needs ScrollTrigger
-			} else {
-				// Below the fold — import ScrollTrigger for entry + (optionally) flexGrow
-			}
-
 			const needsScrollTrigger = isDesktop && imgWraps.length >= 2;
 
-			if (needsScrollTrigger || !isVisible) {
-				// Wait for DOM to be fully settled before measuring section height
-				await tick();
-				await new Promise(r => requestAnimationFrame(r));
+			// Wait for DOM to be fully settled before measuring section height
+			await tick();
+			await new Promise(r => requestAnimationFrame(r));
 
-				// Compute wrapper height for CSS sticky pin
+			// Compute wrapper height for CSS sticky pin
+			if (isDesktop && imgWraps.length >= 2) {
+				const scrollDist = Math.round(images.length * 0.3 * window.innerHeight);
+				wrapperHeight = sectionEl.offsetHeight + scrollDist;
+			} else {
+				wrapperHeight = null;
+			}
+
+			import("gsap/ScrollTrigger").then(({ ScrollTrigger }) => {
+				if (!mounted || !sectionEl) return;
+				gsap.registerPlugin(ScrollTrigger);
+
+				// Entry ScrollTrigger — fires when section enters viewport, or immediately if already in view
+				entrySt = ScrollTrigger.create({
+					trigger: sectionEl,
+					start: "top 20%",
+					once: true,
+					animation: entryTl
+				});
+
+				// Desktop flexGrow pin+scrub
 				if (isDesktop && imgWraps.length >= 2) {
-					const scrollDist = Math.round(images.length * 0.3 * window.innerHeight);
-					wrapperHeight = sectionEl.offsetHeight + scrollDist;
-				} else {
-					wrapperHeight = null;
-				}
-
-				import("gsap/ScrollTrigger").then(({ ScrollTrigger }) => {
-					if (!mounted || !sectionEl) return;
-					gsap.registerPlugin(ScrollTrigger);
-
-					// Entry ScrollTrigger (only if not yet visible)
-					if (!isVisible) {
-						entrySt = ScrollTrigger.create({
-							trigger: sectionEl,
-							start: "top 20%",
-							once: true,
-							animation: entryTl
-						});
-					} else {
-						// Already in view — play entry immediately
-						entryTl.play();
-					}
-
-					// Desktop flexGrow pin+scrub
-					if (isDesktop && imgWraps.length >= 2) {
 						const n = imgWraps.length;
 						const scrollDistance = Math.round(images.length * 0.3 * window.innerHeight);
 						const seg = 1 / (n - 1);
@@ -240,12 +224,6 @@
 					// Recalculate pin-spacers once custom fonts are rendered
 					document.fonts.ready.then(() => ScrollTrigger.refresh());
 				});
-			} else {
-				// Visible on mobile (or single-image) — play entry immediately
-				wrapperHeight = null;
-				entryTl.play();
-				gsapCleanup = () => { entryTl.kill(); };
-			}
 		}
 
 		rebuild();
