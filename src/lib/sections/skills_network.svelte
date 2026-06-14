@@ -31,6 +31,34 @@
 		)
 	);
 
+	let zoom = $state(1);
+	let panX = $state(0);
+	let panY = $state(0);
+	let isDragging = $state(false);
+	let dragStartX = $state(0);
+	let dragStartY = $state(0);
+	let dragStartPanX = $state(0);
+	let dragStartPanY = $state(0);
+	let lastTouchDist = $state(0);
+	let zoomEnabled = $state(false);
+	let dragOccurred = $state(false);
+	let pinchInGraphArea = $state(false);
+
+	let graphBounds = $derived.by(() => {
+		const positions = effectivePositions;
+		if (positions.length === 0) return null;
+		let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+		for (const p of positions) {
+			if (p.x < minX) minX = p.x;
+			if (p.y < minY) minY = p.y;
+			if (p.x > maxX) maxX = p.x;
+			if (p.y > maxY) maxY = p.y;
+		}
+		const padX = (maxX - minX) * 0.2;
+		const padY = (maxY - minY) * 0.2;
+		return { minX: minX - padX, minY: minY - padY, maxX: maxX + padX, maxY: maxY + padY };
+	});
+
 	let floatTweens = /** @type {gsap.core.Tween[]} */ ([]);
 	let packetTweens = /** @type {gsap.core.Tween[]} */ ([]);
 	let pulseTween = /** @type {gsap.core.Tween | null} */ (null);
@@ -181,14 +209,153 @@
 	}
 
 	function onSvgBgClick() {
-		if (isMobile) return;
+		if (isMobile || dragOccurred) return;
 		selectedId = null;
 		hoveredId = null;
 		animateToRest();
 	}
 
+	/**
+	 * @param {number} clientX
+	 * @param {number} clientY
+	 */
+	function isInGraphArea(clientX, clientY) {
+		if (!svgEl || !graphBounds) return false;
+		const ctm = svgEl.getScreenCTM();
+		if (!ctm) return false;
+
+		const tl = svgEl.createSVGPoint();
+		tl.x = graphBounds.minX;
+		tl.y = graphBounds.minY;
+		const tlScreen = tl.matrixTransform(ctm);
+
+		const br = svgEl.createSVGPoint();
+		br.x = graphBounds.maxX;
+		br.y = graphBounds.maxY;
+		const brScreen = br.matrixTransform(ctm);
+
+		return clientX >= tlScreen.x && clientX <= brScreen.x && clientY >= tlScreen.y && clientY <= brScreen.y;
+	}
+
 	function closeMobileDetail() {
 		mobileDetailSkill = null;
+	}
+
+	function clampPan() {
+		const maxX = (zoom - 1) * 500;
+		const maxY = (zoom - 1) * 350;
+		panX = Math.max(-maxX, Math.min(maxX, panX));
+		panY = Math.max(-maxY, Math.min(maxY, panY));
+	}
+
+	/**
+	 * @param {PointerEvent} e
+	 */
+	function onPointerDown(e) {
+		if (!zoomEnabled) return;
+		if (e.button !== 0) return;
+		const target = /** @type {HTMLElement} */ (e.target);
+		if (target.closest("[data-node-id]")) return;
+		if (!isInGraphArea(e.clientX, e.clientY)) return;
+		e.preventDefault();
+		svgEl?.setPointerCapture(e.pointerId);
+		isDragging = true;
+		dragOccurred = false;
+		dragStartX = e.clientX;
+		dragStartY = e.clientY;
+		dragStartPanX = panX;
+		dragStartPanY = panY;
+	}
+
+	/**
+	 * @param {PointerEvent} e
+	 */
+	function onPointerMove(e) {
+		if (!isDragging) return;
+		dragOccurred = true;
+		panX = dragStartPanX + (e.clientX - dragStartX);
+		panY = dragStartPanY + (e.clientY - dragStartY);
+		clampPan();
+	}
+
+	function onPointerUp() {
+		isDragging = false;
+	}
+
+	/**
+	 * @param {WheelEvent} e
+	 */
+	function onWheel(e) {
+		if (!zoomEnabled) return;
+		if (!isInGraphArea(e.clientX, e.clientY)) return;
+		e.preventDefault();
+		const rect = svgEl?.getBoundingClientRect();
+		if (!rect) return;
+		const cx = e.clientX - rect.left;
+		const cy = e.clientY - rect.top;
+		const delta = e.deltaY > 0 ? -0.1 : 0.1;
+		const newZoom = Math.max(1, Math.min(5, zoom + delta));
+		panX = cx + (panX - cx) * newZoom / zoom;
+		panY = cy + (panY - cy) * newZoom / zoom;
+		zoom = newZoom;
+		clampPan();
+	}
+
+	/**
+	 * @param {TouchEvent} e
+	 */
+	function onTouchStart(e) {
+		if (!zoomEnabled) return;
+		if (e.touches.length === 2) {
+			const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+			const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+			pinchInGraphArea = isInGraphArea(cx, cy);
+			if (!pinchInGraphArea) return;
+			e.preventDefault();
+			const dx = e.touches[0].clientX - e.touches[1].clientX;
+			const dy = e.touches[0].clientY - e.touches[1].clientY;
+			lastTouchDist = Math.hypot(dx, dy);
+			dragStartX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+			dragStartY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+			dragStartPanX = panX;
+			dragStartPanY = panY;
+		}
+	}
+
+	/**
+	 * @param {TouchEvent} e
+	 */
+	function onTouchMove(e) {
+		if (e.touches.length === 2) {
+			if (!pinchInGraphArea) return;
+			e.preventDefault();
+			const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+			const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+			panX = dragStartPanX + (cx - dragStartX);
+			panY = dragStartPanY + (cy - dragStartY);
+
+			const dx = e.touches[0].clientX - e.touches[1].clientX;
+			const dy = e.touches[0].clientY - e.touches[1].clientY;
+			const dist = Math.hypot(dx, dy);
+			if (lastTouchDist > 0) {
+				const rect = svgEl?.getBoundingClientRect();
+				if (!rect) return;
+				const mx = cx - rect.left;
+				const my = cy - rect.top;
+				const newZoom = Math.max(1, Math.min(5, zoom * (dist / lastTouchDist)));
+				panX = mx + (panX - mx) * newZoom / zoom;
+				panY = my + (panY - my) * newZoom / zoom;
+				zoom = newZoom;
+			}
+			lastTouchDist = dist;
+			clampPan();
+		}
+	}
+
+	function onTouchEnd() {
+		isDragging = false;
+		lastTouchDist = 0;
+		pinchInGraphArea = false;
 	}
 
 	function startFloats() {
@@ -532,6 +699,7 @@
 							}
 						}
 					);
+					zoomEnabled = true;
 				}
 			},
 			"-=0.3"
@@ -606,6 +774,7 @@
 		mql.addEventListener("change", onMqlChange);
 
 		if (reducedMotion) {
+			zoomEnabled = true;
 			return () => mql.removeEventListener("change", onMqlChange);
 		}
 
@@ -622,7 +791,7 @@
 	bind:this={sectionEl}
 	use:inertOffscreen
 	id="skills"
-	class="flex min-h-screen w-full flex-col lg:flex-row"
+	class="flex w-full max-lg:h-screen max-lg:flex-col max-lg:pb-8 lg:min-h-screen lg:flex-row"
 >
 	<!-- mobile heading -->
 	<div
@@ -640,18 +809,26 @@
 
 	<!-- SVG graph panel (left on desktop, top on mobile) -->
 	<div
-		class="flex w-full items-center justify-center px-3 max-lg:flex-1 lg:sticky lg:top-0 lg:h-screen lg:w-3/5 lg:px-6"
+		class="flex w-full items-center justify-center px-3 max-lg:flex-1 max-lg:min-h-[40vh] lg:self-center lg:h-[70vh] lg:w-3/5 lg:px-6"
 	>
-	<div bind:this={svgContainerEl} class="relative h-full w-full">
+	<div bind:this={svgContainerEl} class="relative h-full w-full overflow-hidden">
 			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 			<svg
 				bind:this={svgEl}
 				viewBox="0 0 1000 700"
 				class="h-full w-full"
+				style="transform: scale({zoom}) translate({panX}px, {panY}px); transform-origin: 0 0"
 				preserveAspectRatio="xMidYMid meet"
 				role="img"
 				aria-label="Skills network graph"
 				onclick={onSvgBgClick}
+				onpointerdown={onPointerDown}
+				onpointermove={onPointerMove}
+				onpointerup={onPointerUp}
+				onwheel={onWheel}
+				ontouchstart={onTouchStart}
+				ontouchmove={onTouchMove}
+				ontouchend={onTouchEnd}
 				onkeydown={(e) => {
 					if (e.key === "Escape") onSvgBgClick();
 				}}
