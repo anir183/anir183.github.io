@@ -18,7 +18,7 @@
 	/** @type {string | null} */
 	let queuedImage = null;
 
-	/** @type {Array<{el: HTMLDivElement, front: HTMLDivElement | null, rear: HTMLDivElement | null, col: number, row: number}>} */
+	/** @type {Array<{el: HTMLDivElement, front: HTMLDivElement | null, rear: HTMLDivElement | null, tint: Element[], col: number, row: number}>} */
 	let tileMeta = [];
 
 	/** @type {gsap.core.Tween[]} */
@@ -34,6 +34,10 @@
 	let tileApplied = [];
 	/** @type {boolean[]} */
 	let tileWasNear = [];
+	/** @type {boolean[]} */
+	let tileFrontVisible = [];
+	/** @type {(() => void) | null} */
+	let visibilityCleanup = null;
 
 	let tileIndices = $derived(Array.from({ length: rows * cols }, (_, i) => i));
 
@@ -161,20 +165,20 @@
 			const c = tileCenter(i, gridRect);
 			const dist = Math.hypot(e.clientX - c.x, e.clientY - c.y);
 
-			if (dist < DIM_FAR) {
+			if (dist < DIM_FAR && tileFrontVisible[i]) {
 				tileWasNear[i] = true;
 				if (tileApplied[i] !== DIM_STRENGTH) {
 					tileApplied[i] = DIM_STRENGTH;
 					const t = tileMeta[i];
-					gsap.killTweensOf([t.front, t.rear], "opacity");
-					gsap.set([t.front, t.rear], { opacity: DIM_STRENGTH });
+					gsap.killTweensOf(t.tint, "opacity");
+					gsap.set(t.tint, { opacity: DIM_STRENGTH });
 				}
 			} else if (tileWasNear[i]) {
 				tileWasNear[i] = false;
 				tileApplied[i] = 1;
 				const t = tileMeta[i];
-				gsap.to([t.front, t.rear], {
-					opacity: 1,
+				gsap.to(t.tint, {
+					opacity: 0,
 					duration: 3,
 					ease: "power2.out"
 				});
@@ -188,8 +192,8 @@
 				tileWasNear[i] = false;
 				tileApplied[i] = 1;
 				const t = tileMeta[i];
-				gsap.to([t.front, t.rear], {
-					opacity: 1,
+				gsap.to(t.tint, {
+					opacity: 0,
 					duration: 3,
 					ease: "power2.out"
 				});
@@ -223,6 +227,36 @@
 	function stopBreathing() {
 		breathingTweens.forEach((t) => t.kill());
 		breathingTweens = [];
+	}
+
+	function startFrontVisibilityCheck() {
+		stopFrontVisibilityCheck();
+		tileFrontVisible = new Array(tileMeta.length).fill(false);
+		const check = () => {
+			let allVisible = true;
+			for (let i = 0; i < tileMeta.length; i++) {
+				if (tileFrontVisible[i]) continue;
+				const rot = gsap.getProperty(tileMeta[i].el, "rotationY");
+				if (typeof rot === "number") {
+					const norm = ((rot % 360) + 360) % 360;
+					if (norm >= 270 || norm < 90) {
+						tileFrontVisible[i] = true;
+					} else {
+						allVisible = false;
+					}
+				}
+			}
+			if (allVisible) stopFrontVisibilityCheck();
+		};
+		gsap.ticker.add(check);
+		visibilityCleanup = () => gsap.ticker.remove(check);
+	}
+
+	function stopFrontVisibilityCheck() {
+		if (visibilityCleanup) {
+			visibilityCleanup();
+			visibilityCleanup = null;
+		}
 	}
 
 	function onTransitionComplete() {
@@ -269,6 +303,7 @@
 				el,
 				front: el.querySelector(".front"),
 				rear: el.querySelector(".rear"),
+				tint: [...el.querySelectorAll(".cube-tint")],
 				col,
 				row
 			};
@@ -277,6 +312,7 @@
 		if (!reducedMotion) {
 			startBreathing();
 			initProximityDim();
+			startFrontVisibilityCheck();
 		}
 
 		if (activeImage) {
@@ -300,12 +336,14 @@
 			if (!reducedMotion) {
 				startBreathing();
 				initProximityDim();
+				startFrontVisibilityCheck();
 			}
 			rebuildingGrid = false;
 			return;
 		}
 
 		stopBreathing();
+		stopFrontVisibilityCheck();
 		gridEl.removeEventListener("mousemove", onGridMove);
 		gridEl.removeEventListener("mouseleave", onGridLeave);
 
@@ -360,6 +398,7 @@
 	$effect(() => {
 		return () => {
 			stopBreathing();
+			stopFrontVisibilityCheck();
 			clearTimeout(roTimer);
 			ro?.disconnect();
 		};
@@ -381,11 +420,21 @@
 				<div
 					class="cube-face front absolute inset-0"
 					style="backface-visibility: hidden; transform: translateZ(1px)"
-				></div>
+				>
+					<div
+						class="cube-tint pointer-events-none absolute inset-0"
+						style="background-color: var(--color-c-accent-0); opacity: 0"
+					></div>
+				</div>
 				<div
 					class="cube-face rear absolute inset-0"
 					style="backface-visibility: hidden; transform: rotateY(180deg) translateZ(1px)"
-				></div>
+				>
+					<div
+						class="cube-tint pointer-events-none absolute inset-0"
+						style="background-color: var(--color-c-accent-0); opacity: 0"
+					></div>
+				</div>
 			</div>
 		</div>
 	{/each}
