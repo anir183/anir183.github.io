@@ -1,4 +1,5 @@
 <script>
+	import { Picture } from "$lib";
 	let {
 		images = /** @type {string[]} */ ([]),
 		activeIndex = $bindable(0),
@@ -15,7 +16,7 @@
 		class="relative flex-1 overflow-hidden rounded-xl min-h-0 cursor-pointer bg-c-bg-0"
 		onclick={() => handleDesktopImgClick?.(activeIndex)}
 	>
-		<img
+		<Picture
 			src={images[activeIndex]}
 			alt=""
 			class="absolute inset-0 h-full w-full object-cover"
@@ -30,7 +31,7 @@
 					onclick={() => activeIndex = i}
 					class="relative flex-1 overflow-hidden rounded-lg transition-all duration-300 bg-c-bg-0 {i === activeIndex ? 'ring-2 ring-c-accent-0' : 'opacity-60 hover:opacity-80'}"
 				>
-					<img
+					<Picture
 						src={src}
 						alt=""
 						class="absolute inset-0 h-full w-full object-cover"
@@ -60,7 +61,7 @@
 				tabindex="0"
 			>
 				<div class="absolute inset-0 overflow-hidden rounded-xl bg-c-bg-0">
-					<img
+					<Picture
 						src={src}
 						alt=""
 						class="h-full w-full object-cover"

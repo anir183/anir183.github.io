@@ -1,5 +1,5 @@
 <script>
-	import { theme, themes } from "$lib";
+	import { theme, themes, Picture } from "$lib";
 
 	let { heroH1 = $bindable() } = $props();
 
@@ -23,24 +23,34 @@
 				'z-2'} {img.portraitDark ? 'h-svh w-screen' : 'aspect-video w-[20vw] max-intro:w-[35vw]'} overflow-hidden rounded-4xl will-change-transform"
 		>
 			{#if img.portraitDark}
-				<img
+				<Picture
 					src={img.src}
 					alt=""
+					draggable={false}
+					oncontextmenu={(/** @type {MouseEvent} */ e) => e.preventDefault()}
 					class="absolute inset-0 block h-full w-full object-cover transition-opacity duration-700 {theme.current ===
-					themes.LIGHT
+						themes.LIGHT
 						? 'opacity-100'
 						: 'opacity-0'}"
 				/>
-				<img
+				<Picture
 					src={img.portraitDark}
 					alt=""
+					draggable={false}
+					oncontextmenu={(/** @type {MouseEvent} */ e) => e.preventDefault()}
 					class="absolute inset-0 block h-full w-full object-cover transition-opacity duration-700 {theme.current ===
-					themes.DARK
+						themes.DARK
 						? 'opacity-100'
 						: 'opacity-0'}"
 				/>
 			{:else}
-				<img src={img.src} alt="" class="block h-full w-full object-cover" />
+				<Picture
+					src={img.src}
+					alt=""
+					draggable={false}
+					oncontextmenu={(/** @type {MouseEvent} */ e) => e.preventDefault()}
+					class="block h-full w-full object-cover"
+				/>
 			{/if}
 		</div>
 	{/each}

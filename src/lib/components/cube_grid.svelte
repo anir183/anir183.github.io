@@ -1,7 +1,7 @@
 <script>
 	import { onMount, tick } from "svelte";
 	import { gsap } from "gsap";
-	import { staggerRotateTiles } from "$lib";
+	import { staggerRotateTiles, webpSrc } from "$lib";
 
 	let { activeImage = null, entryActive = $bindable(true) } = $props();
 
@@ -135,7 +135,11 @@
 		tileMeta.forEach((t) => {
 			const target = face === "front" ? t.front : t.rear;
 			if (!target) return;
+			const webp = webpSrc(image);
+			const ext = image.split(".").pop().toLowerCase();
+			const mime = ext === "png" ? "image/png" : "image/jpeg";
 			target.style.backgroundImage = `url("${image}")`;
+			target.style.backgroundImage = `image-set(url("${webp}") type("image/webp"), url("${image}") type("${mime}"))`;
 			target.style.backgroundSize = `${bgW}px ${bgH}px`;
 			target.style.backgroundPosition = `-${t.col * w + offsetX}px -${t.row * h + offsetY}px`;
 		});

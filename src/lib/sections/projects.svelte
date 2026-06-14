@@ -6,6 +6,7 @@
 		AnimatedHeading,
 		CubeGrid,
 		AccentLink,
+		Picture,
 		projectsEntrySequence
 	} from "$lib";
 	import { inertOffscreen } from "$lib/actions/inert_offscreen.js";
@@ -133,13 +134,13 @@
 		class="sticky bottom-0 flex h-[50vh] w-full items-center justify-center max-lg:static max-lg:h-screen max-lg:p-10 max-sm:px-5 max-sm:py-8 lg:top-0 lg:h-screen lg:w-3/5 lg:pr-12"
 	>
 		{#each projects as project (project.id)}
-			<img
+			<Picture
 				src={project.image}
 				alt=""
 				aria-hidden="true"
 				class="invisible absolute"
 			/>
-			<img
+			<Picture
 				src={project.imageMobile}
 				alt=""
 				aria-hidden="true"

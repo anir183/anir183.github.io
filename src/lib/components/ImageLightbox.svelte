@@ -1,4 +1,5 @@
 <script>
+	import { Picture } from "$lib";
 	let {
 		src = "",
 		onclose = /** @type {(() => void) | undefined} */ (undefined)
@@ -132,15 +133,14 @@
 		class="absolute top-4 right-4 text-white text-2xl font-bold leading-none cursor-pointer z-10"
 		onclick={close}
 	>&times;</button>
-	<img
+	<Picture
 		src={src}
 		alt=""
-		class="max-h-[90vh] max-w-[90vw] object-contain cursor-grab touch-action-none"
-		class:cursor-grabbing={isDragging}
+		class="max-h-[90vh] max-w-[90vw] object-contain cursor-grab touch-action-none {isDragging ? 'cursor-grabbing' : ''}"
 		style="transform: scale({scale}) translate({panX}px, {panY}px)"
 		onwheel={onWheel}
 		onmousedown={onMouseDown}
-		onclick={(e) => e.stopPropagation()}
+		onclick={(/** @type {MouseEvent} */ e) => e.stopPropagation()}
 		draggable={false}
 	/>
 </div>

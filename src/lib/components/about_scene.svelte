@@ -1,4 +1,5 @@
 <script>
+	import { Picture } from "$lib";
 	let { sceneEl = $bindable() } = $props();
 </script>
 
@@ -47,20 +48,20 @@
 		style="aspect-ratio: 2160 / 2668"
 	>
 		<!-- subject layer -->
-		<img
-			data-layer-role="subject"
+		<Picture
 			src="/assets/pfp/pfp-layer-2.png"
 			alt=""
+			data-layer-role="subject"
 			class="pointer-events-none absolute inset-0 z-[1] h-full w-full object-cover will-change-transform select-none"
 			draggable="false"
 			style="transform: perspective(1200px) translateX(calc(var(--px,0)*1px)) translateY(calc((var(--py,0) + var(--fy,0))*1px)) rotateX(calc(var(--rx,0)*1deg)) rotateY(calc(var(--ry,0)*1deg)) scale(calc(var(--entry-scale, 1)))"
 		/>
 
 		<!-- foreground layer -->
-		<img
-			data-layer-role="fg"
+		<Picture
 			src="/assets/pfp/pfp-layer-1.png"
 			alt=""
+			data-layer-role="fg"
 			class="pointer-events-none absolute inset-0 z-[2] h-full w-full object-cover will-change-transform select-none"
 			draggable="false"
 			style="transform: perspective(1200px) translateX(calc(var(--px,0)*1px)) translateY(calc((var(--py,0) + var(--fy,0))*1px)) rotateX(calc(var(--rx,0)*1deg)) rotateY(calc(var(--ry,0)*1deg)) scale(calc(var(--entry-scale, 1)))"
