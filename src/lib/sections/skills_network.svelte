@@ -42,6 +42,8 @@
 	let lastTouchDist = $state(0);
 	let zoomEnabled = $state(false);
 	let dragOccurred = $state(false);
+
+	const uncoloredDevicons = new Set(['linux-plain', 'github-original', 'vercel-original']);
 	let pinchInGraphArea = $state(false);
 
 	let graphBounds = $derived.by(() => {
@@ -888,13 +890,21 @@
 								opacity="0"
 							/>
 						{/if}
-						<text
-							text-anchor="middle"
-							dominant-baseline="central"
-							class="pointer-events-none fill-c-neutral-0 text-xs select-none max-lg:text-2xl"
-						>
-							{skill.icon}
-						</text>
+						{#if skill.devicon}
+							<foreignObject x="-16" y="-16" width="32" height="32">
+								<div class="flex h-full w-full items-center justify-center leading-none">
+									<i class="devicon-{skill.devicon} {!uncoloredDevicons.has(skill.devicon) && 'colored'} max-lg:text-4xl" style="font-size: 20px;"></i>
+								</div>
+							</foreignObject>
+						{:else}
+							<text
+								text-anchor="middle"
+								dominant-baseline="central"
+								class="pointer-events-none fill-c-neutral-0 text-xs select-none max-lg:text-2xl"
+							>
+								{skill.icon}
+							</text>
+						{/if}
 					</g>
 				{/each}
 			</svg>
@@ -910,7 +920,11 @@
 						class="w-64 rounded-2xl border border-c-border/40 bg-c-bg-2/90 px-5 py-4 shadow-lg backdrop-blur-xl"
 					>
 						<div class="flex items-center gap-2.5">
-							<span class="text-3xl">{activeSkill.icon}</span>
+							{#if activeSkill.devicon}
+								<i class="devicon-{activeSkill.devicon} {!uncoloredDevicons.has(activeSkill.devicon) && 'colored'} text-3xl shrink-0 leading-none"></i>
+							{:else}
+								<span class="text-3xl">{activeSkill.icon}</span>
+							{/if}
 							<div>
 								<p class="font-c-unbounded text-sm font-bold text-c-neutral-0">
 									{activeSkill.name}
@@ -1003,7 +1017,11 @@
 			transition:scale={{ start: reducedMotion ? 1 : 0.92, duration: reducedMotion ? 0 : 150 }}
 		>
 			<div class="flex items-center gap-3">
-				<span class="text-4xl">{mobileDetailSkill.icon}</span>
+				{#if mobileDetailSkill.devicon}
+					<i class="devicon-{mobileDetailSkill.devicon} {!uncoloredDevicons.has(mobileDetailSkill.devicon) && 'colored'} text-4xl shrink-0 leading-none"></i>
+				{:else}
+					<span class="text-4xl">{mobileDetailSkill.icon}</span>
+				{/if}
 				<div>
 					<h3 class="font-c-unbounded text-xl text-c-neutral-0">
 						{mobileDetailSkill.name}
@@ -1049,3 +1067,30 @@
 		</div>
 	</div>
 {/if}
+
+<style>
+	/* dark mode — lighter brand tints */
+	:global(:root.dark .devicon-express-original.colored) {
+		color: #7a7a7a;
+	}
+	:global(:root.dark .devicon-unity-plain.colored) {
+		color: #8a8a8a;
+	}
+	:global(:root.dark .devicon-azuresqldatabase-plain.colored) {
+		color: #4d9fd4;
+	}
+	:global(:root.dark .devicon-lua-plain.colored) {
+		color: #5050b3;
+	}
+	:global(:root.dark .devicon-rust-original.colored) {
+		color: #777;
+	}
+
+	/* light mode — darker brand tints */
+	:global(:root:not(.dark) .devicon-c-original.colored) {
+		color: #6d7d91;
+	}
+	:global(:root:not(.dark) .devicon-react-original.colored) {
+		color: #2ea0c4;
+	}
+</style>

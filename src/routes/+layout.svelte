@@ -6,6 +6,7 @@
 	import { browser } from "$app/environment";
 	import { beforeNavigate, afterNavigate, goto } from "$app/navigation";
 
+	import "devicon/devicon.min.css";
 	import { initTheme, assert_failure, Crash, markSpaNavigation } from "$lib";
 
 	let { children } = $props();
