@@ -141,7 +141,7 @@
 				if (!mounted) return;
 				document.body.classList.remove(BODY_SCROLL_LOCK);
 				cleanupSnap = createSectionSnap();
-				setTimeout(() => { headingStart = true; }, 3000);
+				setTimeout(() => { headingStart = true; }, 900);
 			});
 
 		return () => {
