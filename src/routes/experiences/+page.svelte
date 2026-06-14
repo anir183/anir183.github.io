@@ -39,8 +39,8 @@
 
 	const navItems = [
 		{ label: "Home", href: resolve("/") },
-		{ label: "Experiences", href: resolve("/experiences") },
-		{ label: "Projects", href: resolve("/projects") }
+		{ label: "Projects", href: resolve("/projects") },
+		{ label: "Experiences", href: resolve("/experiences") }
 	];
 
 	onMount(() => {
