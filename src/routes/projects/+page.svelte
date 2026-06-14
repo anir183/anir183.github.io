@@ -46,6 +46,7 @@
 
 	onMount(() => {
 		let mounted = true;
+		const sectionHash = window.location.hash.slice(1);
 		/** @type {HTMLElement[]} */
 		let navLinesStore = [];
 
@@ -106,7 +107,12 @@
 			})
 			.then(() => {
 				preloaderVisible = false;
-				if (reducedMotion || !navLinesStore.length) {
+				if (reducedMotion || !navLinesStore.length || sectionHash) {
+					if (sectionHash && navLinesStore.length) {
+						gsap.set(navLinesStore, { opacity: 1, y: "0%" });
+						if (themeBtn) gsap.set(themeBtn, { opacity: 1, scale: 1 });
+						if (hamburgerBtn) gsap.set(hamburgerBtn, { opacity: 1, scale: 1 });
+					}
 					headingStart = true;
 					return;
 				}
@@ -142,6 +148,13 @@
 				document.body.classList.remove(BODY_SCROLL_LOCK);
 				cleanupSnap = createSectionSnap();
 				setTimeout(() => { headingStart = true; }, 900);
+
+				if (sectionHash) {
+					requestAnimationFrame(() => {
+						document.getElementById(sectionHash)
+							?.scrollIntoView({ behavior: "instant" });
+					});
+				}
 			});
 
 		return () => {
@@ -173,6 +186,7 @@
 			start={headingStart}
 			{reducedMotion}
 			class="font-c-unbounded text-5xl max-sm:text-2xl font-black text-center lg:text-7xl"
+			sectionId="projects-heading"
 		>Projects</AnimatedHeading>
 	</div>
 </section>

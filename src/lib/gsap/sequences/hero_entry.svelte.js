@@ -11,7 +11,8 @@ import { assert, LG_BREAKPOINT, STAGGER_FAST } from "$lib";
  *   logoEl: HTMLElement | null | undefined,
  *   delay?: number,
  *   skipImageAnimation?: boolean,
- *   reducedMotion?: boolean
+ *   reducedMotion?: boolean,
+ *   skipAllAnimations?: boolean
  * }} config
  * @returns {Promise<{tl: gsap.core.Timeline}>}
  */
@@ -25,7 +26,8 @@ export async function heroEntrySequence(config) {
 		logoEl = null,
 		delay = 0.5,
 		skipImageAnimation = false,
-		reducedMotion = false
+		reducedMotion = false,
+		skipAllAnimations = false
 	} = config ?? {};
 
 	console.log("[heroEntry] started", { navLinks: navLinks.length, heroHeadline: !!heroHeadline, introImages: introImages.length, themeButton: !!themeButton });
@@ -116,6 +118,16 @@ export async function heroEntrySequence(config) {
 		borderRadius: 0,
 		opacity: 0
 	});
+	}
+
+	if (skipAllAnimations) {
+		introImages.forEach((img) => gsap.set(img, { opacity: 1 }));
+		if (logoEl) gsap.set(logoEl, { opacity: 1, x: 0 });
+		if (themeButton) gsap.set(themeButton, { opacity: 1, scale: 1 });
+		if (hamburgerButton) gsap.set(hamburgerButton, { opacity: 1, scale: 1 });
+		navLinks.forEach((a) => gsap.set(a, { opacity: 1 }));
+		if (heroHeadline) gsap.set(heroHeadline, { opacity: 1 });
+		return { tl: gsap.timeline({ delay: 0 }) };
 	}
 
 	if (reducedMotion) {

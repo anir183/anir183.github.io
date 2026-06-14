@@ -139,6 +139,7 @@
 			start={true}
 			reducedMotion={reducedMotion}
 			class="font-c-unbounded text-3xl max-sm:text-xl font-black text-c-neutral-0"
+			sectionId="about"
 		>
 			A little bit about <span class="text-c-accent-0">me</span>.
 		</AnimatedHeading>
@@ -162,6 +163,7 @@
 			start={!isMobile}
 			reducedMotion={reducedMotion}
 			class="font-c-unbounded text-2xl font-black text-c-neutral-0 max-lg:hidden lg:text-5xl"
+			sectionId="about"
 		>
 			A little bit about <span class="text-c-accent-0">me</span>.
 		</AnimatedHeading>

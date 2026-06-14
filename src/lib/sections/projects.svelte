@@ -75,6 +75,7 @@
 			start={true}
 			reducedMotion={reducedMotion}
 		class="font-c-unbounded text-3xl max-sm:text-xl font-black text-c-neutral-0"
+		sectionId="projects"
 	>
 		<span class="text-c-accent-0">Projects</span> I have built.
 	</AnimatedHeading>
@@ -89,6 +90,7 @@
 				start={true}
 				reducedMotion={reducedMotion}
 				class="font-c-unbounded text-3xl font-black text-c-neutral-0 lg:text-5xl"
+				sectionId="projects"
 			>
 				<span class="text-c-accent-0">Projects</span> I have built.
 			</AnimatedHeading>

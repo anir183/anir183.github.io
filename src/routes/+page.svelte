@@ -47,6 +47,10 @@
 
 		const spaNav = isSpaNavigation();
 
+		const validSectionIds = new Set(['projects', 'skills', 'about', 'socials']);
+		const sectionHash = window.location.hash.slice(1);
+		const skipAllAnimations = validSectionIds.has(sectionHash);
+
 		if (spaNav) {
 			document.body.classList.remove(BODY_SCROLL_LOCK);
 		} else {
@@ -74,7 +78,8 @@
 					themeButton: themeBtn,
 					hamburgerButton: hamburgerBtn,
 					logoEl,
-					skipImageAnimation: spaNav,
+					skipImageAnimation: spaNav || skipAllAnimations,
+					skipAllAnimations,
 					reducedMotion
 				});
 			})
@@ -116,6 +121,13 @@
 				if (!mounted) return;
 				document.body.classList.remove(BODY_SCROLL_LOCK);
 				cleanupSnap = createSectionSnap();
+
+				if (sectionHash) {
+					requestAnimationFrame(() => {
+						document.getElementById(sectionHash)
+							?.scrollIntoView({ behavior: "instant" });
+					});
+				}
 			});
 
 		return () => {

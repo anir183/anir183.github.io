@@ -32,6 +32,56 @@
 	let images = $derived((isMobile ? project?.imagesMobile : project?.images) ?? []);
 	let hasMultipleImages = $derived(images.length >= 2);
 
+	/** @type {HTMLElement | undefined} */
+	let mobileTitleEl = $state();
+
+	/** @type {any} */
+	let mobileSplit = $state(null);
+
+	let mobileCopied = $state(false);
+	/** @type {ReturnType<typeof setTimeout> | undefined} */
+	let mobileCopiedTimer;
+
+	$effect(() => {
+		if (mobileTitleEl && !mobileSplit) initMobileSplit();
+	});
+
+	async function initMobileSplit() {
+		const el = mobileTitleEl;
+		if (!el) return;
+		const { SplitText } = await import("gsap/SplitText");
+		const s = new SplitText(el, { type: "chars,words", charsClass: "char", charsTag: "span", wordsClass: "word", wordsTag: "span" });
+		el.style.whiteSpace = "normal";
+		for (const w of /** @type {HTMLElement[]} */ (s.words)) {
+			w.style.whiteSpace = "nowrap";
+		}
+		mobileSplit = s;
+	}
+
+	function copyMobile() {
+		const id = project?.id;
+		if (!id) return;
+		const url = `${window.location.origin}${window.location.pathname}#project-${id}`;
+		navigator.clipboard.writeText(url).catch(() => {});
+		mobileCopied = true;
+		clearTimeout(mobileCopiedTimer);
+		mobileCopiedTimer = setTimeout(() => mobileCopied = false, 1500);
+		if (!reducedMotion && mobileSplit) {
+			gsap.timeline()
+				.to(mobileSplit.chars, { y: -12, opacity: 0, duration: 0.2, stagger: 0.05, ease: "power2.in" })
+				.to(mobileSplit.chars, { y: 12, duration: 0, stagger: 0.05 }, 0.2)
+				.to(mobileSplit.chars, { y: 0, opacity: 1, duration: 0.2, stagger: 0.05, ease: "power2.out" }, 0.2);
+		}
+	}
+
+	/** @param {KeyboardEvent} e */
+	function handleMobileKeydown(e) {
+		if (e.key === "Enter" || e.key === " ") {
+			e.preventDefault();
+			copyMobile();
+		}
+	}
+
 	/**
 	 * @param {number} i
 	 */
@@ -257,6 +307,8 @@
 			description={project?.description ?? ""}
 			tags={project?.tags ?? []}
 			link={project?.link ?? ""}
+			sectionId={project?.id ? `project-${project.id}` : undefined}
+			{reducedMotion}
 		/>
 	</div>
 
@@ -269,10 +321,24 @@
 			{project?.number}
 		</span>
 		<h3
+			bind:this={mobileTitleEl}
 			data-pi="title"
 			class="mt-1 font-c-unbounded text-[clamp(1.5rem,5vw,2.75rem)] font-black leading-tight text-c-neutral-0"
+			class:cursor-pointer={true}
+			title="Copy link"
+			onclick={copyMobile}
+			onkeydown={handleMobileKeydown}
+			role="button"
+			tabindex="0"
 		>
 			{project?.name}
+			<span class="copy-icon" aria-hidden="true">
+				{#if mobileCopied}
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+				{:else}
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+				{/if}
+			</span>
 		</h3>
 		<p data-pi="desc" class="mt-2 max-w-prose text-base max-sm:text-xs leading-relaxed text-c-neutral-1 font-c-ubuntu">
 			{project?.description}
@@ -329,3 +395,24 @@
 	<ImageLightbox src={images[activeIndex]} onclose={() => showLightbox = false} />
 {/if}
 </div>
+
+<style>
+	.copy-icon {
+		display: inline-flex;
+		align-items: center;
+		vertical-align: middle;
+		margin-left: 0.5rem;
+		opacity: 0;
+		transition: opacity 0.15s ease;
+	}
+
+	.cursor-pointer:hover .copy-icon,
+	.cursor-pointer:focus-visible .copy-icon {
+		opacity: 0.4;
+	}
+
+	.copy-icon:hover {
+		opacity: 1 !important;
+	}
+</style>
+

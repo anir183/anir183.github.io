@@ -78,6 +78,7 @@
 			start={true}
 			reducedMotion={reducedMotion}
 			class="font-c-unbounded text-3xl max-sm:text-xl font-black text-c-neutral-0"
+			sectionId="socials"
 		>
 			Open a <span class="text-c-accent-0">social</span>.
 		</AnimatedHeading>
@@ -101,6 +102,7 @@
 			start={true}
 			reducedMotion={reducedMotion}
 			class="font-c-unbounded text-2xl font-black text-c-neutral-0 max-lg:hidden lg:text-5xl"
+			sectionId="socials"
 		>
 			Open a <span class="text-c-accent-0">social</span>.
 		</AnimatedHeading>

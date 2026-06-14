@@ -12,11 +12,39 @@
 		duration = 0.6,
 		ease = "power3.out",
 		triggerOffset = "top 85%",
+		sectionId,
 		children
 	} = $props();
 
 	/** @type {HTMLElement | undefined} */
 	let el = $state();
+
+	let copied = $state(false);
+	/** @type {ReturnType<typeof setTimeout> | undefined} */
+	let copiedTimer;
+
+	function copy() {
+		if (!sectionId) return;
+		const url = `${window.location.origin}${window.location.pathname}#${sectionId}`;
+		navigator.clipboard.writeText(url).catch(() => {});
+		copied = true;
+		clearTimeout(copiedTimer);
+		copiedTimer = setTimeout(() => copied = false, 1500);
+		if (!reducedMotion && chars) {
+			gsap.timeline()
+				.to(chars, { y: -12, opacity: 0, duration: 0.2, stagger: 0.05, ease: "power2.in" })
+				.to(chars, { y: 12, duration: 0, stagger: 0.05 }, 0.2)
+				.to(chars, { y: 0, opacity: 1, duration: 0.2, stagger: 0.05, ease: "power2.out" }, 0.2);
+		}
+	}
+
+	/** @param {KeyboardEvent} e */
+	function handleKeydown(e) {
+		if (e.key === "Enter" || e.key === " ") {
+			e.preventDefault();
+			copy();
+		}
+	}
 
 	let alive = true;
 	let setupDone = false;
@@ -47,6 +75,8 @@
 			});
 
 			chars = split.chars;
+
+			el.style.whiteSpace = "normal";
 
 			gsap.set(chars, {
 				x: fromX,
@@ -101,12 +131,49 @@
 	});
 </script>
 
-<svelte:element this={tag} bind:this={el} class={className}>
+<svelte:element
+	this={tag}
+	bind:this={el}
+	class={className}
+	class:cursor-pointer={!!sectionId}
+	title={sectionId ? "Copy link to this section" : undefined}
+	onclick={sectionId ? copy : undefined}
+	onkeydown={sectionId ? handleKeydown : undefined}
+	role={sectionId ? "button" : undefined}
+	tabindex={sectionId ? 0 : undefined}
+>
 	{@render children()}
+	{#if sectionId}
+		<span class="copy-icon" aria-hidden="true">
+			{#if copied}
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+			{:else}
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+			{/if}
+		</span>
+	{/if}
 </svelte:element>
 
 <style>
 	:global(.word) {
 		white-space: nowrap;
+	}
+
+	.copy-icon {
+		display: inline-flex;
+		align-items: center;
+		vertical-align: middle;
+		margin-left: 0.5rem;
+		opacity: 0;
+		transition: opacity 0.15s ease;
+	}
+
+	.cursor-pointer:hover .copy-icon,
+	.cursor-pointer:focus-visible .copy-icon {
+		opacity: 0.4;
+	}
+
+	.copy-icon:hover {
+		opacity: 1 !important;
 	}
 </style>

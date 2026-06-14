@@ -804,6 +804,7 @@
 			start={true}
 			reducedMotion={reducedMotion}
 			class="font-c-unbounded text-3xl max-sm:text-xl font-black text-c-neutral-0"
+			sectionId="skills"
 		>
 			Some <span class="text-c-accent-0">skills</span> I have honed.
 		</AnimatedHeading>
@@ -974,6 +975,7 @@
 			start={!isMobile}
 			reducedMotion={reducedMotion}
 			class="font-c-unbounded text-2xl font-black text-c-neutral-0 max-lg:hidden lg:text-5xl"
+			sectionId="skills"
 		>
 			Some <span class="text-c-accent-0">skills</span> I have honed.
 		</AnimatedHeading>
