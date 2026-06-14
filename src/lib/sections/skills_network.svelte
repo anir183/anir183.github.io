@@ -42,6 +42,13 @@
 	let lastTouchDist = $state(0);
 	let zoomEnabled = $state(false);
 	let dragOccurred = $state(false);
+	let pointerVelocityX = 0;
+	let pointerVelocityY = 0;
+	let lastMovePanX = 0;
+	let lastMovePanY = 0;
+	let lastMoveTime = 0;
+	let momentumTween = /** @type {gsap.core.Tween | null} */ (null);
+	let wheelTween = /** @type {gsap.core.Tween | null} */ (null);
 
 	const uncoloredDevicons = new Set(['linux-plain', 'github-original', 'vercel-original']);
 	let pinchInGraphArea = $state(false);
@@ -259,6 +266,10 @@
 		const target = /** @type {HTMLElement} */ (e.target);
 		if (target.closest("[data-node-id]")) return;
 		if (!isInGraphArea(e.clientX, e.clientY)) return;
+		momentumTween?.kill();
+		momentumTween = null;
+		wheelTween?.kill();
+		wheelTween = null;
 		e.preventDefault();
 		svgEl?.setPointerCapture(e.pointerId);
 		isDragging = true;
@@ -275,13 +286,47 @@
 	function onPointerMove(e) {
 		if (!isDragging) return;
 		dragOccurred = true;
-		panX = dragStartPanX + (e.clientX - dragStartX);
-		panY = dragStartPanY + (e.clientY - dragStartY);
+		const newPanX = dragStartPanX + (e.clientX - dragStartX);
+		const newPanY = dragStartPanY + (e.clientY - dragStartY);
+		const now = performance.now();
+		if (lastMoveTime > 0) {
+			const dt = now - lastMoveTime;
+			if (dt > 0) {
+				pointerVelocityX = (newPanX - lastMovePanX) / dt;
+				pointerVelocityY = (newPanY - lastMovePanY) / dt;
+			}
+		}
+		lastMoveTime = now;
+		lastMovePanX = newPanX;
+		lastMovePanY = newPanY;
+		panX = newPanX;
+		panY = newPanY;
 		clampPan();
 	}
 
 	function onPointerUp() {
 		isDragging = false;
+		if (zoomEnabled && !reducedMotion && (Math.abs(pointerVelocityX) > 0.3 || Math.abs(pointerVelocityY) > 0.3)) {
+			const target = { x: panX, y: panY };
+			momentumTween = gsap.to(target, {
+				x: panX + pointerVelocityX * 300,
+				y: panY + pointerVelocityY * 300,
+				duration: 1.5,
+				ease: "power2.out",
+				overwrite: "auto",
+				onUpdate: () => {
+					panX = target.x;
+					panY = target.y;
+					clampPan();
+				},
+				onComplete: () => {
+					momentumTween = null;
+				}
+			});
+		}
+		pointerVelocityX = 0;
+		pointerVelocityY = 0;
+		lastMoveTime = 0;
 	}
 
 	/**
@@ -297,10 +342,39 @@
 		const cy = e.clientY - rect.top;
 		const delta = e.deltaY > 0 ? -0.1 : 0.1;
 		const newZoom = Math.max(1, Math.min(5, zoom + delta));
-		panX = cx + (panX - cx) * newZoom / zoom;
-		panY = cy + (panY - cy) * newZoom / zoom;
-		zoom = newZoom;
-		clampPan();
+		const newPanX = cx + (panX - cx) * newZoom / zoom;
+		const newPanY = cy + (panY - cy) * newZoom / zoom;
+
+		momentumTween?.kill();
+		momentumTween = null;
+
+		if (reducedMotion) {
+			zoom = newZoom;
+			panX = newPanX;
+			panY = newPanY;
+			clampPan();
+			return;
+		}
+
+		wheelTween?.kill();
+		const target = { z: zoom, x: panX, y: panY };
+		wheelTween = gsap.to(target, {
+			z: newZoom,
+			x: newPanX,
+			y: newPanY,
+			duration: 0.08,
+			ease: "power2.out",
+			overwrite: "auto",
+			onUpdate: () => {
+				zoom = target.z;
+				panX = target.x;
+				panY = target.y;
+				clampPan();
+			},
+			onComplete: () => {
+				wheelTween = null;
+			}
+		});
 	}
 
 	/**
