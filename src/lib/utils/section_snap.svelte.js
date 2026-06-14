@@ -14,6 +14,7 @@ export function createSectionSnap(options = {}) {
 	if (!sections.length) return () => {};
 
 	const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	if (reducedMotion) return () => {};
 
 	/** @type {ReturnType<typeof setTimeout> | undefined} */
 	let timeout;
