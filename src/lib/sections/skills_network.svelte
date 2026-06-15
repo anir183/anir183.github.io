@@ -22,6 +22,8 @@
 	let isMobile = $state(false);
 	let reducedMotion = $state(typeof window !== 'undefined' && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 	let isTouchDevice = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+	let containerWidth = $state(1000);
+	let containerHeight = $state(700);
 	let selectedId = $state(/** @type {string | null} */ (null));
 	let hoveredId = $state(/** @type {string | null} */ (null));
 	let tooltipX = $state(0);
@@ -88,11 +90,13 @@
 		displaySkills.find((s) => s.id === (selectedId ?? hoveredId)) ?? null
 	);
 
+	let viewBoxHeight = $derived(Math.max(600, Math.min(2000, 1000 * containerHeight / containerWidth)));
+
 	let nodePositions = $derived(
 		displaySkills.map(
 			(/** @type {import("$lib/utils/skills_data.svelte.js").Skill} */ s) => ({
 				x: s.position.x * 1000,
-				y: s.position.y * 700
+				y: s.position.y * viewBoxHeight
 			})
 		)
 	);
@@ -125,7 +129,7 @@
 			const mx = (a.x + b.x) / 2;
 			const my = (a.y + b.y) / 2;
 			const cx = mx;
-			const cy = my + 16;
+			const cy = my + 16 * viewBoxHeight / 700;
 			return `M ${a.x} ${a.y} Q ${cx} ${cy} ${b.x} ${b.y}`;
 		})
 	);
@@ -141,7 +145,7 @@
 			if (!a || !b) return null;
 			const mx = (a.x + b.x) / 2;
 			const my = (a.y + b.y) / 2;
-			return { from: a, to: b, cx: mx, cy: my + 16 };
+			return { from: a, to: b, cx: mx, cy: my + 16 * viewBoxHeight / 700 };
 		})
 	);
 
@@ -252,7 +256,7 @@
 
 	function clampPan() {
 		const maxX = (zoom - 1) * 500;
-		const maxY = (zoom - 1) * 350;
+		const maxY = (zoom - 1) * viewBoxHeight / 2;
 		panX = Math.max(-maxX, Math.min(maxX, panX));
 		panY = Math.max(-maxY, Math.min(maxY, panY));
 	}
@@ -792,15 +796,32 @@
 		const onMqlChange = (/** @type {MediaQueryListEvent} */ e) => (isMobile = e.matches);
 		mql.addEventListener("change", onMqlChange);
 
+		const ro = new ResizeObserver(([entry]) => {
+			const box = entry.contentBoxSize?.[0] ?? entry.borderBoxSize?.[0];
+			if (box) {
+				containerWidth = box.inlineSize;
+				containerHeight = box.blockSize;
+			} else {
+				const rect = entry.target.getBoundingClientRect();
+				containerWidth = rect.width;
+				containerHeight = rect.height;
+			}
+		});
+		if (svgContainerEl) ro.observe(svgContainerEl);
+
 		if (reducedMotion) {
 			if (!isTouchDevice) zoomEnabled = true;
-			return () => mql.removeEventListener("change", onMqlChange);
+			return () => {
+				mql.removeEventListener("change", onMqlChange);
+				ro.disconnect();
+			};
 		}
 
 		requestAnimationFrame(() => initAnimations());
 
 		return () => {
 			mql.removeEventListener("change", onMqlChange);
+			ro.disconnect();
 			killAll();
 		};
 	});
@@ -835,7 +856,7 @@
 			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 			<svg
 				bind:this={svgEl}
-				viewBox="0 0 1000 700"
+				viewBox="0 0 1000 {viewBoxHeight}"
 				class="h-full w-full"
 				style="transform: scale({zoom}) translate({panX}px, {panY}px); transform-origin: 0 0"
 				preserveAspectRatio="xMidYMid meet"
