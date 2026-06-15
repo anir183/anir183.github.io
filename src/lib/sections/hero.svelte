@@ -20,7 +20,7 @@
 	{#each imageData as img (img.src)}
 		<div
 			class="intro-img absolute top-1/2 left-1/2 {img.z ??
-				'z-2'} aspect-video w-[20vw] max-intro:w-[35vw] overflow-hidden rounded-4xl will-change-transform"
+				'z-2'} {img.portraitDark ? 'h-svh w-screen' : 'aspect-video w-[20vw] max-intro:w-[35vw]'} overflow-hidden rounded-4xl will-change-transform"
 		>
 			{#if img.portraitDark}
 				<Picture

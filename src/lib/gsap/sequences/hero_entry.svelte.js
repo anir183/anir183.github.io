@@ -82,15 +82,20 @@ export async function heroEntrySequence(config) {
 		introImgWidth * introImages.length + introImgGap * (introImages.length - 1);
 	const startX = -totalWidth / 2 + introImgWidth / 2;
 
+	const portrait = introImages[2];
+	const portraitWidth = portrait.getBoundingClientRect().width;
+	const initPortraitScale = (introImgWidth / portraitWidth) * introImgScale;
+
 	introImages.forEach((img, i) => {
 		const centeredX = startX + i * (introImgWidth + introImgGap);
+		const isPortrait = i === 2;
 		const offScreenX = centeredX - window.innerWidth * 2.5;
 
 		gsap.set(img, {
 			xPercent: -50,
 			yPercent: -50,
 			x: offScreenX,
-			scale: introImgScale,
+			scale: isPortrait ? initPortraitScale : introImgScale,
 			rotation: introImgRotations[i],
 			borderRadius: "2rem"
 		});
@@ -110,8 +115,6 @@ export async function heroEntrySequence(config) {
 		x: 0,
 		y: 0,
 		rotation: 0,
-		width: "100vw",
-		height: "100svh",
 		borderRadius: 0,
 		opacity: 0
 	});
@@ -135,8 +138,7 @@ export async function heroEntrySequence(config) {
 				const cx = parseFloat(img.dataset.centeredX || "0");
 				if (i === 2) {
 					gsap.set(img, {
-						opacity: 1, scale: 1, x: 0, y: 0, rotation: 0,
-						width: "100vw", height: "100svh", borderRadius: 0
+						opacity: 1, scale: 1, x: 0, y: 0, rotation: 0, borderRadius: 0
 					});
 				} else {
 					gsap.set(img, {
@@ -215,8 +217,6 @@ export async function heroEntrySequence(config) {
 				x: 0,
 				y: 0,
 				rotation: 0,
-				width: "100vw",
-				height: "100svh",
 				borderRadius: 0,
 				duration: 2,
 				ease: "power4.out"
