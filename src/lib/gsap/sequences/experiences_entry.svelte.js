@@ -7,7 +7,8 @@ import { gsap } from "gsap";
  *   nodeEls: SVGElement[],
  *   contentWraps: HTMLElement[],
  *   segmentLengths: number[],
- *   reducedMotion?: boolean
+ *   reducedMotion?: boolean,
+ *   onContentComplete?: (sectionIndex: number) => void
  * }} config
  * @returns {Promise<(() => void) | undefined>}
  */
@@ -18,7 +19,8 @@ export async function experiencesEntrySequence(config) {
 		nodeEls = [],
 		contentWraps = [],
 		segmentLengths = [],
-		reducedMotion = false
+		reducedMotion = false,
+		onContentComplete
 	} = config ?? {};
 
 	if (!sectionsParent || !contentWraps.length) return;
@@ -189,7 +191,10 @@ export async function experiencesEntrySequence(config) {
 		const desc = wrap.querySelector('[data-el="desc"]');
 		const tags = wrap.querySelector('[data-el="tags"]');
 
-		const contentTl = gsap.timeline({ defaults: { ease: "power2.out", duration: 1 } });
+		const contentTl = gsap.timeline({
+				defaults: { ease: "power2.out", duration: 1 },
+				onComplete: () => onContentComplete?.(i)
+			});
 		contentTl.set(wrap, { opacity: 1 }, 0);
 		if (heading) contentTl.fromTo(heading, { y: 40, opacity: 0 }, { y: 0, opacity: 1 }, 0);
 		if (company) contentTl.fromTo(company, { y: 24, opacity: 0 }, { y: 0, opacity: 1 }, 0.2);

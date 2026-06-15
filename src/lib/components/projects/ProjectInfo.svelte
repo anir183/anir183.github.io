@@ -9,7 +9,8 @@
 		tags = [],
 		link = "",
 		sectionId,
-		reducedMotion = false
+		reducedMotion = false,
+		animationComplete = false
 	} = $props();
 
 	/** @type {HTMLElement | undefined} */
@@ -74,16 +75,16 @@
 		bind:this={h3El}
 		data-pi="title"
 		class="font-c-unbounded text-[clamp(1.5rem,5vw,2.75rem)] font-black leading-tight text-c-neutral-0"
-		class:cursor-pointer={!!sectionId}
-		title={sectionId ? "Copy link" : undefined}
-		onclick={sectionId ? copy : undefined}
-		onkeydown={sectionId ? handleKeydown : undefined}
-		role={sectionId ? "button" : undefined}
-		tabindex={sectionId ? 0 : undefined}
+		class:cursor-pointer={!!sectionId && animationComplete}
+		title={sectionId && animationComplete ? "Copy link" : undefined}
+		onclick={sectionId && animationComplete ? copy : undefined}
+		onkeydown={sectionId && animationComplete ? handleKeydown : undefined}
+		role={sectionId && animationComplete ? "button" : undefined}
+		tabindex={sectionId && animationComplete ? 0 : undefined}
 	>
 		{title}
 		{#if sectionId}
-			<span class="copy-icon" aria-hidden="true">
+			<span class="copy-icon" class:copy-enabled={animationComplete} aria-hidden="true">
 				{#if copied}
 					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
 				{:else}
@@ -125,7 +126,12 @@
 		vertical-align: middle;
 		margin-left: 0.5rem;
 		opacity: 0;
+		pointer-events: none;
 		transition: opacity 0.15s ease;
+	}
+
+	.copy-icon.copy-enabled {
+		pointer-events: auto;
 	}
 
 	.cursor-pointer:hover .copy-icon,

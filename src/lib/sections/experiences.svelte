@@ -31,6 +31,7 @@
 	let expSplits = $state(new Map());
 
 	let copiedMap = $state(new Map());
+	let animationCompleteMap = $state(new Map());
 	/** @type {Record<string, ReturnType<typeof setTimeout>>} */
 	let copiedTimers = {};
 
@@ -239,8 +240,18 @@
 			nodeEls: activationNodeEls,
 			contentWraps: /** @type {HTMLElement[]} */ (contentWraps),
 			segmentLengths,
-			reducedMotion
+			reducedMotion,
+			onContentComplete: (/** @type {number} */ i) => {
+				const id = experiences[i]?.id;
+				if (id) animationCompleteMap.set(id, true);
+			}
 		}));
+
+		if (reducedMotion) {
+			for (const exp of experiences) {
+				if (exp?.id) animationCompleteMap.set(exp.id, true);
+			}
+		}
 
 		// Bottom node activation on scroll
 		if (reducedMotion) {
@@ -319,6 +330,7 @@
 			pathSegments = [];
 			nodePositions = [];
 			viewBoxStr = "0 0 100 100";
+			animationCompleteMap = new Map();
 			await tick();
 			await initExperiences();
 		} finally {
@@ -403,15 +415,15 @@ onDestroy(() => {
 				<h3
 					bind:this={h3Els[i]}
 					class="text-4xl font-black text-c-neutral-0 font-c-unbounded leading-tight lg:text-5xl xl:text-6xl"
-					class:cursor-pointer={true}
-					title="Copy link"
-					onclick={() => handleExpCopy(exp.id)}
-					onkeydown={(e) => handleExpKeydown(e, exp.id)}
-					role="button"
-					tabindex="0"
+					class:cursor-pointer={animationCompleteMap.get(exp.id) ?? false}
+					title={animationCompleteMap.get(exp.id) ? "Copy link" : undefined}
+					onclick={animationCompleteMap.get(exp.id) ? () => handleExpCopy(exp.id) : undefined}
+					onkeydown={animationCompleteMap.get(exp.id) ? (e) => handleExpKeydown(e, exp.id) : undefined}
+					role={animationCompleteMap.get(exp.id) ? "button" : undefined}
+					tabindex={animationCompleteMap.get(exp.id) ? 0 : undefined}
 				>
 					{exp.role}
-					<span class="copy-icon" aria-hidden="true">
+					<span class="copy-icon" class:copy-enabled={animationCompleteMap.get(exp.id) ?? false} aria-hidden="true">
 						{#if copiedMap.get(exp.id)}
 							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
 						{:else}
@@ -456,7 +468,12 @@ onDestroy(() => {
 		vertical-align: middle;
 		margin-left: 0.5rem;
 		opacity: 0;
+		pointer-events: none;
 		transition: opacity 0.15s ease;
+	}
+
+	.copy-icon.copy-enabled {
+		pointer-events: auto;
 	}
 
 	.cursor-pointer:hover .copy-icon,

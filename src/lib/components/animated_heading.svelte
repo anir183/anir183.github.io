@@ -20,6 +20,7 @@
 	let el = $state();
 
 	let copied = $state(false);
+	let copyEnabled = $state(false);
 	/** @type {ReturnType<typeof setTimeout> | undefined} */
 	let copiedTimer;
 
@@ -102,7 +103,8 @@
 				skewX: 0,
 				stagger,
 				duration,
-				ease
+				ease,
+				onComplete: () => { copyEnabled = true; }
 			}),
 			once: true
 		});
@@ -123,6 +125,10 @@
 	});
 
 	$effect(() => {
+		if (reducedMotion) copyEnabled = true;
+	});
+
+	$effect(() => {
 		return () => {
 			alive = false;
 			st?.kill();
@@ -135,16 +141,16 @@
 	this={tag}
 	bind:this={el}
 	class={className}
-	class:cursor-pointer={!!sectionId}
-	title={sectionId ? "Copy link to this section" : undefined}
-	onclick={sectionId ? copy : undefined}
-	onkeydown={sectionId ? handleKeydown : undefined}
-	role={sectionId ? "button" : undefined}
-	tabindex={sectionId ? 0 : undefined}
+	class:cursor-pointer={!!sectionId && copyEnabled}
+	title={sectionId && copyEnabled ? "Copy link to this section" : undefined}
+	onclick={sectionId && copyEnabled ? copy : undefined}
+	onkeydown={sectionId && copyEnabled ? handleKeydown : undefined}
+	role={sectionId && copyEnabled ? "button" : undefined}
+	tabindex={sectionId && copyEnabled ? 0 : undefined}
 >
 	{@render children()}
 	{#if sectionId}
-		<span class="copy-icon" aria-hidden="true">
+		<span class="copy-icon" class:copy-enabled={copyEnabled} aria-hidden="true">
 			{#if copied}
 				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
 			{:else}
@@ -165,7 +171,12 @@
 		vertical-align: middle;
 		margin-left: 0.5rem;
 		opacity: 0;
+		pointer-events: none;
 		transition: opacity 0.15s ease;
+	}
+
+	.copy-icon.copy-enabled {
+		pointer-events: auto;
 	}
 
 	.cursor-pointer:hover .copy-icon,
