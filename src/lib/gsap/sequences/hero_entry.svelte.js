@@ -97,7 +97,7 @@ export async function heroEntrySequence(config) {
 			x: offScreenX,
 			scale: isPortrait ? initPortraitScale : introImgScale,
 			rotation: introImgRotations[i],
-			borderRadius: "2rem"
+			borderRadius: isPortrait ? `${(portraitWidth / introImgWidth) * 2}rem` : "2rem"
 		});
 
 		img.dataset.centeredX = centeredX.toString();

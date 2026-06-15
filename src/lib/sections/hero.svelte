@@ -3,6 +3,11 @@
 
 	let { heroH1 = $bindable() } = $props();
 
+	let viewportRatio = $state(16 / 9);
+	$effect(() => {
+		viewportRatio = window.innerWidth / window.innerHeight;
+	});
+
 	const imageData = [
 		{ src: "/assets/hero_images/random_0.jpg" },
 		{ src: "/assets/hero_images/random_1.jpg" },
@@ -20,7 +25,8 @@
 	{#each imageData as img (img.src)}
 		<div
 			class="intro-img absolute top-1/2 left-1/2 {img.z ??
-				'z-2'} {img.portraitDark ? 'h-svh w-screen' : 'aspect-video w-[20vw] max-intro:w-[35vw]'} overflow-hidden rounded-4xl will-change-transform"
+				'z-2'} {img.portraitDark ? 'h-svh w-screen' : 'w-[20vw] max-intro:w-[35vw]'} overflow-hidden rounded-4xl will-change-transform"
+			style={!img.portraitDark ? `aspect-ratio:${viewportRatio}` : undefined}
 		>
 			{#if img.portraitDark}
 				<Picture
