@@ -21,6 +21,7 @@
 	let buttonEl = $state();
 	let isMobile = $state(false);
 	let reducedMotion = $state(typeof window !== 'undefined' && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+	let isTouchDevice = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
 	let selectedId = $state(/** @type {string | null} */ (null));
 	let hoveredId = $state(/** @type {string | null} */ (null));
 	let tooltipX = $state(0);
@@ -51,7 +52,6 @@
 	let wheelTween = /** @type {gsap.core.Tween | null} */ (null);
 
 	const uncoloredDevicons = new Set(['linux-plain', 'github-original', 'vercel-original']);
-	let pinchInGraphArea = $state(false);
 
 	let graphBounds = $derived.by(() => {
 		const positions = effectivePositions;
@@ -375,63 +375,6 @@
 				wheelTween = null;
 			}
 		});
-	}
-
-	/**
-	 * @param {TouchEvent} e
-	 */
-	function onTouchStart(e) {
-		if (!zoomEnabled) return;
-		if (e.touches.length === 2) {
-			const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-			const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-			pinchInGraphArea = isInGraphArea(cx, cy);
-			if (!pinchInGraphArea) return;
-			e.preventDefault();
-			const dx = e.touches[0].clientX - e.touches[1].clientX;
-			const dy = e.touches[0].clientY - e.touches[1].clientY;
-			lastTouchDist = Math.hypot(dx, dy);
-			dragStartX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-			dragStartY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-			dragStartPanX = panX;
-			dragStartPanY = panY;
-		}
-	}
-
-	/**
-	 * @param {TouchEvent} e
-	 */
-	function onTouchMove(e) {
-		if (e.touches.length === 2) {
-			if (!pinchInGraphArea) return;
-			e.preventDefault();
-			const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-			const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-			panX = dragStartPanX + (cx - dragStartX);
-			panY = dragStartPanY + (cy - dragStartY);
-
-			const dx = e.touches[0].clientX - e.touches[1].clientX;
-			const dy = e.touches[0].clientY - e.touches[1].clientY;
-			const dist = Math.hypot(dx, dy);
-			if (lastTouchDist > 0) {
-				const rect = svgEl?.getBoundingClientRect();
-				if (!rect) return;
-				const mx = cx - rect.left;
-				const my = cy - rect.top;
-				const newZoom = Math.max(1, Math.min(5, zoom * (dist / lastTouchDist)));
-				panX = mx + (panX - mx) * newZoom / zoom;
-				panY = my + (panY - my) * newZoom / zoom;
-				zoom = newZoom;
-			}
-			lastTouchDist = dist;
-			clampPan();
-		}
-	}
-
-	function onTouchEnd() {
-		isDragging = false;
-		lastTouchDist = 0;
-		pinchInGraphArea = false;
 	}
 
 	function startFloats() {
@@ -775,7 +718,7 @@
 							}
 						}
 					);
-					zoomEnabled = true;
+					if (!isTouchDevice) zoomEnabled = true;
 				}
 			},
 			"-=0.3"
@@ -850,7 +793,7 @@
 		mql.addEventListener("change", onMqlChange);
 
 		if (reducedMotion) {
-			zoomEnabled = true;
+			if (!isTouchDevice) zoomEnabled = true;
 			return () => mql.removeEventListener("change", onMqlChange);
 		}
 
@@ -894,7 +837,7 @@
 				bind:this={svgEl}
 				viewBox="0 0 1000 700"
 				class="h-full w-full"
-				style="touch-action: none; transform: scale({zoom}) translate({panX}px, {panY}px); transform-origin: 0 0"
+				style="transform: scale({zoom}) translate({panX}px, {panY}px); transform-origin: 0 0"
 				preserveAspectRatio="xMidYMid meet"
 				role="img"
 				aria-label="Skills network graph"
@@ -903,9 +846,6 @@
 				onpointermove={onPointerMove}
 				onpointerup={onPointerUp}
 				onwheel={onWheel}
-				ontouchstart={onTouchStart}
-				ontouchmove={onTouchMove}
-				ontouchend={onTouchEnd}
 				onkeydown={(e) => {
 					if (e.key === "Escape") onSvgBgClick();
 				}}
