@@ -291,7 +291,7 @@
 
 <div
 	bind:this={wrapperEl}
-	class="relative"
+	class="lg:relative"
 	style="height: {wrapperHeight != null ? wrapperHeight + 'px' : ''}"
 >
 <section
