@@ -1,4 +1,4 @@
-import { readFile, writeFile, mkdir, readdir, stat } from "node:fs/promises";
+import { readFile, mkdir, readdir, stat } from "node:fs/promises";
 import { join, extname, relative, dirname } from "node:path";
 import sharp from "sharp";
 
@@ -6,7 +6,6 @@ const EXTENSIONS = new Set([".png", ".jpg", ".jpeg"]);
 const QUALITY = 90;
 
 const SRC_DIR = new URL("../static", import.meta.url).pathname;
-const OUT_DIR = new URL("../static/.webp", import.meta.url).pathname;
 
 async function walk(dir) {
   const entries = [];
@@ -30,7 +29,10 @@ async function main() {
   for (const file of files) {
     const rel = relative(SRC_DIR, file);
     if (!rel.startsWith("assets")) continue;
-    const outPath = join(OUT_DIR, rel.replace(/\.(png|jpg|jpeg)$/i, ".webp"));
+
+    const outPath = file
+      .replace(/\.(png|jpg|jpeg)$/i, ".webp")
+      .replace(/\/([^/]+)$/, "/webp/$1");
     const outDir = dirname(outPath);
 
     try {

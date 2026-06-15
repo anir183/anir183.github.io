@@ -1,10 +1,14 @@
 <script>
   import { webpSrc } from "$lib";
 
-  let { src, webp = webpSrc(src), alt = "", class: className = "", ...rest } = $props();
+  let { src, alt = "", class: className = "", ...rest } = $props();
+
+  function handleError(/** @type {Event} */ ev) {
+    const img = /** @type {HTMLImageElement} */ (ev.target);
+    if (img.dataset.fallback !== undefined) return;
+    img.dataset.fallback = "";
+    img.src = src;
+  }
 </script>
 
-<picture>
-  <source srcset={webp} type="image/webp" />
-  <img {src} {alt} class={className} {...rest} />
-</picture>
+<img src={webpSrc(src)} {alt} class={className} onerror={handleError} {...rest} />

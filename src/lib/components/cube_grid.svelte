@@ -17,6 +17,8 @@
 	let isAnimating = false;
 	/** @type {string | null} */
 	let queuedImage = null;
+	/** @type {number} */
+	let paintVersion = 0;
 
 	/** @type {Array<{el: HTMLDivElement, front: HTMLDivElement | null, rear: HTMLDivElement | null, tint: Element[], col: number, row: number}>} */
 	let tileMeta = [];
@@ -71,8 +73,10 @@
 	 * @returns {HTMLImageElement | null}
 	 */
 	function findImageElement(src) {
+		const variants = [src, webpSrc(src)];
 		for (const img of document.querySelectorAll("img")) {
-			if (img.getAttribute("src") === src) return img;
+			const imgSrc = img.getAttribute("src");
+			if (imgSrc && variants.includes(imgSrc)) return img;
 		}
 		return null;
 	}
@@ -132,17 +136,27 @@
 			offsetY = (bgH - fullH) / 2;
 		}
 
+		const version = ++paintVersion;
+		const webpUrl = webpSrc(image);
+
 		tileMeta.forEach((t) => {
 			const target = face === "front" ? t.front : t.rear;
 			if (!target) return;
-			const webp = webpSrc(image);
-			const ext = image.split(".").pop().toLowerCase();
-			const mime = ext === "png" ? "image/png" : "image/jpeg";
 			target.style.backgroundImage = `url("${image}")`;
-			target.style.backgroundImage = `image-set(url("${webp}") type("image/webp"), url("${image}") type("${mime}"))`;
 			target.style.backgroundSize = `${bgW}px ${bgH}px`;
 			target.style.backgroundPosition = `-${t.col * w + offsetX}px -${t.row * h + offsetY}px`;
 		});
+
+		const preloader = new Image();
+		preloader.onload = () => {
+			if (version !== paintVersion) return;
+			tileMeta.forEach((t) => {
+				const target = face === "front" ? t.front : t.rear;
+				if (!target) return;
+				target.style.backgroundImage = `url("${webpUrl}")`;
+			});
+		};
+		preloader.src = webpUrl;
 	}
 
 	/**
