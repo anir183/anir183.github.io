@@ -232,7 +232,7 @@
 <svelte:window onkeydown={onKeydown} />
 
 <div
-	class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 cursor-pointer overflow-hidden"
+	class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 cursor-pointer overflow-hidden touch-action-none"
 	onclick={close}
 	onmousemove={onMouseMove}
 	onmouseup={onMouseUp}

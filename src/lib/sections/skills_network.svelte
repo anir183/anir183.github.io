@@ -894,7 +894,7 @@
 				bind:this={svgEl}
 				viewBox="0 0 1000 700"
 				class="h-full w-full"
-				style="transform: scale({zoom}) translate({panX}px, {panY}px); transform-origin: 0 0"
+				style="touch-action: none; transform: scale({zoom}) translate({panX}px, {panY}px); transform-origin: 0 0"
 				preserveAspectRatio="xMidYMid meet"
 				role="img"
 				aria-label="Skills network graph"
