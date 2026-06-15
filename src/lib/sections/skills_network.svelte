@@ -52,6 +52,7 @@
 	let lastMoveTime = 0;
 	let momentumTween = /** @type {gsap.core.Tween | null} */ (null);
 	let wheelTween = /** @type {gsap.core.Tween | null} */ (null);
+	let resizeTimeout = /** @type {ReturnType<typeof setTimeout> | undefined} */ (undefined);
 
 	const uncoloredDevicons = new Set(['linux-plain', 'github-original', 'vercel-original']);
 
@@ -205,19 +206,18 @@
 	 * @param {string} id
 	 */
 	function onNodeClick(id) {
+		if (selectedId === id) {
+			selectedId = null;
+			animateToRest();
+			return;
+		}
+		selectedId = id;
+		animateToActive(id);
 		if (isMobile) {
 			const skill = displaySkills.find((s) => s.id === id);
 			if (skill) mobileDetailSkill = skill;
 			return;
 		}
-		if (selectedId === id) {
-			selectedId = null;
-			animateToRest();
-		} else {
-			selectedId = id;
-			animateToActive(id);
-		}
-		if (selectedId !== id) return;
 		updateTooltip();
 	}
 
@@ -251,6 +251,8 @@
 	}
 
 	function closeMobileDetail() {
+		selectedId = null;
+		animateToRest();
 		mobileDetailSkill = null;
 	}
 
@@ -630,6 +632,70 @@
 		packetEls = [];
 	}
 
+	function rebuildGraph() {
+		if (!svgEl || !sectionEl) return;
+
+		zoomEnabled = false;
+
+		packetTweens.forEach((t) => t.kill());
+		packetTweens = [];
+		packetEls.forEach((el) => el.remove());
+		packetEls = [];
+		svgEl.querySelectorAll("[data-packet-edge]").forEach(
+			/** @param {Element} el */ (el) => el.remove()
+		);
+
+		pulseTween?.kill();
+		pulseTween = null;
+		momentumTween?.kill();
+		momentumTween = null;
+		wheelTween?.kill();
+		wheelTween = null;
+
+		floatTweens.forEach((t) => t.kill());
+		floatTweens = [];
+		skills.forEach((_, i) => {
+			floatOffsets[i].x = 0;
+			floatOffsets[i].y = 0;
+		});
+
+		const pathEls = svgEl.querySelectorAll("[data-edge]");
+		pathEls.forEach(
+			/** @param {SVGPathElement} p */ (p) => {
+				if (p instanceof SVGPathElement) {
+					p.style.removeProperty("strokeDasharray");
+					p.style.removeProperty("strokeDashoffset");
+					const len = p.getTotalLength();
+					p.style.strokeDasharray = String(len);
+					p.style.strokeDashoffset = String(len);
+				}
+			}
+		);
+
+		gsap.to(pathEls, {
+			strokeDashoffset: 0,
+			duration: 0.6,
+			stagger: 0.02,
+			ease: "power3.inOut",
+			onComplete: () => {
+				pathEls.forEach(
+					/** @param {SVGPathElement} p */ (p) => {
+						if (p instanceof SVGPathElement) {
+							p.style.removeProperty("strokeDasharray");
+							p.style.removeProperty("strokeDashoffset");
+						}
+					}
+				);
+				if (!isTouchDevice) zoomEnabled = true;
+			}
+		});
+
+		if (!reducedMotion) {
+			startFloats();
+			requestAnimationFrame(() => startPackets());
+		}
+	}
+
 	async function initAnimations() {
 		await tick();
 
@@ -744,7 +810,6 @@
 	}
 
 	$effect(() => {
-		if (isMobile) return;
 		const active = selectedId;
 		updatePackets();
 
@@ -791,12 +856,20 @@
 	});
 
 	onMount(() => {
+		if (svgContainerEl) {
+			const rect = svgContainerEl.getBoundingClientRect();
+			containerWidth = rect.width;
+			containerHeight = rect.height;
+		}
+
 		const mql = window.matchMedia(`(max-width: ${LG_BREAKPOINT - 1}px)`);
 		isMobile = mql.matches;
 		const onMqlChange = (/** @type {MediaQueryListEvent} */ e) => (isMobile = e.matches);
 		mql.addEventListener("change", onMqlChange);
 
+		let roFirst = true;
 		const ro = new ResizeObserver(([entry]) => {
+			if (roFirst) { roFirst = false; return; }
 			const box = entry.contentBoxSize?.[0] ?? entry.borderBoxSize?.[0];
 			if (box) {
 				containerWidth = box.inlineSize;
@@ -806,6 +879,8 @@
 				containerWidth = rect.width;
 				containerHeight = rect.height;
 			}
+			clearTimeout(resizeTimeout);
+			resizeTimeout = setTimeout(rebuildGraph, 150);
 		});
 		if (svgContainerEl) ro.observe(svgContainerEl);
 
@@ -814,6 +889,7 @@
 			return () => {
 				mql.removeEventListener("change", onMqlChange);
 				ro.disconnect();
+				clearTimeout(resizeTimeout);
 			};
 		}
 
@@ -822,6 +898,7 @@
 		return () => {
 			mql.removeEventListener("change", onMqlChange);
 			ro.disconnect();
+			clearTimeout(resizeTimeout);
 			killAll();
 		};
 	});
@@ -831,7 +908,7 @@
 	bind:this={sectionEl}
 	use:inertOffscreen
 	id="skills"
-	class="flex w-full max-lg:h-screen max-lg:flex-col max-lg:pb-8 lg:min-h-screen lg:flex-row"
+	class="flex w-full max-lg:h-screen max-lg:flex-col max-lg:py-4 max-lg:pb-8 lg:min-h-screen lg:flex-row"
 >
 	<!-- mobile heading -->
 	<div
