@@ -122,19 +122,32 @@
 			generateDots(0, currentCh);
 		});
 
+		/** @type {ReturnType<typeof setTimeout> | undefined} */
+		let resizeTimer;
 		const ro = new ResizeObserver(() => {
 			if (cancelled) return;
-			const newCh = el.offsetHeight;
-			if (newCh > currentCh) {
-				generateDots(currentCh, newCh);
-				currentCh = newCh;
-			}
+			clearTimeout(resizeTimer);
+			resizeTimer = setTimeout(() => {
+				const newW = el.offsetWidth;
+				const newH = el.offsetHeight;
+				if (newW !== cw) {
+					cw = newW;
+					currentCh = 0;
+					el.innerHTML = "";
+					generateDots(0, newH);
+					currentCh = newH;
+				} else if (newH > currentCh) {
+					generateDots(currentCh, newH);
+					currentCh = newH;
+				}
+			}, 100);
 		});
 		ro.observe(el);
 
 		return () => {
 			cancelled = true;
 			cancelAnimationFrame(initRaf);
+			clearTimeout(resizeTimer);
 			ro.disconnect();
 		};
 	});
