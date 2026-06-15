@@ -38,21 +38,220 @@
 	let panX = $state(0);
 	let panY = $state(0);
 	let isDragging = $state(false);
-	let dragStartX = $state(0);
-	let dragStartY = $state(0);
-	let dragStartPanX = $state(0);
-	let dragStartPanY = $state(0);
-	let lastTouchDist = $state(0);
-	let zoomEnabled = $state(false);
 	let dragOccurred = $state(false);
-	let pointerVelocityX = 0;
-	let pointerVelocityY = 0;
+	let zoomEnabled = $state(false);
+	/** @type {number} */
+	let dragStartX = 0;
+	/** @type {number} */
+	let dragStartY = 0;
+	/** @type {number} */
+	let dragStartPanX = 0;
+	/** @type {number} */
+	let dragStartPanY = 0;
+	/** @type {number} */
+	let velocityX = 0;
+	/** @type {number} */
+	let velocityY = 0;
+	/** @type {number} */
 	let lastMovePanX = 0;
+	/** @type {number} */
 	let lastMovePanY = 0;
+	/** @type {number} */
 	let lastMoveTime = 0;
-	let momentumTween = /** @type {gsap.core.Tween | null} */ (null);
-	let wheelTween = /** @type {gsap.core.Tween | null} */ (null);
+	/** @type {number | null} */
+	let momentumRaf = null;
+
+	let zoomedIn = $state(false);
+	/** @type {number} */
+	let lastTapTime = 0;
+	/** @type {number} */
+	let lastTapX = 0;
+	/** @type {number} */
+	let lastTapY = 0;
+
+	let graphTransition = $state("none");
+	/** @type {ReturnType<typeof setTimeout> | undefined} */
+	let transitionTimeout = undefined;
 	let resizeTimeout = /** @type {ReturnType<typeof setTimeout> | undefined} */ (undefined);
+
+	function clampPan() {
+		if (zoom <= 1) { panX = 0; panY = 0; return; }
+		const minPanX = containerWidth / zoom - containerWidth;
+		const minPanY = containerHeight / zoom - containerHeight;
+		panX = Math.max(minPanX, Math.min(0, panX));
+		panY = Math.max(minPanY, Math.min(0, panY));
+	}
+
+	function killMomentum() {
+		if (momentumRaf !== null) {
+			cancelAnimationFrame(momentumRaf);
+			momentumRaf = null;
+		}
+	}
+
+	/**
+	 * @param {number} cx
+	 * @param {number} cy
+	 * @param {number} newZoom
+	 * @param {number | undefined} duration
+	 */
+	function zoomToPoint(cx, cy, newZoom, duration) {
+		newZoom = Math.max(1, Math.min(5, newZoom));
+		const newPanX = panX + cx * (1 / newZoom - 1 / zoom);
+		const newPanY = panY + cy * (1 / newZoom - 1 / zoom);
+		zoom = newZoom;
+		panX = newPanX;
+		panY = newPanY;
+		clampPan();
+		if (!reducedMotion && duration) {
+			graphTransition = `transform ${duration}s ease-out`;
+			clearTimeout(transitionTimeout);
+			transitionTimeout = setTimeout(() => { graphTransition = "none"; }, duration * 1000 + 50);
+		}
+	}
+
+	/**
+	 * @param {number} cx
+	 * @param {number} cy
+	 */
+	function toggleZoom(cx, cy) {
+		killMomentum();
+		zoomedIn = !zoomedIn;
+		if (zoomedIn) {
+			zoomToPoint(cx, cy, 2, 0.25);
+		} else {
+			zoom = 1;
+			panX = 0;
+			panY = 0;
+			if (!reducedMotion) {
+				graphTransition = "transform 0.25s ease-out";
+				clearTimeout(transitionTimeout);
+				transitionTimeout = setTimeout(() => { graphTransition = "none"; }, 300);
+			}
+		}
+	}
+
+	/**
+	 * @param {PointerEvent} e
+	 */
+	function onPointerDown(e) {
+		if (e.button !== 0) return;
+
+		// Touch double-tap detection (desktop double-click uses native ondblclick)
+		if (e.pointerType === 'touch') {
+			const now = performance.now();
+			const dx = Math.abs(e.clientX - lastTapX);
+			const dy = Math.abs(e.clientY - lastTapY);
+			const isDoubleTap = (now - lastTapTime) < 300 && dx < 40 && dy < 40;
+			lastTapTime = now;
+			lastTapX = e.clientX;
+			lastTapY = e.clientY;
+			if (isDoubleTap) {
+				const rect = svgContainerEl?.getBoundingClientRect();
+				if (!rect) return;
+				toggleZoom(e.clientX - rect.left, e.clientY - rect.top);
+				e.preventDefault();
+				return;
+			}
+		}
+
+		if (!zoomEnabled) return;
+		const target = /** @type {HTMLElement} */ (e.target);
+		if (target.closest("[data-node-id]")) return;
+		if (!isInGraphArea(e.clientX, e.clientY)) return;
+		killMomentum();
+		clearTimeout(transitionTimeout);
+		graphTransition = "none";
+		svgEl?.setPointerCapture(e.pointerId);
+		isDragging = true;
+		dragOccurred = false;
+		dragStartX = e.clientX;
+		dragStartY = e.clientY;
+		dragStartPanX = panX;
+		dragStartPanY = panY;
+	}
+
+	/**
+	 * @param {PointerEvent} e
+	 */
+	function onPointerMove(e) {
+		if (!isDragging) return;
+		dragOccurred = true;
+		const dx = (e.clientX - dragStartX) / zoom;
+		const dy = (e.clientY - dragStartY) / zoom;
+		const newPanX = dragStartPanX + dx;
+		const newPanY = dragStartPanY + dy;
+		const now = performance.now();
+		if (lastMoveTime > 0) {
+			const dt = now - lastMoveTime;
+			if (dt > 0) {
+				velocityX = (newPanX - lastMovePanX) / dt;
+				velocityY = (newPanY - lastMovePanY) / dt;
+			}
+		}
+		lastMoveTime = now;
+		lastMovePanX = newPanX;
+		lastMovePanY = newPanY;
+		panX = newPanX;
+		panY = newPanY;
+		clampPan();
+	}
+
+	function onPointerUp() {
+		isDragging = false;
+		if (zoomEnabled && !reducedMotion && (Math.abs(velocityX) > 0.3 || Math.abs(velocityY) > 0.3)) {
+			const friction = 0.92;
+			const minV = 0.05;
+			let vx = velocityX;
+			let vy = velocityY;
+			/**
+			 * @param {number} _ts
+			 */
+			function step(_ts) {
+				panX += vx;
+				panY += vy;
+				vx *= friction;
+				vy *= friction;
+				clampPan();
+				if (Math.abs(vx) > minV || Math.abs(vy) > minV) {
+					momentumRaf = requestAnimationFrame(step);
+				} else {
+					momentumRaf = null;
+				}
+			}
+			momentumRaf = requestAnimationFrame(step);
+		}
+		velocityX = 0;
+		velocityY = 0;
+		lastMoveTime = 0;
+	}
+
+	/**
+	 * @param {WheelEvent} e
+	 */
+	function onWheel(e) {
+		if (!zoomEnabled) return;
+		if (!isInGraphArea(e.clientX, e.clientY)) return;
+		e.preventDefault();
+		killMomentum();
+		const rect = svgContainerEl?.getBoundingClientRect();
+		if (!rect) return;
+		const cx = e.clientX - rect.left;
+		const cy = e.clientY - rect.top;
+		const delta = e.deltaY > 0 ? -0.1 : 0.1;
+		zoomToPoint(cx, cy, zoom + delta, 0.2);
+	}
+
+	/**
+	 * @param {MouseEvent} e
+	 */
+	function onDblClick(e) {
+		if (!zoomEnabled) return;
+		e.preventDefault();
+		const rect = svgContainerEl?.getBoundingClientRect();
+		if (!rect) return;
+		toggleZoom(e.clientX - rect.left, e.clientY - rect.top);
+	}
 
 	const uncoloredDevicons = new Set(['linux-plain', 'github-original', 'vercel-original']);
 
@@ -256,132 +455,7 @@
 		mobileDetailSkill = null;
 	}
 
-	function clampPan() {
-		const maxX = (zoom - 1) * 500;
-		const maxY = (zoom - 1) * viewBoxHeight / 2;
-		panX = Math.max(-maxX, Math.min(maxX, panX));
-		panY = Math.max(-maxY, Math.min(maxY, panY));
-	}
 
-	/**
-	 * @param {PointerEvent} e
-	 */
-	function onPointerDown(e) {
-		if (!zoomEnabled) return;
-		if (e.button !== 0) return;
-		const target = /** @type {HTMLElement} */ (e.target);
-		if (target.closest("[data-node-id]")) return;
-		if (!isInGraphArea(e.clientX, e.clientY)) return;
-		momentumTween?.kill();
-		momentumTween = null;
-		wheelTween?.kill();
-		wheelTween = null;
-		e.preventDefault();
-		svgEl?.setPointerCapture(e.pointerId);
-		isDragging = true;
-		dragOccurred = false;
-		dragStartX = e.clientX;
-		dragStartY = e.clientY;
-		dragStartPanX = panX;
-		dragStartPanY = panY;
-	}
-
-	/**
-	 * @param {PointerEvent} e
-	 */
-	function onPointerMove(e) {
-		if (!isDragging) return;
-		dragOccurred = true;
-		const newPanX = dragStartPanX + (e.clientX - dragStartX);
-		const newPanY = dragStartPanY + (e.clientY - dragStartY);
-		const now = performance.now();
-		if (lastMoveTime > 0) {
-			const dt = now - lastMoveTime;
-			if (dt > 0) {
-				pointerVelocityX = (newPanX - lastMovePanX) / dt;
-				pointerVelocityY = (newPanY - lastMovePanY) / dt;
-			}
-		}
-		lastMoveTime = now;
-		lastMovePanX = newPanX;
-		lastMovePanY = newPanY;
-		panX = newPanX;
-		panY = newPanY;
-		clampPan();
-	}
-
-	function onPointerUp() {
-		isDragging = false;
-		if (zoomEnabled && !reducedMotion && (Math.abs(pointerVelocityX) > 0.3 || Math.abs(pointerVelocityY) > 0.3)) {
-			const target = { x: panX, y: panY };
-			momentumTween = gsap.to(target, {
-				x: panX + pointerVelocityX * 300,
-				y: panY + pointerVelocityY * 300,
-				duration: 1.5,
-				ease: "power2.out",
-				overwrite: "auto",
-				onUpdate: () => {
-					panX = target.x;
-					panY = target.y;
-					clampPan();
-				},
-				onComplete: () => {
-					momentumTween = null;
-				}
-			});
-		}
-		pointerVelocityX = 0;
-		pointerVelocityY = 0;
-		lastMoveTime = 0;
-	}
-
-	/**
-	 * @param {WheelEvent} e
-	 */
-	function onWheel(e) {
-		if (!zoomEnabled) return;
-		if (!isInGraphArea(e.clientX, e.clientY)) return;
-		e.preventDefault();
-		const rect = svgEl?.getBoundingClientRect();
-		if (!rect) return;
-		const cx = e.clientX - rect.left;
-		const cy = e.clientY - rect.top;
-		const delta = e.deltaY > 0 ? -0.1 : 0.1;
-		const newZoom = Math.max(1, Math.min(5, zoom + delta));
-		const newPanX = cx + (panX - cx) * newZoom / zoom;
-		const newPanY = cy + (panY - cy) * newZoom / zoom;
-
-		momentumTween?.kill();
-		momentumTween = null;
-
-		if (reducedMotion) {
-			zoom = newZoom;
-			panX = newPanX;
-			panY = newPanY;
-			clampPan();
-			return;
-		}
-
-		wheelTween?.kill();
-		const target = { z: zoom, x: panX, y: panY };
-		wheelTween = gsap.to(target, {
-			z: newZoom,
-			x: newPanX,
-			y: newPanY,
-			duration: 0.08,
-			ease: "power2.out",
-			overwrite: "auto",
-			onUpdate: () => {
-				zoom = target.z;
-				panX = target.x;
-				panY = target.y;
-				clampPan();
-			},
-			onComplete: () => {
-				wheelTween = null;
-			}
-		});
-	}
 
 	function startFloats() {
 		floatTweens = skills.map((_, i) =>
@@ -647,10 +721,7 @@
 
 		pulseTween?.kill();
 		pulseTween = null;
-		momentumTween?.kill();
-		momentumTween = null;
-		wheelTween?.kill();
-		wheelTween = null;
+		killMomentum();
 
 		floatTweens.forEach((t) => t.kill());
 		floatTweens = [];
@@ -935,7 +1006,7 @@
 				bind:this={svgEl}
 				viewBox="0 0 1000 {viewBoxHeight}"
 				class="h-full w-full"
-				style="transform: scale({zoom}) translate({panX}px, {panY}px); transform-origin: 0 0"
+				style="transform: scale({zoom}) translate({panX}px, {panY}px); transition: {graphTransition}; transform-origin: 0 0"
 				preserveAspectRatio="xMidYMid meet"
 				role="img"
 				aria-label="Skills network graph"
@@ -944,6 +1015,7 @@
 				onpointermove={onPointerMove}
 				onpointerup={onPointerUp}
 				onwheel={onWheel}
+				ondblclick={onDblClick}
 				onkeydown={(e) => {
 					if (e.key === "Escape") onSvgBgClick();
 				}}

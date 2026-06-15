@@ -204,6 +204,8 @@ image loading is centralized in `src/lib/utils/loading.svelte.js`:
 
 <!-- put any notes you think may be needed to be taken into consideration again -->
 
+- skills_network zoom/pan: rewritten with CSS transition instead of GSAP tweens, using `svgContainerEl.getBoundingClientRect()` (container-relative coords, not SVG element which is post-transform). Zoom-to-point formula: `panX + (clientX - containerLeft) * (1/newZoom - 1/zoom)`. Clamp uses `containerWidth / zoom - containerWidth` (not viewBox width of 1000). Drag delta divided by zoom (`transform-origin: 0 0` means 1px panX = zoom px screen). Momentum uses requestAnimationFrame loop (not GSAP). Double-tap detected in `onPointerDown` for touch devices (via `e.pointerType === 'touch'`), native `ondblclick` for desktop. No `onTouchStart` handler — avoids race with pointer capture. CSS `transition` property set per-animation and cleared via timeout.
+
 <!-- hero.bak.svelte removed — original proof-of-concept, no longer needed -->
 
 - skills_network tooltip: HTML overlay div positioned with absolute coords inside `flex-1` SVG container (relative), using `SVGPoint.matrixTransform(getScreenCTM())` to convert viewBox → screen → container-relative pixels — handles `preserveAspectRatio` letterboxing automatically; tooltip flips to left side if it would overflow right edge; pointer-events: none for non-interactive display; delays hidden by 150ms when unpinning to prevent flicker during node-to-tooltip transitions
