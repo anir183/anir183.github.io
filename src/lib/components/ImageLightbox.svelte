@@ -27,6 +27,70 @@
 	let lastMoveTime = 0;
 	let transitionTimeout = /** @type {ReturnType<typeof setTimeout> | undefined} */ (undefined);
 
+	let lastTapTime = 0;
+	let lastTapX = 0;
+	let lastTapY = 0;
+	let zoomedIn = $state(false);
+
+	/**
+	 * @param {number} cx
+	 * @param {number} cy
+	 */
+	function toggleZoom(cx, cy) {
+		zoomedIn = !zoomedIn;
+		if (zoomedIn) {
+			const mx = cx - window.innerWidth / 2;
+			const my = cy - window.innerHeight / 2;
+			const imgX = (mx - panX) / scale;
+			const imgY = (my - panY) / scale;
+			scale = 2;
+			panX = mx - imgX * scale;
+			panY = my - imgY * scale;
+		} else {
+			scale = 1;
+			panX = 0;
+			panY = 0;
+		}
+		if (!reducedMotion) {
+			imgTransition = "transform 0.25s ease-out";
+			clearTimeout(transitionTimeout);
+			transitionTimeout = setTimeout(() => {
+				imgTransition = "none";
+			}, 300);
+		}
+	}
+
+	/**
+	 * @param {TouchEvent} e
+	 */
+	function onTouchStart(e) {
+		if (e.touches.length !== 1) {
+			lastTapTime = 0;
+			return;
+		}
+		const now = performance.now();
+		const dx = Math.abs(e.touches[0].clientX - lastTapX);
+		const dy = Math.abs(e.touches[0].clientY - lastTapY);
+		const isDoubleTap = (now - lastTapTime) < 300 && dx < 40 && dy < 40;
+
+		lastTapTime = now;
+		lastTapX = e.touches[0].clientX;
+		lastTapY = e.touches[0].clientY;
+
+		if (isDoubleTap) {
+			toggleZoom(e.touches[0].clientX, e.touches[0].clientY);
+			e.preventDefault();
+		}
+	}
+
+	/**
+	 * @param {MouseEvent} e
+	 */
+	function onDblClick(e) {
+		e.preventDefault();
+		toggleZoom(e.clientX, e.clientY);
+	}
+
 	function killMomentum() {
 		if (momentumRaf !== null) {
 			cancelAnimationFrame(momentumRaf);
@@ -159,6 +223,8 @@
 		style="transform: scale({scale}) translate({panX}px, {panY}px); transition: {imgTransition}"
 		onwheel={onWheel}
 		onmousedown={onMouseDown}
+		ondblclick={onDblClick}
+		ontouchstart={onTouchStart}
 		onclick={(/** @type {MouseEvent} */ e) => e.stopPropagation()}
 		draggable={false}
 	/>
