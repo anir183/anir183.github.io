@@ -4,8 +4,8 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"dev": "node scripts/optimize-images.js && vite dev",
-		"build": "node scripts/optimize-images.js && vite build",
+		"dev": "node scripts/optimize-images && node scripts/optimize-fonts.js && vite dev",
+		"build": "node scripts/optimize-images && node scripts/optimize-fonts.js && vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
@@ -35,6 +35,7 @@
 		"svelte": "^5.55.2",
 		"svelte-check": "^4.4.6",
 		"tailwindcss": "^4.2.2",
+		"ttf2woff2": "^8.0.1",
 		"typescript": "^6.0.2",
 		"vite": "^8.0.7"
 	},

@@ -8,27 +8,31 @@
 @font-face {
 	font-family: Unbounded;
 	font-display: swap;
-	src: url("/fonts/unbounded/Unbounded-VariableFont_wght.ttf")
+	src: url("/fonts/unbounded/Unbounded-VariableFont_wght.woff2") format("woff2"),
+	url("/fonts/unbounded/Unbounded-VariableFont_wght.ttf")
 		format("truetype");
 }
 
 @font-face {
 	font-family: Ubuntu;
 	font-display: swap;
-	src: url("/fonts/ubuntu_sans/UbuntuSans-VariableFont_wdth,wght.ttf")
+	src: url("/fonts/ubuntu_sans/UbuntuSans-VariableFont_wdth,wght.woff2") format("woff2"),
+	url("/fonts/ubuntu_sans/UbuntuSans-VariableFont_wdth,wght.ttf")
 		format("truetype");
 }
 
 @font-face {
 	font-family: BebasNeue;
 	font-display: swap;
-	src: url("/fonts/bebas_neue/BebasNeue-Regular.ttf") format("truetype");
+	src: url("/fonts/bebas_neue/BebasNeue-Regular.woff2") format("woff2"),
+	url("/fonts/bebas_neue/BebasNeue-Regular.ttf") format("truetype");
 }
 
 @font-face {
 	font-family: JetBrains;
 	font-display: swap;
-	src: url("/fonts/jetbrains_mono/JetBrainsMono-VariableFont_wght.ttf")
+	src: url("/fonts/jetbrains_mono/JetBrainsMono-VariableFont_wght.woff2") format("woff2"),
+	url("/fonts/jetbrains_mono/JetBrainsMono-VariableFont_wght.ttf")
 		format("truetype");
 }
 

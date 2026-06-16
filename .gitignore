@@ -28,3 +28,6 @@ static/**/webp/
 #
 # templates
 /templates
+
+# Generated build artifacts
+src/lib/generated/
