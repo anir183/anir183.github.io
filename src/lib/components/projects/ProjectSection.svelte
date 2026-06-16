@@ -1,5 +1,5 @@
 <script>
-	import { onMount, tick } from "svelte";
+	import { onDestroy, onMount, tick } from "svelte";
 	import { gsap } from "gsap";
 	import ProjectInfo from "./ProjectInfo.svelte";
 	import ProjectCarousel from "./ProjectCarousel.svelte";
@@ -290,6 +290,8 @@
 			mql.removeEventListener("change", mqlHandler);
 		};
 	});
+
+	onDestroy(() => clearTimeout(mobileCopiedTimer));
 </script>
 
 <div

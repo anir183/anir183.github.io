@@ -143,6 +143,9 @@
 
 <svelte:head>
 	<title>Home — anir183</title>
+	<meta name="description" content="Anirban RoyChowdhury's portfolio — full-stack developer and cyber security student. Explore projects, skills, experience, and get in touch." />
+	<meta property="og:title" content="Home — anir183" />
+	<meta property="og:description" content="Anirban RoyChowdhury's portfolio — full-stack developer and cyber security student. Explore projects, skills, experience, and get in touch." />
 </svelte:head>
 
 

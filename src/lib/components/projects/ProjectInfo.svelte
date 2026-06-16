@@ -1,4 +1,5 @@
 <script>
+	import { onDestroy } from "svelte";
 	import { gsap } from "gsap";
 	import { AccentLink } from "$lib";
 
@@ -61,6 +62,8 @@
 			copy();
 		}
 	}
+
+	onDestroy(() => clearTimeout(copiedTimer));
 </script>
 
 <div class="flex flex-col gap-4 lg:gap-6">

@@ -168,6 +168,9 @@
 
 <svelte:head>
 	<title>Projects — anir183</title>
+	<meta name="description" content="Explore projects built by Anirban RoyChowdhury — full-stack web applications, tools, and experiments across various technologies." />
+	<meta property="og:title" content="Projects — anir183" />
+	<meta property="og:description" content="Explore projects built by Anirban RoyChowdhury — full-stack web applications, tools, and experiments." />
 </svelte:head>
 
 {#if preloaderVisible}

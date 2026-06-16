@@ -50,6 +50,12 @@
 <svelte:head>
 	<title>anir183</title>
 	<link rel="icon" type="image/svg+xml" href="/assets/branding/logo_w_bg.svg" />
+	<meta name="description" content="Anirban RoyChowdhury — full-stack developer & cyber security student. Portfolio showcasing projects, skills, and experience." />
+	<meta property="og:title" content="anir183" />
+	<meta property="og:description" content="Anirban RoyChowdhury — full-stack developer & cyber security student. Portfolio showcasing projects, skills, and experience." />
+	<meta property="og:type" content="website" />
+	<meta name="twitter:card" content="summary" />
+	<script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Anirban RoyChowdhury","url":"https://anir183.github.io","jobTitle":"Full-Stack Developer & Cyber Security Student","sameAs":["https://github.com/anir183","https://www.linkedin.com/in/anir183"]}</script>
 	<script>
 		// NOTE: removes theme switch flicker due to delay before onMount
 		if (typeof localStorage !== "undefined" && typeof window !== "undefined") {
@@ -75,6 +81,11 @@
 	></div>
 {/if}
 
+<a
+	href="#main-content"
+	class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded focus:bg-c-accent-0 focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-c-bg-0"
+>Skip to content</a>
+
 {#if assert_failure.occurred}
 	<Crash
 		error={assert_failure.error?.name}
@@ -82,7 +93,10 @@
 		reload={true}
 	/>
 {:else}
-	<div class="relative min-h-screen overflow-x-clip bg-c-bg-0 text-c-neutral-0 antialiased">
+	<div
+		id="main-content"
+		class="relative min-h-screen overflow-x-clip bg-c-bg-0 text-c-neutral-0 antialiased"
+	>
 		{@render children()}
 	</div>
 {/if}

@@ -199,6 +199,16 @@
 		lastMoveTime = 0;
 	}
 
+	/**
+	 * @param {KeyboardEvent} e
+	 */
+	function onBackdropKeydown(e) {
+		if (e.key === "Enter" || e.key === " ") {
+			e.preventDefault();
+			close();
+		}
+	}
+
 </script>
 
 <svelte:window onkeydown={onKeydown} />
@@ -206,6 +216,7 @@
 <div
 	class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 cursor-pointer overflow-hidden"
 	onclick={close}
+	onkeydown={onBackdropKeydown}
 	onmousemove={onMouseMove}
 	onmouseup={onMouseUp}
 	onmouseleave={onMouseUp}

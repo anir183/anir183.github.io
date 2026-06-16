@@ -271,7 +271,6 @@
 		return { minX: minX - padX, minY: minY - padY, maxX: maxX + padX, maxY: maxY + padY };
 	});
 
-	let floatTweens = /** @type {gsap.core.Tween[]} */ ([]);
 	let packetTweens = /** @type {gsap.core.Tween[]} */ ([]);
 	let pulseTween = /** @type {gsap.core.Tween | null} */ (null);
 	let scrollTrigger =
@@ -304,19 +303,7 @@
 		)
 	);
 
-	let floatOffsets = $state(skills.map(() => ({ x: 0, y: 0 })));
-
-	let effectivePositions = $derived(
-		nodePositions.map(
-			(
-				/** @type {{ x: number, y: number }} */ bp,
-				/** @type {number} */ i
-			) => ({
-				x: bp.x + floatOffsets[i].x,
-				y: bp.y + floatOffsets[i].y
-			})
-		)
-	);
+	let effectivePositions = $derived(nodePositions);
 
 	let skillIndex = $derived(new Map(displaySkills.map((s, i) => [s.id, i])));
 
@@ -459,31 +446,6 @@
 	}
 
 
-
-	function startFloats() {
-		floatTweens = skills.map((_, i) =>
-			gsap.to(floatOffsets[i], {
-				y: 8 + Math.random() * 4,
-				duration: 3.5 + Math.random() * 2,
-				repeat: -1,
-				yoyo: true,
-				ease: "sine.inOut",
-				delay: Math.random() * 3
-			})
-		);
-		skills.forEach((_, i) => {
-			floatTweens.push(
-				gsap.to(floatOffsets[i], {
-					x: (Math.random() - 0.5) * 6,
-					duration: 4 + Math.random() * 2,
-					repeat: -1,
-					yoyo: true,
-					ease: "sine.inOut",
-					delay: Math.random() * 3
-				})
-			);
-		});
-	}
 
 	function startPackets() {
 		if (!svgEl) return;
@@ -717,7 +679,6 @@
 		pauseObserver?.disconnect();
 		pauseObserver = null;
 		pulseTween?.kill();
-		floatTweens.forEach((t) => t.kill());
 		packetTweens.forEach((t) => t.kill());
 		scrollTrigger?.kill();
 		packetEls.forEach((el) => el.remove());
@@ -725,13 +686,11 @@
 	}
 
 	function pauseAllTweens() {
-		floatTweens.forEach((t) => t.pause());
 		packetTweens.forEach((t) => t.pause());
 		pulseTween?.pause();
 	}
 
 	function resumeAllTweens() {
-		floatTweens.forEach((t) => t.resume());
 		packetTweens.forEach((t) => t.resume());
 		pulseTween?.resume();
 	}
@@ -776,13 +735,6 @@
 		pulseTween = null;
 		killMomentum();
 
-		floatTweens.forEach((t) => t.kill());
-		floatTweens = [];
-		skills.forEach((_, i) => {
-			floatOffsets[i].x = 0;
-			floatOffsets[i].y = 0;
-		});
-
 		const pathEls = svgEl.querySelectorAll("[data-edge]");
 		pathEls.forEach(
 			/** @param {SVGPathElement} p */ (p) => {
@@ -815,7 +767,6 @@
 		});
 
 		if (!reducedMotion) {
-			startFloats();
 			requestAnimationFrame(() => {
 				startPackets();
 				setupVisibilityPausing();
@@ -923,7 +874,6 @@
 
 		tl.call(() => {
 			if (!reducedMotion) {
-				startFloats();
 				startPackets();
 			}
 			setupVisibilityPausing();

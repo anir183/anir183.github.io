@@ -171,6 +171,9 @@
 
 <svelte:head>
 	<title>Experiences — anir183</title>
+	<meta name="description" content="Professional experience and timeline of Anirban RoyChowdhury — internships, roles, and achievements in software development and cyber security." />
+	<meta property="og:title" content="Experiences — anir183" />
+	<meta property="og:description" content="Professional experience and timeline of Anirban RoyChowdhury — internships, roles, and achievements." />
 </svelte:head>
 
 {#if preloaderVisible}

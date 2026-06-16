@@ -30,9 +30,10 @@ export async function heroEntrySequence(config) {
 		skipAllAnimations = false
 	} = config ?? {};
 
-	console.log("[heroEntry] started", { navLinks: navLinks.length, heroHeadline: !!heroHeadline, introImages: introImages.length, themeButton: !!themeButton });
-
 	const { SplitText } = await import("gsap/SplitText");
+	if (navLinks.length && !navLinks[0].isConnected) {
+		return { tl: gsap.timeline({ delay: 0 }) };
+	}
 
 	/** @type {HTMLElement[]} */
 	let navLines = [];
@@ -155,7 +156,6 @@ export async function heroEntrySequence(config) {
 		if (hamburgerButton) {
 			gsap.set(hamburgerButton, { opacity: 1, scale: 1 });
 		}
-		console.log("[heroEntry] reduced motion — skipping animation");
 		return { tl: gsap.timeline({ delay }) };
 	}
 
@@ -289,6 +289,5 @@ export async function heroEntrySequence(config) {
 		"<"
 	);
 
-	console.log("[heroEntry] returning tl");
 	return { tl };
 }

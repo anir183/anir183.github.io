@@ -49,6 +49,7 @@ export async function experiencesEntrySequence(config) {
 
 	const { ScrollTrigger } = await import("gsap/ScrollTrigger");
 	gsap.registerPlugin(ScrollTrigger);
+	if (!sectionsParent || !sectionsParent.isConnected) return;
 
 	/** @type {ScrollTrigger[]} */
 	const triggers = [];

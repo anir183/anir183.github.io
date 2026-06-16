@@ -25,10 +25,15 @@
 		if (paraEl) gsap.set(paraEl, { y: 19, opacity: 0 });
 		if (linksEl) gsap.set(linksEl, { y: 13, opacity: 0 });
 
+		/** @type {gsap.core.Timeline | undefined} */
+		let tl;
+		/** @type {import("gsap/ScrollTrigger").ScrollTrigger | undefined} */
+		let st;
+
 		import("gsap/ScrollTrigger").then(({ ScrollTrigger }) => {
 			gsap.registerPlugin(ScrollTrigger);
 
-			const tl = gsap.timeline({
+			tl = gsap.timeline({
 				onComplete: () => (terminalPlay = true)
 			});
 
@@ -54,13 +59,18 @@
 				);
 			}
 
-			ScrollTrigger.create({
+			st = ScrollTrigger.create({
 				trigger: sectionEl,
 				start: "top 20%",
 				once: true,
 				animation: tl
 			});
 		});
+
+		return () => {
+			tl?.kill();
+			st?.kill();
+		};
 	});
 </script>
 
