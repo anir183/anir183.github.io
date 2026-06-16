@@ -1,7 +1,7 @@
 <script>
   import { webpSrc } from "$lib";
 
-  let { src, alt = "", class: className = "", loading = /** @type {"lazy" | "eager" | undefined} */ ("lazy"), ...rest } = $props();
+  let { src, alt = "", class: className = "", loading = /** @type {"lazy" | "eager" | undefined} */ ("eager"), ...rest } = $props();
 
   function handleError(/** @type {Event} */ ev) {
     const img = /** @type {HTMLImageElement} */ (ev.target);
