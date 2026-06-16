@@ -4,6 +4,8 @@
 	import { Crash } from "$lib";
 </script>
 
-<title>{page.status.toString()} — :/</title>
+<svelte:head>
+	<title>{page.status.toString()} — :/</title>
+</svelte:head>
 
 <Crash error={page.status.toString()} details={page.error?.message} />

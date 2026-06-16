@@ -1261,29 +1261,3 @@
 	</div>
 {/if}
 
-<style>
-	/* dark mode — lighter brand tints */
-	:global(:root.dark .devicon-express-original.colored) {
-		color: #7a7a7a;
-	}
-	:global(:root.dark .devicon-unity-plain.colored) {
-		color: #8a8a8a;
-	}
-	:global(:root.dark .devicon-azuresqldatabase-plain.colored) {
-		color: #4d9fd4;
-	}
-	:global(:root.dark .devicon-lua-plain.colored) {
-		color: #5050b3;
-	}
-	:global(:root.dark .devicon-rust-original.colored) {
-		color: #777;
-	}
-
-	/* light mode — darker brand tints */
-	:global(:root:not(.dark) .devicon-c-original.colored) {
-		color: #6d7d91;
-	}
-	:global(:root:not(.dark) .devicon-react-original.colored) {
-		color: #2ea0c4;
-	}
-</style>

@@ -4,11 +4,11 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"dev": "node scripts/optimize-images && node scripts/optimize-fonts.js && vite dev",
-		"build": "node scripts/optimize-images && node scripts/optimize-fonts.js && vite build",
+		"dev": "node scripts/optimize-images && node scripts/optimize-fonts.js && node scripts/copy-devicon-font.js && vite dev",
+		"build": "node scripts/optimize-images && node scripts/optimize-fonts.js && node scripts/copy-devicon-font.js && vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
-		"check": "node scripts/optimize-images.js && svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
+		"check": "node scripts/optimize-images.js && node scripts/optimize-fonts.js && node scripts/copy-devicon-font.js && svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write ."

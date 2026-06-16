@@ -92,9 +92,7 @@
 					return;
 				}
 				tl = entryTl;
-				console.log("[page] GSAP setup done, waiting one frame");
 				return new Promise(resolve => requestAnimationFrame(resolve)).then(() => {
-					console.log("[page] frame flushed, waiting for counter to reach 100%");
 					return new Promise(resolve => {
 						if (preloaderDone) return resolve(undefined);
 						const check = () => requestAnimationFrame(() => {
@@ -104,7 +102,6 @@
 						check();
 					});
 				}).then(() => {
-					console.log("[page] fading preloader");
 					preloaderVisible = false;
 					return entryTl.then();
 				});
@@ -115,8 +112,7 @@
 					if (!img.classList.contains("z-1")) img.style.display = "none";
 				});
 			})
-			.catch((/** @type {Error} */ err) => {
-				console.warn("[page] hero animation failed:", err);
+			.catch(() => {
 				preloaderVisible = false;
 			})
 			.finally(() => {

@@ -6,7 +6,7 @@
 	import { browser } from "$app/environment";
 	import { beforeNavigate, afterNavigate, goto } from "$app/navigation";
 
-	import "devicon/devicon.min.css";
+	import "$lib/devicon-used.css";
 	import { initTheme, assert_failure, Crash, markSpaNavigation } from "$lib";
 
 	let { children } = $props();
@@ -48,14 +48,15 @@
 </script>
 
 <svelte:head>
-	<title>anir183</title>
 	<link rel="icon" type="image/svg+xml" href="/assets/branding/logo_w_bg.svg" />
 	<meta name="description" content="Anirban RoyChowdhury — full-stack developer & cyber security student. Portfolio showcasing projects, skills, and experience." />
 	<meta property="og:title" content="anir183" />
 	<meta property="og:description" content="Anirban RoyChowdhury — full-stack developer & cyber security student. Portfolio showcasing projects, skills, and experience." />
 	<meta property="og:type" content="website" />
+	<meta property="og:image" content="https://anir183.is-a.dev/assets/branding/logo_dark.svg" />
 	<meta name="twitter:card" content="summary" />
-	<script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Anirban RoyChowdhury","url":"https://anir183.github.io","jobTitle":"Full-Stack Developer & Cyber Security Student","sameAs":["https://github.com/anir183","https://www.linkedin.com/in/anir183"]}</script>
+	<link rel="canonical" href="https://anir183.is-a.dev" />
+	<script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Anirban RoyChowdhury","url":"https://anir183.is-a.dev","jobTitle":"Full-Stack Developer & Cyber Security Student","sameAs":["https://github.com/anir183","https://www.linkedin.com/in/anir183"]}</script>
 	<script>
 		// NOTE: removes theme switch flicker due to delay before onMount
 		if (typeof localStorage !== "undefined" && typeof window !== "undefined") {
@@ -93,10 +94,10 @@
 		reload={true}
 	/>
 {:else}
-	<div
+	<main
 		id="main-content"
 		class="relative min-h-screen overflow-x-clip bg-c-bg-0 text-c-neutral-0 antialiased"
 	>
 		{@render children()}
-	</div>
+	</main>
 {/if}
