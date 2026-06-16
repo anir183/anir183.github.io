@@ -51,6 +51,9 @@
 	let rebuildingGrid = false;
 	let resizeKey = $state(0);
 
+	/** @type {IntersectionObserver | null} */
+	let breathingObserver = null;
+
 	function computeGridDimensions() {
 		if (!gridEl) return;
 		const w = gridEl.clientWidth;
@@ -240,9 +243,27 @@
 			});
 			breathingTweens.push(tw);
 		});
+
+		// Pause tweens when grid is off-screen to save CPU/GPU
+		if (breathingObserver) breathingObserver.disconnect();
+		if (gridEl) {
+			breathingObserver = new IntersectionObserver(
+				([entry]) => {
+					if (entry.isIntersecting) {
+						breathingTweens.forEach((t) => t.resume());
+					} else {
+						breathingTweens.forEach((t) => t.pause());
+					}
+				},
+				{ threshold: 0 }
+			);
+			breathingObserver.observe(gridEl);
+		}
 	}
 
 	function stopBreathing() {
+		breathingObserver?.disconnect();
+		breathingObserver = null;
 		breathingTweens.forEach((t) => t.kill());
 		breathingTweens = [];
 	}

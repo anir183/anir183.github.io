@@ -276,6 +276,7 @@
 	let scrollTrigger =
 		/** @type {import("gsap/ScrollTrigger").ScrollTrigger | null} */ (null);
 	let packetEls = /** @type {SVGCircleElement[]} */ ([]);
+	let pauseObserver = /** @type {IntersectionObserver | null} */ (null);
 
 	let edgePathLengths = /** @type {number[]} */ ([]);
 	let edgeTweens = /** @type {gsap.core.Tween[]} */ ([]);
@@ -486,17 +487,25 @@
 		if (!svgEl) return;
 
 		const pathEls = svgEl.querySelectorAll("[data-edge]");
+		const SAMPLE_COUNT = 100;
 
 		skillConnections.forEach((_e, i) => {
 			const path = /** @type {SVGPathElement | undefined} */ (pathEls[i]);
 			if (!path) return;
 
 			const len = path.getTotalLength();
+
+			/** Pre-compute path points instead of calling getPointAtLength per frame. */
+			const samples = new Array(SAMPLE_COUNT);
+			for (let k = 0; k < SAMPLE_COUNT; k++) {
+				samples[k] = path.getPointAtLength((k / (SAMPLE_COUNT - 1)) * len);
+			}
+
 			const count = 1 + Math.floor(Math.random() * 1);
 
 			for (let j = 0; j < count; j++) {
 				const initialT = Math.random();
-				const initPt = path.getPointAtLength(initialT * len);
+				const initPt = samples[Math.round(initialT * (SAMPLE_COUNT - 1))];
 
 				/* eslint-disable svelte/no-dom-manipulating */
 				const circle = document.createElementNS(
@@ -516,11 +525,10 @@
 
 				const packetDelay = Math.random() * 8;
 
-				/** @type {{ t: number, path: SVGPathElement, len: number, el: SVGCircleElement }} */
+				/** @type {{ t: number, samples: DOMPoint[], el: SVGCircleElement }} */
 				const data = {
 					t: initialT,
-					path,
-					len,
+					samples,
 					el: circle
 				};
 
@@ -531,9 +539,15 @@
 					ease: "none",
 					delay: packetDelay,
 					onUpdate: function () {
-						const pt = data.path.getPointAtLength(data.t * data.len);
-						data.el.setAttribute("cx", String(pt.x));
-						data.el.setAttribute("cy", String(pt.y));
+						const t = data.t;
+						const idx = t * (SAMPLE_COUNT - 1);
+						const idx0 = Math.floor(idx);
+						const idx1 = Math.min(idx0 + 1, SAMPLE_COUNT - 1);
+						const frac = idx - idx0;
+						const p0 = data.samples[idx0];
+						const p1 = data.samples[idx1];
+						data.el.setAttribute("cx", String(p0.x + (p1.x - p0.x) * frac));
+						data.el.setAttribute("cy", String(p0.y + (p1.y - p0.y) * frac));
 					},
 					onRepeat: function () {
 						gsap.fromTo(
@@ -698,12 +712,47 @@
 	}
 
 	function killAll() {
+		pauseObserver?.disconnect();
+		pauseObserver = null;
 		pulseTween?.kill();
 		floatTweens.forEach((t) => t.kill());
 		packetTweens.forEach((t) => t.kill());
 		scrollTrigger?.kill();
 		packetEls.forEach((el) => el.remove());
 		packetEls = [];
+	}
+
+	function pauseAllTweens() {
+		floatTweens.forEach((t) => t.pause());
+		packetTweens.forEach((t) => t.pause());
+		pulseTween?.pause();
+	}
+
+	function resumeAllTweens() {
+		floatTweens.forEach((t) => t.resume());
+		packetTweens.forEach((t) => t.resume());
+		pulseTween?.resume();
+	}
+
+	function setupVisibilityPausing() {
+		if (pauseObserver) pauseObserver.disconnect();
+		if (!sectionEl) return;
+
+		pauseObserver = new IntersectionObserver(
+			([entry]) => {
+				if (entry.isIntersecting) resumeAllTweens();
+				else pauseAllTweens();
+			},
+			{ threshold: 0 }
+		);
+		pauseObserver.observe(sectionEl);
+
+		// Initial check: if section is off-screen when observer starts, pause immediately
+		const rect = sectionEl.getBoundingClientRect();
+		const vh = window.innerHeight;
+		if (rect.bottom <= 0 || rect.top >= vh) {
+			pauseAllTweens();
+		}
 	}
 
 	function rebuildGraph() {
@@ -763,7 +812,10 @@
 
 		if (!reducedMotion) {
 			startFloats();
-			requestAnimationFrame(() => startPackets());
+			requestAnimationFrame(() => {
+				startPackets();
+				setupVisibilityPausing();
+			});
 		}
 	}
 
@@ -870,6 +922,7 @@
 				startFloats();
 				startPackets();
 			}
+			setupVisibilityPausing();
 		});
 
 		scrollTrigger = ScrollTrigger.create({
