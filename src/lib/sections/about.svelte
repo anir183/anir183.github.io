@@ -1,7 +1,6 @@
 <script>
 	import { onMount } from "svelte";
 	import { gsap } from "gsap";
-	import { ScrollTrigger } from "gsap/ScrollTrigger";
 	import {
 		AboutScene,
 		AccentLink,
@@ -48,23 +47,25 @@
 		);
 
 		if (!reducedMotion) {
-			gsap.registerPlugin(ScrollTrigger);
+			import("gsap/ScrollTrigger").then(({ ScrollTrigger }) => {
+				gsap.registerPlugin(ScrollTrigger);
 
-			const tl = aboutEntrySequence({
-				layers,
-				subtitle: paraEl,
-				ctaGroup: ctaEl,
-				reducedMotion
-			});
-
-			if (tl) {
-				ScrollTrigger.create({
-					trigger: sectionEl,
-					start: "top 20%",
-					once: true,
-					animation: tl
+				const tl = aboutEntrySequence({
+					layers,
+					subtitle: paraEl,
+					ctaGroup: ctaEl,
+					reducedMotion
 				});
-			}
+
+				if (tl) {
+					ScrollTrigger.create({
+						trigger: sectionEl,
+						start: "top 20%",
+						once: true,
+						animation: tl
+					});
+				}
+			});
 		}
 
 		const strengthMap = /** @type {Record<string, number>} */ ({

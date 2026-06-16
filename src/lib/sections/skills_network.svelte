@@ -207,8 +207,9 @@
 			/**
 			 * @param {number} _ts
 			 */
-			function step(_ts) {
-				panX += vx;
+		function step(_ts) {
+			if (!sectionVisible) { momentumRaf = null; return; }
+			panX += vx;
 				panY += vy;
 				vx *= friction;
 				vy *= friction;
@@ -277,6 +278,7 @@
 		/** @type {import("gsap/ScrollTrigger").ScrollTrigger | null} */ (null);
 	let packetEls = /** @type {SVGCircleElement[]} */ ([]);
 	let pauseObserver = /** @type {IntersectionObserver | null} */ (null);
+	let sectionVisible = true;
 
 	let edgePathLengths = /** @type {number[]} */ ([]);
 	let edgeTweens = /** @type {gsap.core.Tween[]} */ ([]);
@@ -740,6 +742,7 @@
 
 		pauseObserver = new IntersectionObserver(
 			([entry]) => {
+				sectionVisible = entry.isIntersecting;
 				if (entry.isIntersecting) resumeAllTweens();
 				else pauseAllTweens();
 			},
@@ -751,6 +754,7 @@
 		const rect = sectionEl.getBoundingClientRect();
 		const vh = window.innerHeight;
 		if (rect.bottom <= 0 || rect.top >= vh) {
+			sectionVisible = false;
 			pauseAllTweens();
 		}
 	}

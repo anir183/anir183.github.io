@@ -51,11 +51,13 @@
 
 		document.body.classList.add(BODY_SCROLL_LOCK);
 
-		loadAllImages((/** @type {number} */ pct) => {
-			if (!mounted) return;
-			progress = pct;
-		})
-			.then(() => document.fonts.ready)
+		Promise.all([
+			loadAllImages((/** @type {number} */ pct) => {
+				if (!mounted) return;
+				progress = pct;
+			}),
+			document.fonts.ready
+		])
 			.then(async () => {
 				// --- GSAP setup: initial state only, before preloader fades ---
 				if (!mounted) return;

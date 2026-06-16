@@ -1,7 +1,6 @@
 <script>
 	import { onMount } from "svelte";
 	import { gsap } from "gsap";
-	import { ScrollTrigger } from "gsap/ScrollTrigger";
 	import { socials, AnimatedHeading, AccentLink, Terminal } from "$lib";
 	import { inertOffscreen } from "$lib/actions/inert_offscreen.js";
 
@@ -16,8 +15,6 @@
 	let terminalPlay = $state(false);
 
 	onMount(() => {
-		gsap.registerPlugin(ScrollTrigger);
-
 		if (reducedMotion) {
 			if (paraEl) gsap.set(paraEl, { y: 0, opacity: 1 });
 			if (linksEl) gsap.set(linksEl, { y: 0, opacity: 1 });
@@ -28,37 +25,41 @@
 		if (paraEl) gsap.set(paraEl, { y: 19, opacity: 0 });
 		if (linksEl) gsap.set(linksEl, { y: 13, opacity: 0 });
 
-		const tl = gsap.timeline({
-			onComplete: () => (terminalPlay = true)
-		});
+		import("gsap/ScrollTrigger").then(({ ScrollTrigger }) => {
+			gsap.registerPlugin(ScrollTrigger);
 
-		if (paraEl) {
-			tl.to(paraEl, {
-				y: 0,
-				opacity: 1,
-				duration: 0.6,
-				ease: "power3.out"
+			const tl = gsap.timeline({
+				onComplete: () => (terminalPlay = true)
 			});
-		}
 
-		if (linksEl) {
-			tl.to(
-				linksEl,
-				{
+			if (paraEl) {
+				tl.to(paraEl, {
 					y: 0,
 					opacity: 1,
-					duration: 0.5,
+					duration: 0.6,
 					ease: "power3.out"
-				},
-				"-=0.15"
-			);
-		}
+				});
+			}
 
-		ScrollTrigger.create({
-			trigger: sectionEl,
-			start: "top 20%",
-			once: true,
-			animation: tl
+			if (linksEl) {
+				tl.to(
+					linksEl,
+					{
+						y: 0,
+						opacity: 1,
+						duration: 0.5,
+						ease: "power3.out"
+					},
+					"-=0.15"
+				);
+			}
+
+			ScrollTrigger.create({
+				trigger: sectionEl,
+				start: "top 20%",
+				once: true,
+				animation: tl
+			});
 		});
 	});
 </script>
