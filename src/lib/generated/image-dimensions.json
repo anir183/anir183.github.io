@@ -1,0 +1,138 @@
+{
+  "/assets/branding/logo_w_bg.png": {
+    "w": 1080,
+    "h": 1080
+  },
+  "/assets/hero_images/portrait_bg_dark.png": {
+    "w": 3344,
+    "h": 1882
+  },
+  "/assets/hero_images/portrait_bg_light.png": {
+    "w": 3344,
+    "h": 1882
+  },
+  "/assets/hero_images/random_0.jpg": {
+    "w": 640,
+    "h": 427
+  },
+  "/assets/hero_images/random_1.jpg": {
+    "w": 640,
+    "h": 427
+  },
+  "/assets/hero_images/random_2.jpg": {
+    "w": 640,
+    "h": 427
+  },
+  "/assets/hero_images/random_3.jpg": {
+    "w": 640,
+    "h": 420
+  },
+  "/assets/pfp/pfp-layer-1.png": {
+    "w": 2160,
+    "h": 2668
+  },
+  "/assets/pfp/pfp-layer-2.png": {
+    "w": 2160,
+    "h": 2668
+  },
+  "/assets/pfp/pfp-layer-3.png": {
+    "w": 2160,
+    "h": 2668
+  },
+  "/assets/project_images/cognify/mobile_0.png": {
+    "w": 633,
+    "h": 951
+  },
+  "/assets/project_images/cognify/mobile_1.png": {
+    "w": 633,
+    "h": 951
+  },
+  "/assets/project_images/cognify/mobile_2.png": {
+    "w": 633,
+    "h": 951
+  },
+  "/assets/project_images/cognify/regular_0.png": {
+    "w": 1920,
+    "h": 1080
+  },
+  "/assets/project_images/cognify/regular_1.png": {
+    "w": 1920,
+    "h": 1080
+  },
+  "/assets/project_images/cognify/regular_2.png": {
+    "w": 1920,
+    "h": 1080
+  },
+  "/assets/project_images/movie_booking/mobile_0.png": {
+    "w": 1366,
+    "h": 768
+  },
+  "/assets/project_images/movie_booking/mobile_1.png": {
+    "w": 1366,
+    "h": 768
+  },
+  "/assets/project_images/movie_booking/mobile_2.png": {
+    "w": 1366,
+    "h": 768
+  },
+  "/assets/project_images/movie_booking/regular_0.png": {
+    "w": 1366,
+    "h": 768
+  },
+  "/assets/project_images/movie_booking/regular_1.png": {
+    "w": 1366,
+    "h": 768
+  },
+  "/assets/project_images/movie_booking/regular_2.png": {
+    "w": 1366,
+    "h": 768
+  },
+  "/assets/project_images/safe_ping/mobile_0.png": {
+    "w": 515,
+    "h": 1080
+  },
+  "/assets/project_images/safe_ping/mobile_1.png": {
+    "w": 515,
+    "h": 1080
+  },
+  "/assets/project_images/safe_ping/mobile_2.png": {
+    "w": 515,
+    "h": 1080
+  },
+  "/assets/project_images/safe_ping/regular_0.png": {
+    "w": 1952,
+    "h": 1080
+  },
+  "/assets/project_images/safe_ping/regular_1.png": {
+    "w": 1952,
+    "h": 1080
+  },
+  "/assets/project_images/safe_ping/regular_2.png": {
+    "w": 1952,
+    "h": 1080
+  },
+  "/assets/project_images/shebs/mobile_0.png": {
+    "w": 493,
+    "h": 947
+  },
+  "/assets/project_images/shebs/mobile_1.png": {
+    "w": 493,
+    "h": 947
+  },
+  "/assets/project_images/shebs/mobile_2.png": {
+    "w": 493,
+    "h": 947
+  },
+  "/assets/project_images/shebs/regular_0.png": {
+    "w": 1920,
+    "h": 1080
+  },
+  "/assets/project_images/shebs/regular_1.png": {
+    "w": 1920,
+    "h": 1080
+  },
+  "/assets/project_images/shebs/regular_2.png": {
+    "w": 1920,
+    "h": 1080
+  }
+}
