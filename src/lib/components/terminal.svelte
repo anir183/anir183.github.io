@@ -1290,6 +1290,7 @@ let isMobileDevice = $state(false);
 	});
 </script>
 
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <div
 	bind:this={terminalEl}
 		class="flex flex-col overflow-hidden rounded-2xl border-2 bg-c-bg-1/50 backdrop-blur-sm transition-colors duration-300 outline-none max-lg:flex-1 max-lg:min-h-0 {focused ? 'border-c-accent-0/15' : 'border-transparent'}"

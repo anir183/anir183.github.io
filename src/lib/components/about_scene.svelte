@@ -50,7 +50,7 @@
 		<!-- subject layer -->
 		<Picture
 			src="/assets/pfp/pfp-layer-2.png"
-			alt=""
+			alt="anirban"
 			data-layer-role="subject"
 			class="pointer-events-none absolute inset-0 z-[1] h-full w-full object-cover will-change-transform select-none"
 			draggable="false"

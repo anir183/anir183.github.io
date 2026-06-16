@@ -138,13 +138,13 @@
 		{#each projects as project (project.id)}
 			<Picture
 				src={project.image}
-				alt=""
+				alt="Screenshot of {project.name}"
 				aria-hidden="true"
 				class="invisible absolute"
 			/>
 			<Picture
 				src={project.imageMobile}
-				alt=""
+				alt="Screenshot of {project.name}"
 				aria-hidden="true"
 				class="invisible absolute"
 			/>

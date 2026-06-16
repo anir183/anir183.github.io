@@ -412,6 +412,7 @@ onDestroy(() => {
 							: 'max-lg:mx-auto lg:mr-[10vw] lg:ml-auto'
 						}"
 				>
+				<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 				<h3
 					bind:this={h3Els[i]}
 					class="text-4xl font-black text-c-neutral-0 font-c-unbounded leading-tight lg:text-5xl xl:text-6xl"

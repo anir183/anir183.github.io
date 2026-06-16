@@ -74,6 +74,7 @@
 		{number}
 	</span>
 
+	<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 	<h3
 		bind:this={h3El}
 		data-pi="title"

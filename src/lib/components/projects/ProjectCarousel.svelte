@@ -2,6 +2,7 @@
 	import { Picture } from "$lib";
 	let {
 		images = /** @type {string[]} */ ([]),
+		title = "",
 		activeIndex = $bindable(0),
 		imageTrackEl = $bindable(),
 		isMobile = false,
@@ -14,11 +15,14 @@
 	<div
 		data-project-img={0}
 		class="relative flex-1 overflow-hidden rounded-xl min-h-0 cursor-pointer bg-c-bg-0"
+		role="button"
+		tabindex="0"
 		onclick={() => handleDesktopImgClick?.(activeIndex)}
+		onkeydown={(e) => e.key === "Enter" && handleDesktopImgClick?.(activeIndex)}
 	>
 		<Picture
 			src={images[activeIndex]}
-			alt=""
+			alt="Screenshot of {title}"
 			class="absolute inset-0 h-full w-full object-cover"
 			draggable={false}
 		/>
@@ -33,7 +37,7 @@
 				>
 					<Picture
 						src={src}
-						alt=""
+						alt="Screenshot of {title}"
 						class="absolute inset-0 h-full w-full object-cover"
 						draggable={false}
 					/>
@@ -63,7 +67,7 @@
 				<div class="absolute inset-0 overflow-hidden rounded-xl bg-c-bg-0">
 					<Picture
 						src={src}
-						alt=""
+						alt="Screenshot of {title}"
 						class="h-full w-full object-cover"
 					/>
 				</div>

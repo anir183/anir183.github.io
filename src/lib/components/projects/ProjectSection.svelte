@@ -326,6 +326,7 @@
 		>
 			{project?.number}
 		</span>
+		<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 		<h3
 			bind:this={mobileTitleEl}
 			data-pi="title"
@@ -355,6 +356,7 @@
 	<div class="flex max-lg:flex-1 max-lg:px-5 lg:w-3/5 lg:h-[70vh]">
 		<ProjectCarousel
 			images={images}
+			title={project?.name ?? ""}
 			bind:imageTrackEl
 			bind:activeIndex
 			{isMobile}
