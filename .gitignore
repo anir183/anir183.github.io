@@ -24,3 +24,6 @@ vite.config.ts.timestamp-*
 
 # Build artifacts
 static/**/webp/
+
+# Generated build artifacts
+src/lib/generated/
