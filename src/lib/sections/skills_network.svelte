@@ -555,30 +555,20 @@
 			const len = edgePathLengths[i] || 1;
 
 			if (connected) {
-				const sourceFirst = edge[0] === id;
-				const rev = edgePosDat[i];
-				const d = rev
-					? sourceFirst
-						? `M ${rev.from.x} ${rev.from.y} Q ${rev.cx} ${rev.cy} ${rev.to.x} ${rev.to.y}`
-						: `M ${rev.to.x} ${rev.to.y} Q ${rev.cx} ${rev.cy} ${rev.from.x} ${rev.from.y}`
-					: "";
-
 				const tween = gsap.fromTo(
 					pathEl,
 					{
 						strokeDasharray: len + 2,
 						strokeDashoffset: len,
 						stroke: "var(--color-c-border)",
-						opacity: 0.3,
-						attr: { d: pathEl.getAttribute("d") }
+						opacity: 0.3
 					},
 					{
 						strokeDashoffset: 0,
 						stroke: "var(--color-c-accent-0)",
 						opacity: 0.7,
 						duration: dur,
-						ease: "power2.out",
-						attr: { d }
+						ease: "power2.out"
 					}
 				);
 				edgeTweens.push(tween);
@@ -890,6 +880,8 @@
 		});
 
 		ScrollTrigger.refresh();
+		document.fonts.ready.then(() => ScrollTrigger.refresh());
+		setTimeout(() => ScrollTrigger.refresh(), 1000);
 	}
 
 	$effect(() => {
