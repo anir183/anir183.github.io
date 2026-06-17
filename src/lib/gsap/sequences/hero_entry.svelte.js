@@ -31,9 +31,9 @@ export async function heroEntrySequence(config) {
 	} = config ?? {};
 
 	const { SplitText } = await import("gsap/SplitText");
-	if (navLinks.length && !navLinks[0].isConnected) {
-		return { tl: gsap.timeline({ delay: 0 }) };
-	}
+
+	const navLinksDisconnected = navLinks.length > 0 && !navLinks[0].isConnected;
+	const activeNavLinks = navLinksDisconnected ? [] : navLinks;
 
 	/** @type {HTMLElement[]} */
 	let navLines = [];
@@ -43,12 +43,14 @@ export async function heroEntrySequence(config) {
 	if (!reducedMotion) {
 		gsap.registerPlugin(SplitText);
 
-		SplitText.create(navLinks, {
-			type: "lines",
-			linesClass: "line",
-			mask: "lines",
-			autoSplit: true
-		});
+		if (activeNavLinks.length) {
+			SplitText.create(activeNavLinks, {
+				type: "lines",
+				linesClass: "line",
+				mask: "lines",
+				autoSplit: true
+			});
+		}
 
 		SplitText.create(heroHeadline, {
 			type: "lines",
@@ -57,7 +59,9 @@ export async function heroEntrySequence(config) {
 			autoSplit: true
 		});
 
-		navLines = /** @type {HTMLElement[]} */ (navLinks.flatMap((a) => [...a.querySelectorAll(".line")]));
+		if (activeNavLinks.length) {
+			navLines = /** @type {HTMLElement[]} */ (activeNavLinks.flatMap((a) => [...a.querySelectorAll(".line")]));
+		}
 		headlineLines = heroHeadline
 			? /** @type {HTMLElement[]} */ ([...heroHeadline.querySelectorAll(".line")])
 			: [];
@@ -128,7 +132,7 @@ export async function heroEntrySequence(config) {
 		if (logoEl) gsap.set(logoEl, { opacity: 1, x: 0 });
 		if (themeButton) gsap.set(themeButton, { opacity: 1, scale: 1 });
 		if (hamburgerButton) gsap.set(hamburgerButton, { opacity: 1, scale: 1 });
-		navLinks.forEach((a) => gsap.set(a, { opacity: 1 }));
+		activeNavLinks.forEach((a) => gsap.set(a, { opacity: 1 }));
 		if (heroHeadline) gsap.set(heroHeadline, { opacity: 1 });
 		return { tl: gsap.timeline({ delay: 0 }) };
 	}

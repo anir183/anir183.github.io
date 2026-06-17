@@ -988,9 +988,11 @@ let isMobileDevice = $state(false);
 			tabCompletions = [];
 		}
 		if (e.key === "Enter") {
+			if (composing) return;
 			e.preventDefault();
 			submitCommand();
 		} else if (e.key === "Backspace") {
+			if (composing) return;
 			e.preventDefault();
 			if (historyIndex !== -1) historyIndex = -1;
 			currentInput = currentInput.slice(0, -1);

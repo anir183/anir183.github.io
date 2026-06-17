@@ -24,7 +24,7 @@ export function createSectionSnap(options = {}) {
 	/** @type {ReturnType<typeof setTimeout> | undefined} */
 	let timeout;
 	let snapping = false;
-	let lastSnap = 0;
+	let lastSnap = Date.now();
 
 	function snap() {
 		if (snapping) return;

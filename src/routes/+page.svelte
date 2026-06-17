@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from "svelte";
+	import { onMount, tick } from "svelte";
 	import { fade } from "svelte/transition";
 	import { browser } from "$app/environment";
 	import {
@@ -64,7 +64,7 @@
 			}),
 			document.fonts.ready
 		])
-			.then(() => {
+			.then(async () => {
 				const introImgEls = /** @type {NodeListOf<HTMLElement>} */ (
 					document.querySelectorAll(".intro-img")
 				);
@@ -73,6 +73,7 @@
 					navEl?.querySelectorAll(":scope > div:first-of-type a")
 				);
 				const navLinks = navLinkEls ? [...navLinkEls] : [];
+				await tick();
 				return heroEntrySequence({
 					introImages: introImgs,
 					heroHeadline: heroH1,
@@ -118,14 +119,13 @@
 			.finally(() => {
 				if (!mounted) return;
 				document.body.classList.remove(BODY_SCROLL_LOCK);
-				cleanupSnap = createSectionSnap();
 
 				if (sectionHash) {
-					requestAnimationFrame(() => {
-						document.getElementById(sectionHash)
-							?.scrollIntoView({ behavior: "instant" });
-					});
+					document.getElementById(sectionHash)
+						?.scrollIntoView({ behavior: "instant" });
 				}
+
+				cleanupSnap = createSectionSnap();
 			});
 
 		return () => {

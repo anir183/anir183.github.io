@@ -739,6 +739,7 @@
 		pathEls.forEach(
 			/** @param {SVGPathElement} p */ (p) => {
 				if (p instanceof SVGPathElement) {
+					if (!p.getAttribute('d')) return;
 					p.style.removeProperty("strokeDasharray");
 					p.style.removeProperty("strokeDashoffset");
 					const len = p.getTotalLength();
@@ -787,12 +788,14 @@
 
 		edgePathLengths = displayEdges.map((_, i) => {
 			const p = pathEls[i];
-			return p ? p.getTotalLength() : 1;
+			if (!p || !p.getAttribute('d')) return 1;
+			return p.getTotalLength();
 		});
 
 		gsap.set(nodeEls, { scale: 0, opacity: 0 });
 		pathEls.forEach(
 			/** @param {SVGPathElement} p */ (p) => {
+				if (!p.getAttribute('d')) return;
 				const len = p.getTotalLength();
 				p.style.strokeDasharray = String(len);
 				p.style.strokeDashoffset = String(len);
@@ -885,6 +888,8 @@
 			once: true,
 			animation: tl
 		});
+
+		ScrollTrigger.refresh();
 	}
 
 	$effect(() => {
