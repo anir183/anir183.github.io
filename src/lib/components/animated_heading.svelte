@@ -142,7 +142,7 @@
 	bind:this={el}
 	class={className}
 	class:cursor-pointer={!!sectionId && copyEnabled}
-	title={sectionId && copyEnabled ? "Copy link to this section" : undefined}
+	title={sectionId && copyEnabled ? "copy link to this section" : undefined}
 	onclick={sectionId && copyEnabled ? copy : undefined}
 	onkeydown={sectionId && copyEnabled ? handleKeydown : undefined}
 	role={sectionId && copyEnabled ? "button" : undefined}

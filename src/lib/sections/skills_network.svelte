@@ -73,6 +73,7 @@
 	/** @type {ReturnType<typeof setTimeout> | undefined} */
 	let transitionTimeout = undefined;
 	let resizeTimeout = /** @type {ReturnType<typeof setTimeout> | undefined} */ (undefined);
+	let entryAnimDone = false;
 
 	function clampPan() {
 		if (zoom <= 1) { panX = 0; panY = 0; return; }
@@ -750,6 +751,7 @@
 						if (p instanceof SVGPathElement) {
 							p.style.removeProperty("strokeDasharray");
 							p.style.removeProperty("strokeDashoffset");
+							p.removeAttribute("stroke-dasharray");
 						}
 					}
 				);
@@ -759,7 +761,7 @@
 
 		if (!reducedMotion) {
 			requestAnimationFrame(() => {
-				startPackets();
+				if (entryAnimDone) startPackets();
 				setupVisibilityPausing();
 			});
 		}
@@ -822,10 +824,16 @@
 			);
 		}
 
-		tl.to(
+		tl.fromTo(
 			pathEls,
 			{
+				strokeDasharray: (i) => (edgePathLengths[i] || 1) + 2,
+				strokeDashoffset: (i) => edgePathLengths[i] || 1,
+				opacity: 0
+			},
+			{
 				strokeDashoffset: 0,
+				opacity: 0.3,
 				duration: 1.2,
 				stagger: 0.02,
 				ease: "power3.inOut"
@@ -856,6 +864,7 @@
 							if (p instanceof SVGPathElement) {
 								p.style.removeProperty("strokeDasharray");
 								p.style.removeProperty("strokeDashoffset");
+								p.removeAttribute("stroke-dasharray");
 							}
 						}
 					);
@@ -869,6 +878,7 @@
 			if (!reducedMotion) {
 				startPackets();
 			}
+			entryAnimDone = true;
 			setupVisibilityPausing();
 		});
 
@@ -880,8 +890,6 @@
 		});
 
 		ScrollTrigger.refresh();
-		document.fonts.ready.then(() => ScrollTrigger.refresh());
-		setTimeout(() => ScrollTrigger.refresh(), 1000);
 	}
 
 	$effect(() => {
@@ -1028,14 +1036,14 @@
 					<path
 						{d}
 						data-edge={i}
+						opacity="0"
 						fill="none"
 						stroke-linecap="round"
 						stroke="var(--color-c-border)"
 						stroke-width="1.2"
-						opacity="0.3"
 					/>
 				{/each}
-
+			
 				{#each displaySkills as skill, i (skill.id)}
 					<g
 						transform="translate({effectivePositions[i].x}, {effectivePositions[

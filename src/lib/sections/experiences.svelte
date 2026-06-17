@@ -417,7 +417,7 @@ onDestroy(() => {
 					bind:this={h3Els[i]}
 					class="text-4xl font-black text-c-neutral-0 font-c-unbounded leading-tight lg:text-5xl xl:text-6xl"
 					class:cursor-pointer={animationCompleteMap.get(exp.id) ?? false}
-					title={animationCompleteMap.get(exp.id) ? "Copy link" : undefined}
+					title={animationCompleteMap.get(exp.id) ? "copy link" : undefined}
 					onclick={animationCompleteMap.get(exp.id) ? () => handleExpCopy(exp.id) : undefined}
 					onkeydown={animationCompleteMap.get(exp.id) ? (e) => handleExpKeydown(e, exp.id) : undefined}
 					role={animationCompleteMap.get(exp.id) ? "button" : undefined}

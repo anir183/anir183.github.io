@@ -332,7 +332,7 @@
 			data-pi="title"
 			class="mt-1 font-c-unbounded text-[clamp(1.5rem,5vw,2.75rem)] font-black leading-tight text-c-neutral-0"
 			class:cursor-pointer={animationComplete}
-			title={animationComplete ? "Copy link" : undefined}
+			title={animationComplete ? "copy link" : undefined}
 			onclick={animationComplete ? copyMobile : undefined}
 			onkeydown={animationComplete ? handleMobileKeydown : undefined}
 			role={animationComplete ? "button" : undefined}

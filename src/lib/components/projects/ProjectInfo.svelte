@@ -80,7 +80,7 @@
 		data-pi="title"
 		class="font-c-unbounded text-[clamp(1.5rem,5vw,2.75rem)] font-black leading-tight text-c-neutral-0"
 		class:cursor-pointer={!!sectionId && animationComplete}
-		title={sectionId && animationComplete ? "Copy link" : undefined}
+		title={sectionId && animationComplete ? "copy link" : undefined}
 		onclick={sectionId && animationComplete ? copy : undefined}
 		onkeydown={sectionId && animationComplete ? handleKeydown : undefined}
 		role={sectionId && animationComplete ? "button" : undefined}
