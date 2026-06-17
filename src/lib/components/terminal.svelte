@@ -644,7 +644,7 @@ let terminalEl = $state();
 let hiddenInput = $state();
 let composing = $state(false);
 let isMobileDevice = $state(false);
-let pendingComposition = false;
+
 
 	/** @type {{ container: Element, titleBar: Element, separator: Element, initialLines: Element[], inputPrompt: Element } | null} */
 	let animRefs = $state(null);
@@ -1064,13 +1064,12 @@ let pendingComposition = false;
 
 	function onInput() {
 		if (composing || !hiddenInput) return;
-		if (pendingComposition) { pendingComposition = false; return; }
+		currentInput = hiddenInput.value;
 	}
 
 	/** @param {InputEvent} e */
 	function onBeforeInput(e) {
 		if (composing || !hiddenInput) return;
-		if (pendingComposition) { pendingComposition = false; return; }
 		const data = e.data;
 		if (data && typeof data === "string") {
 			e.preventDefault();
@@ -1086,7 +1085,6 @@ let pendingComposition = false;
 	/** @param {CompositionEvent} e */
 	function onCompositionEnd(e) {
 		composing = false;
-		pendingComposition = true;
 		if (hiddenInput) {
 			const val = hiddenInput.value;
 			const composed = e.data || "";
