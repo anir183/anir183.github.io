@@ -16,6 +16,11 @@ export function createSectionSnap(options = {}) {
 	const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 	if (reducedMotion) return () => {};
 
+	const isMobile = window.matchMedia("(pointer: coarse)").matches;
+	const effectiveThreshold = isMobile ? 0.1 : threshold;
+	const effectiveSnapDelay = isMobile ? 300 : snapDelay;
+	const effectiveCooldown = isMobile ? 800 : cooldown;
+
 	/** @type {ReturnType<typeof setTimeout> | undefined} */
 	let timeout;
 	let snapping = false;
@@ -24,10 +29,10 @@ export function createSectionSnap(options = {}) {
 	function snap() {
 		if (snapping) return;
 		const now = Date.now();
-		if (now - lastSnap < cooldown) return;
+		if (now - lastSnap < effectiveCooldown) return;
 
 		const vh = window.innerHeight;
-		const snapThreshold = vh * threshold;
+		const snapThreshold = vh * effectiveThreshold;
 
 		for (const section of sections) {
 			const r = section.getBoundingClientRect();
@@ -60,7 +65,7 @@ export function createSectionSnap(options = {}) {
 	/** @param {Event} _e */
 	function onScroll(_e) {
 		clearTimeout(timeout);
-		timeout = setTimeout(snap, snapDelay);
+		timeout = setTimeout(snap, effectiveSnapDelay);
 	}
 
 	window.addEventListener("scroll", onScroll, { passive: true });
