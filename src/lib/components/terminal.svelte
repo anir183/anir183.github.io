@@ -984,15 +984,14 @@ let isMobileDevice = $state(false);
 
 	/** @param {KeyboardEvent} e */
 	function onKeydown(e) {
+		if (composing) return;
 		if (tabCompletions.length > 0 && e.key !== "Tab" && e.key !== "Shift" && e.key !== "Control" && e.key !== "Alt" && e.key !== "Meta") {
 			tabCompletions = [];
 		}
 		if (e.key === "Enter") {
-			if (composing) return;
 			e.preventDefault();
 			submitCommand();
 		} else if (e.key === "Backspace") {
-			if (composing) return;
 			e.preventDefault();
 			if (historyIndex !== -1) historyIndex = -1;
 			currentInput = currentInput.slice(0, -1);
@@ -1018,7 +1017,6 @@ let isMobileDevice = $state(false);
 			}
 		} else if (e.key === "Tab") {
 			e.preventDefault();
-			if (composing) return;
 			if (historyIndex !== -1) historyIndex = -1;
 
 			if (tabCompletions.length > 0) {
@@ -1285,6 +1283,7 @@ let isMobileDevice = $state(false);
 	});
 
 	$effect(() => {
+		if (composing) return;
 		const val = currentInput;
 		if (hiddenInput && hiddenInput.value !== val) {
 			hiddenInput.value = val;
