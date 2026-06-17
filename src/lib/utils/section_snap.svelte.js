@@ -17,7 +17,7 @@ export function createSectionSnap(options = {}) {
 	if (reducedMotion) return () => {};
 
 	const isMobile = window.matchMedia("(pointer: coarse)").matches;
-	const effectiveThreshold = isMobile ? 0.1 : threshold;
+	const effectiveThreshold = isMobile ? 0.05 : threshold;
 	const effectiveSnapDelay = isMobile ? 300 : snapDelay;
 	const effectiveCooldown = isMobile ? 800 : cooldown;
 
