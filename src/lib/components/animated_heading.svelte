@@ -170,6 +170,7 @@
 		align-items: center;
 		vertical-align: middle;
 		margin-left: 0.5rem;
+		margin-right: calc(-0.5rem - 20px);
 		opacity: 0;
 		pointer-events: none;
 		transition: opacity 0.15s ease;
