@@ -1088,10 +1088,19 @@ let pendingComposition = false;
 		composing = false;
 		pendingComposition = true;
 		if (hiddenInput) {
+			const val = hiddenInput.value;
 			const composed = e.data || "";
-			if (composed.length > 0) {
+
+			if (composed.length > 0 && val.endsWith(composed)) {
+				currentInput = val;
+			} else if (composed.length > 0 && val.startsWith(composed)) {
+				currentInput = val.slice(composed.length) + composed;
+				hiddenInput.value = currentInput;
+			} else if (composed.length > 0 && composed.length <= 2) {
 				currentInput += composed;
 				hiddenInput.value = currentInput;
+			} else {
+				currentInput = val;
 			}
 		}
 	}
