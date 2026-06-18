@@ -1092,13 +1092,20 @@ let isMobileDevice = $state(false);
 		const newVal = hiddenInput.value;
 		if (_backspaceTarget !== null) {
 			const target = _backspaceTarget;
-			_backspaceTarget = null;
-			if (newVal.length > target.length) {
+			if (newVal === target) {
+				_backspaceTarget = null;
+				currentInput = target;
+				hiddenInput.value = target;
+				try { hiddenInput.setSelectionRange(target.length, target.length); } catch {}
+			} else if (newVal.length > target.length) {
 				currentInput = target;
 				hiddenInput.value = target;
 				try { hiddenInput.setSelectionRange(target.length, target.length); } catch {}
 			} else {
+				_backspaceTarget = null;
 				currentInput = newVal;
+				hiddenInput.value = newVal;
+				try { hiddenInput.setSelectionRange(newVal.length, newVal.length); } catch {}
 			}
 			return;
 		}
