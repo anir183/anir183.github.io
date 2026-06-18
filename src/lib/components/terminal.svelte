@@ -989,8 +989,14 @@ let isMobileDevice = $state(false);
 	/** @param {KeyboardEvent} e */
 	function onKeydown(e) {
 		if (e.key === "Backspace") {
+			e.preventDefault();
 			if (historyIndex !== -1) historyIndex = -1;
-			if (tabCompletions.length > 0) tabCompletions = [];
+			currentInput = currentInput.slice(0, -1);
+			if (hiddenInput) {
+				hiddenInput.value = currentInput;
+				try { hiddenInput.setSelectionRange(currentInput.length, currentInput.length); } catch {}
+			}
+			return;
 		}
 		if (composing) return;
 		if (tabCompletions.length > 0 && e.key !== "Tab" && e.key !== "Shift" && e.key !== "Control" && e.key !== "Alt" && e.key !== "Meta") {
@@ -1080,7 +1086,15 @@ let isMobileDevice = $state(false);
 
 	function onInput() {
 		if (!hiddenInput) return;
-		currentInput = hiddenInput.value;
+		const newVal = hiddenInput.value;
+		if (newVal.endsWith(currentInput) && newVal.length > currentInput.length) {
+			const prepended = newVal.slice(0, newVal.length - currentInput.length);
+			currentInput = currentInput + prepended;
+		} else {
+			currentInput = newVal;
+		}
+		hiddenInput.value = currentInput;
+		try { hiddenInput.setSelectionRange(currentInput.length, currentInput.length); } catch {}
 	}
 
 	function onCompositionStart() {
