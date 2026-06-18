@@ -934,6 +934,7 @@ let isMobileDevice = $state(false);
 			history = [...history, ""];
 			historyIndex = -1;
 			currentInput = "";
+			syncInputValue();
 			return;
 		}
 
@@ -970,6 +971,7 @@ let isMobileDevice = $state(false);
 			history = [...history, raw];
 			historyIndex = -1;
 			currentInput = "";
+			syncInputValue();
 			return;
 		}
 
@@ -980,6 +982,7 @@ let isMobileDevice = $state(false);
 		history = [...history, raw];
 		historyIndex = -1;
 		currentInput = "";
+		syncInputValue();
 		execCmd(cmd, raw);
 	}
 
@@ -1003,6 +1006,7 @@ let isMobileDevice = $state(false);
 					: Math.max(0, historyIndex - 1);
 			historyIndex = newIdx;
 			currentInput = history[historyIndex];
+			syncInputValue();
 		} else if (e.key === "ArrowDown") {
 			e.preventDefault();
 			if (historyIndex === -1) return;
@@ -1010,9 +1014,11 @@ let isMobileDevice = $state(false);
 			if (newIdx >= history.length) {
 				historyIndex = -1;
 				currentInput = "";
+				syncInputValue();
 			} else {
 				historyIndex = newIdx;
 				currentInput = history[historyIndex];
+				syncInputValue();
 			}
 		} else if (e.key === "Tab") {
 			e.preventDefault();
@@ -1026,14 +1032,17 @@ let isMobileDevice = $state(false);
 					tabCompletionIdx = (tabCompletionIdx + 1) % len;
 				}
 				currentInput = applyCompletion(currentInput, tabCompletions[tabCompletionIdx]);
+				syncInputValue();
 			} else {
 				const comps = getCompletions(currentInput, cmdMap, aliases, fs, cwd);
 				if (comps.length === 1) {
 					currentInput = applyCompletion(currentInput, comps[0]);
+					syncInputValue();
 				} else if (comps.length > 1) {
 					tabCompletions = comps;
 					tabCompletionIdx = 0;
 					currentInput = applyCompletion(currentInput, comps[0]);
+					syncInputValue();
 				}
 			}
 		} else if (e.key === "Escape") {
@@ -1061,8 +1070,14 @@ let isMobileDevice = $state(false);
 		focused = false;
 	}
 
+	function syncInputValue() {
+		if (!hiddenInput) return;
+		hiddenInput.value = currentInput;
+		try { hiddenInput.setSelectionRange(currentInput.length, currentInput.length); } catch {}
+	}
+
 	function onInput() {
-		if (composing || !hiddenInput) return;
+		if (!hiddenInput) return;
 		currentInput = hiddenInput.value;
 	}
 
@@ -1072,10 +1087,8 @@ let isMobileDevice = $state(false);
 
 	function onCompositionEnd() {
 		composing = false;
-		if (hiddenInput) {
-			currentInput = hiddenInput.value;
-			try { hiddenInput.setSelectionRange(currentInput.length, currentInput.length); } catch {}
-		}
+		if (!hiddenInput) return;
+		currentInput = hiddenInput.value;
 	}
 
 	/** @param {MouseEvent} e */
@@ -1285,14 +1298,7 @@ let isMobileDevice = $state(false);
 		};
 	});
 
-	$effect(() => {
-		if (composing || !hiddenInput) return;
-		const val = currentInput;
-		if (hiddenInput.value !== val) {
-			hiddenInput.value = val;
-		}
-		try { hiddenInput.setSelectionRange(currentInput.length, currentInput.length); } catch {}
-	});
+
 </script>
 
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
@@ -1435,6 +1441,7 @@ let isMobileDevice = $state(false);
 								onmousedown={(e) => {
 									e.preventDefault();
 									currentInput = applyCompletion(currentInput, comp);
+									syncInputValue();
 									tabCompletions = [];
 									terminalEl?.focus();
 								}}>{comp}</button
