@@ -988,7 +988,7 @@ let isMobileDevice = $state(false);
 
 	/** @param {KeyboardEvent} e */
 	function onKeydown(e) {
-		if (composing) return;
+		if (composing && !["Backspace"].includes(e.key)) return;
 		if (tabCompletions.length > 0 && e.key !== "Tab" && e.key !== "Shift" && e.key !== "Control" && e.key !== "Alt" && e.key !== "Meta") {
 			tabCompletions = [];
 		}
@@ -1089,6 +1089,8 @@ let isMobileDevice = $state(false);
 		composing = false;
 		if (!hiddenInput) return;
 		currentInput = hiddenInput.value;
+		hiddenInput.focus({ preventScroll: true });
+		try { hiddenInput.setSelectionRange(currentInput.length, currentInput.length); } catch {}
 	}
 
 	/** @param {MouseEvent} e */
