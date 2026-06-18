@@ -643,6 +643,9 @@ let terminalEl = $state();
 let hiddenInput = $state();
 let composing = $state(false);
 let isMobileDevice = $state(false);
+/** @type {HTMLInputElement | undefined} */
+let mobileInput = $state();
+let isChromeMobile = $state(false);
 
 
 	/** @type {{ container: Element, titleBar: Element, separator: Element, initialLines: Element[], inputPrompt: Element } | null} */
@@ -987,26 +990,18 @@ let isMobileDevice = $state(false);
 
 	/** @param {KeyboardEvent} e */
 	function onKeydown(e) {
-		if (e.key === "Backspace") {
-			e.preventDefault();
-			if (historyIndex !== -1) historyIndex = -1;
-			if (tabCompletions.length > 0) tabCompletions = [];
-			currentInput = currentInput.slice(0, -1);
-			if (hiddenInput) {
-				hiddenInput.value = currentInput;
-				try { hiddenInput.setSelectionRange(currentInput.length, currentInput.length); } catch {}
+		if (!isChromeMobile) {
+			if (e.key === "Backspace") {
+				e.preventDefault();
+				if (historyIndex !== -1) historyIndex = -1;
+				if (tabCompletions.length > 0) tabCompletions = [];
+				currentInput = currentInput.slice(0, -1);
+				return;
 			}
-			return;
-		}
-		if (e.isComposing || composing) return;
-		if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
-			e.preventDefault();
-			currentInput += e.key;
-			if (hiddenInput) {
-				hiddenInput.value = currentInput;
-				try { hiddenInput.setSelectionRange(currentInput.length, currentInput.length); } catch {}
+			if (e.isComposing || composing) return;
+			if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+				return;
 			}
-			return;
 		}
 		if (tabCompletions.length > 0 && e.key !== "Tab" && e.key !== "Shift" && e.key !== "Control" && e.key !== "Alt" && e.key !== "Meta") {
 			tabCompletions = [];
@@ -1073,8 +1068,12 @@ let isMobileDevice = $state(false);
 
 	function onFocus() {
 		focused = true;
-		hiddenInput?.focus({ preventScroll: true });
-		try { hiddenInput?.setSelectionRange(currentInput.length, currentInput.length); } catch {}
+		if (isChromeMobile) {
+			mobileInput?.focus({ preventScroll: true });
+		} else {
+			hiddenInput?.focus({ preventScroll: true });
+			try { hiddenInput?.setSelectionRange(currentInput.length, currentInput.length); } catch {}
+		}
 	}
 
 	/** @param {FocusEvent} e */
@@ -1095,35 +1094,11 @@ let isMobileDevice = $state(false);
 
 	function onInput() {
 		if (!hiddenInput) return;
-		const newVal = hiddenInput.value;
-		if (newVal === currentInput) return;
-
-		// Chrome mobile: IME corrupts hiddenInput.value by appending
-		// autocorrect buffer content (= lastWord minus last char).
-		// Detect this pattern regardless of event order (input can fire before keydown).
-		if (newVal.startsWith(currentInput)) {
-			const appended = newVal.slice(currentInput.length);
-			if (appended.length > 0) {
-				const lastWord = currentInput.split(' ').pop() || '';
-				if (appended === lastWord.slice(0, -1)) {
-					hiddenInput.value = currentInput;
-					try { hiddenInput.setSelectionRange(currentInput.length, currentInput.length); } catch {}
-					return;
-				}
-			}
-		}
-
-		if (newVal.endsWith(currentInput) && newVal.length > currentInput.length) {
-			const prepended = newVal.slice(0, newVal.length - currentInput.length);
-			currentInput = currentInput + prepended;
-		} else {
-			currentInput = newVal;
-		}
-		hiddenInput.value = currentInput;
-		try { hiddenInput.setSelectionRange(currentInput.length, currentInput.length); } catch {}
+		currentInput = hiddenInput.value;
 	}
 
 	function onCompositionStart() {
+		if (isChromeMobile) return;
 		composing = true;
 		if (hiddenInput) {
 			try { hiddenInput.setSelectionRange(currentInput.length, currentInput.length); } catch {}
@@ -1131,6 +1106,7 @@ let isMobileDevice = $state(false);
 	}
 
 	function onCompositionEnd() {
+		if (isChromeMobile) return;
 		composing = false;
 		if (!hiddenInput) return;
 		currentInput = hiddenInput.value;
@@ -1165,6 +1141,8 @@ let isMobileDevice = $state(false);
 
 		isMobileDevice =
 			"ontouchstart" in window && matchMedia("(hover: none)").matches;
+		isChromeMobile =
+			isMobileDevice && /Chrome|CriOS/i.test(navigator.userAgent);
 
 		let mounted = true;
 
@@ -1343,6 +1321,14 @@ let isMobileDevice = $state(false);
 		};
 	});
 
+	$effect(() => {
+		if (isChromeMobile) return;
+		if (composing) return;
+		if (hiddenInput && hiddenInput.value !== currentInput) {
+			hiddenInput.value = currentInput;
+		}
+	});
+
 </script>
 
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
@@ -1441,57 +1427,73 @@ let isMobileDevice = $state(false);
 			{:else}
 				<span class="shrink-0 text-c-accent-0">guest@portfolio-183:{promptDir}$</span>
 			{/if}
-			<span class="relative flex items-center">
-				<span class="whitespace-pre">
-				{#each inputSegments as seg, i}
-					<span class={seg.cls}>{seg.text}</span>
-				{/each}
-			</span>
-				<span
-					class="font-bold -ml-[1px]"
-					class:cursor-blink={focused}
-					class:opacity-0={!focused}>█</span
-				>
+			{#if isChromeMobile}
 				<input
-					bind:this={hiddenInput}
-					class="pointer-events-none absolute left-0 top-0 h-px w-px opacity-0"
+					bind:this={mobileInput}
+					bind:value={currentInput}
+					class="m-0 w-0 min-w-0 flex-1 bg-transparent p-0 text-c-neutral-1 outline-none border-none shadow-none font-c-jetbrains text-xs"
 					type="text"
 					autocomplete="off"
-					data-lpignore="true"
-					data-1p-ignore
-					data-bwignore
 					autocapitalize="off"
 					autocorrect="off"
 					spellcheck="false"
-					oninput={onInput}
-					oncompositionstart={onCompositionStart}
-					oncompositionend={onCompositionEnd}
-					onblur={onHiddenBlur}
+					onfocus={() => focused = true}
+					onblur={() => focused = false}
+					style="outline: none !important; border: none !important; box-shadow: none !important; -webkit-tap-highlight-color: transparent !important; -webkit-focus-ring-color: transparent !important;"
 				/>
-				{#if tabCompletions.length > 0}
-					<div
-						bind:this={completionPopupEl}
-						role="listbox"
-						tabindex="-1"
-						class="absolute left-0 max-h-40 overflow-y-auto rounded-lg border border-c-border/20 bg-c-bg-1 py-0.5 shadow-xl {popupAbove ? 'bottom-full mb-1.5' : 'top-full mt-1.5'}"
-						onmousedown={(e) => e.stopPropagation()}
+			{:else}
+				<span class="relative flex items-center">
+					<span class="whitespace-pre">
+					{#each inputSegments as seg, i}
+						<span class={seg.cls}>{seg.text}</span>
+					{/each}
+				</span>
+					<span
+						class="font-bold -ml-[1px]"
+						class:cursor-blink={focused}
+						class:opacity-0={!focused}>█</span
 					>
-						{#each tabCompletions as comp, i}
-							<button
-								data-idx={i}
-								class="block w-full whitespace-nowrap px-2.5 py-0.5 text-left font-c-jetbrains text-xs transition-colors {i === tabCompletionIdx ? 'bg-c-accent-0/10 text-c-accent-0' : 'text-c-neutral-0'}"
-								onmousedown={(e) => {
-									e.preventDefault();
-									currentInput = applyCompletion(currentInput, comp);
-									syncInputValue();
-									tabCompletions = [];
-									terminalEl?.focus();
-								}}>{comp}</button
-							>
-						{/each}
-					</div>
-				{/if}
-			</span>
+					<input
+						bind:this={hiddenInput}
+						class="pointer-events-none absolute left-0 top-0 h-px w-px opacity-0"
+						type="text"
+						autocomplete="off"
+						data-lpignore="true"
+						data-1p-ignore
+						data-bwignore
+						autocapitalize="off"
+						autocorrect="off"
+						spellcheck="false"
+						oninput={onInput}
+						oncompositionstart={onCompositionStart}
+						oncompositionend={onCompositionEnd}
+						onblur={onHiddenBlur}
+					/>
+					{#if tabCompletions.length > 0}
+						<div
+							bind:this={completionPopupEl}
+							role="listbox"
+							tabindex="-1"
+							class="absolute left-0 max-h-40 overflow-y-auto rounded-lg border border-c-border/20 bg-c-bg-1 py-0.5 shadow-xl {popupAbove ? 'bottom-full mb-1.5' : 'top-full mt-1.5'}"
+							onmousedown={(e) => e.stopPropagation()}
+						>
+							{#each tabCompletions as comp, i}
+								<button
+									data-idx={i}
+									class="block w-full whitespace-nowrap px-2.5 py-0.5 text-left font-c-jetbrains text-xs transition-colors {i === tabCompletionIdx ? 'bg-c-accent-0/10 text-c-accent-0' : 'text-c-neutral-0'}"
+									onmousedown={(e) => {
+										e.preventDefault();
+										currentInput = applyCompletion(currentInput, comp);
+										syncInputValue();
+										tabCompletions = [];
+										terminalEl?.focus();
+									}}>{comp}</button
+								>
+							{/each}
+						</div>
+					{/if}
+				</span>
+			{/if}
 		</div>
 	</div>
 </div>
