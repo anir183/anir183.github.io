@@ -605,8 +605,6 @@
 	let aliasDepth = 0;
 	let awaitingConfirm = $state(false);
 	let focused = $state(false);
-	let _keydownHandled = false;
-
 	let tabCompletions = $state(/** @type {string[]} */ ([]));
 	let tabCompletionIdx = $state(0);
 
@@ -989,7 +987,6 @@ let isMobileDevice = $state(false);
 
 	/** @param {KeyboardEvent} e */
 	function onKeydown(e) {
-		_keydownHandled = false;
 		if (e.key === "Backspace") {
 			e.preventDefault();
 			if (historyIndex !== -1) historyIndex = -1;
@@ -999,7 +996,6 @@ let isMobileDevice = $state(false);
 				hiddenInput.value = currentInput;
 				try { hiddenInput.setSelectionRange(currentInput.length, currentInput.length); } catch {}
 			}
-			_keydownHandled = true;
 			return;
 		}
 		if (e.isComposing || composing) return;
@@ -1010,7 +1006,6 @@ let isMobileDevice = $state(false);
 				hiddenInput.value = currentInput;
 				try { hiddenInput.setSelectionRange(currentInput.length, currentInput.length); } catch {}
 			}
-			_keydownHandled = true;
 			return;
 		}
 		if (tabCompletions.length > 0 && e.key !== "Tab" && e.key !== "Shift" && e.key !== "Control" && e.key !== "Alt" && e.key !== "Meta") {
@@ -1099,11 +1094,25 @@ let isMobileDevice = $state(false);
 	}
 
 	function onInput() {
-		if (!hiddenInput || _keydownHandled) {
-			_keydownHandled = false;
-			return;
-		}
+		if (!hiddenInput) return;
 		const newVal = hiddenInput.value;
+		if (newVal === currentInput) return;
+
+		// Chrome mobile: IME corrupts hiddenInput.value by appending
+		// autocorrect buffer content (= lastWord minus last char).
+		// Detect this pattern regardless of event order (input can fire before keydown).
+		if (newVal.startsWith(currentInput)) {
+			const appended = newVal.slice(currentInput.length);
+			if (appended.length > 0) {
+				const lastWord = currentInput.split(' ').pop() || '';
+				if (appended === lastWord.slice(0, -1)) {
+					hiddenInput.value = currentInput;
+					try { hiddenInput.setSelectionRange(currentInput.length, currentInput.length); } catch {}
+					return;
+				}
+			}
+		}
+
 		if (newVal.endsWith(currentInput) && newVal.length > currentInput.length) {
 			const prepended = newVal.slice(0, newVal.length - currentInput.length);
 			currentInput = currentInput + prepended;
