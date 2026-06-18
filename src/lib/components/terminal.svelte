@@ -605,7 +605,7 @@
 	let aliasDepth = 0;
 	let awaitingConfirm = $state(false);
 	let focused = $state(false);
-	let _backspaceTarget = /** @type {string | null} */ (null);
+	let _keydownHandled = false;
 
 	let tabCompletions = $state(/** @type {string[]} */ ([]));
 	let tabCompletionIdx = $state(0);
@@ -989,19 +989,30 @@ let isMobileDevice = $state(false);
 
 	/** @param {KeyboardEvent} e */
 	function onKeydown(e) {
+		_keydownHandled = false;
 		if (e.key === "Backspace") {
 			e.preventDefault();
 			if (historyIndex !== -1) historyIndex = -1;
 			if (tabCompletions.length > 0) tabCompletions = [];
-			_backspaceTarget = currentInput.slice(0, -1);
-			currentInput = _backspaceTarget;
+			currentInput = currentInput.slice(0, -1);
 			if (hiddenInput) {
 				hiddenInput.value = currentInput;
 				try { hiddenInput.setSelectionRange(currentInput.length, currentInput.length); } catch {}
 			}
+			_keydownHandled = true;
 			return;
 		}
-		if (composing) return;
+		if (e.isComposing || composing) return;
+		if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+			e.preventDefault();
+			currentInput += e.key;
+			if (hiddenInput) {
+				hiddenInput.value = currentInput;
+				try { hiddenInput.setSelectionRange(currentInput.length, currentInput.length); } catch {}
+			}
+			_keydownHandled = true;
+			return;
+		}
 		if (tabCompletions.length > 0 && e.key !== "Tab" && e.key !== "Shift" && e.key !== "Control" && e.key !== "Alt" && e.key !== "Meta") {
 			tabCompletions = [];
 		}
@@ -1088,27 +1099,11 @@ let isMobileDevice = $state(false);
 	}
 
 	function onInput() {
-		if (!hiddenInput) return;
-		const newVal = hiddenInput.value;
-		if (_backspaceTarget !== null) {
-			const target = _backspaceTarget;
-			if (newVal === target) {
-				_backspaceTarget = null;
-				currentInput = target;
-				hiddenInput.value = target;
-				try { hiddenInput.setSelectionRange(target.length, target.length); } catch {}
-			} else if (newVal.length > target.length) {
-				currentInput = target;
-				hiddenInput.value = target;
-				try { hiddenInput.setSelectionRange(target.length, target.length); } catch {}
-			} else {
-				_backspaceTarget = null;
-				currentInput = newVal;
-				hiddenInput.value = newVal;
-				try { hiddenInput.setSelectionRange(newVal.length, newVal.length); } catch {}
-			}
+		if (!hiddenInput || _keydownHandled) {
+			_keydownHandled = false;
 			return;
 		}
+		const newVal = hiddenInput.value;
 		if (newVal.endsWith(currentInput) && newVal.length > currentInput.length) {
 			const prepended = newVal.slice(0, newVal.length - currentInput.length);
 			currentInput = currentInput + prepended;
