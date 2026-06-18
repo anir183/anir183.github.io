@@ -585,5 +585,42 @@ Extended `Project` typedef with:
 [x] experiences section: year as section side header (`exp.period.slice(0, 4)`, absolutely positioned on opposite side from content, hidden mobile, SVG clip‑path `backdrop-filter: blur(8px)` masked to exact character glyphs, GSAP char‑stagger entrance `y: 30→0` `opacity: 0→0.1` duration 1 stagger 0.3, SVG path raised to z‑20 above backdrop‑blur
 [x] experiences section: two-node system unified across all sizes. Desktop: top/bottom nodes centered on year header, curved bezier through 2N-1 nodes, 2 raw segments merged per experience. Mobile: separate straight path segments, through-text skipped. Bottom node activation split from entry sequence (separate ScrollTrigger) for both sizes.
 [x] /projects showcase page: pinned per-project sections with scroll-driven image carousel, ProjectSection/ProjectInfo/ProjectCarousel components, 60vh-per-image scroll distance, mobile fallback without pinning
+### terminal input (Chrome mobile)
+
+Three distinct bugs with a common root: Chrome mobile resets the hidden input's
+cursor to position 0 between IME operations.
+
+**Bug 1 — Reversed text** (`"hello"` → `"olleh"`):
+Chrome inserts each character at position 0 (prepend) instead of appending.
+Fixed in `onInput`: if `newVal.endsWith(currentInput) && newVal.length > currentInput.length`,
+extract the prepended characters and move them to the end. Write corrected value
+back to `hiddenInput` to keep Chrome's buffer in sync.
+
+**Bug 2 — Backspace does nothing**:
+With cursor at position 0, Backspace has nothing to delete in front of the cursor.
+Fixed in `onKeydown`: `preventDefault()` stops Chrome's IME from processing the
+Backspace, then `currentInput.slice(0, -1)` + write to `hiddenInput` handles the
+deletion ourselves.
+
+**Bug 3 — Backspace appends text** (`"test test"` → `"test testtes"`):
+Chrome mobile fires `input` **after** our `onKeydown` Backspace handler, but
+its IME commits text from an internal suggestion/autocomplete buffer. The
+appended text is the partially-deleted suggestion (e.g., "tes" from "test").
+Fixed with `_backspaceTarget` guard: `onKeydown` saves the target value before
+slicing; `onInput` checks if `newVal.length > _backspaceTarget.length` — if so,
+Chrome appended IME text, so restore our correct target and reject the
+corruption.
+
+**Key decisions that survived testing**:
+- No `$effect` cursor correction (was either neutral or catastrophically harmful
+  when wrapped in rAF during IME frames — caused "test sentence" → "ecnetnes tset")
+- No `aria-hidden="true"` or `tabindex="-1"` on hidden input (Chrome mobile treats
+  the input as non-interactive, contributing to cursor reset)
+- `onCompositionEnd` is read-only (no rAF, no setSelectionRange) — avoids
+  interfering with Chrome's composition lifecycle
+- `onInput` without composing guard (Chrome mobile fires onInput reliably during
+  composition; reading hiddenInput.value is safe after commit)
+- Backspace handler before `if (composing) return;` guard
+
 [ ] route structure for navigation
 [ ] content / data files
