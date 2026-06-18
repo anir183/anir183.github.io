@@ -643,7 +643,6 @@ let terminalEl = $state();
 /** @type {HTMLInputElement | undefined} */
 let hiddenInput = $state();
 let composing = $state(false);
-let justComposed = false;
 let isMobileDevice = $state(false);
 
 
@@ -994,9 +993,7 @@ let isMobileDevice = $state(false);
 			e.preventDefault();
 			submitCommand();
 		} else if (e.key === "Backspace") {
-			e.preventDefault();
 			if (historyIndex !== -1) historyIndex = -1;
-			currentInput = currentInput.slice(0, -1);
 		} else if (e.key === "ArrowUp") {
 			e.preventDefault();
 			if (history.length === 0) return;
@@ -1051,6 +1048,7 @@ let isMobileDevice = $state(false);
 	function onFocus() {
 		focused = true;
 		hiddenInput?.focus({ preventScroll: true });
+		try { hiddenInput?.setSelectionRange(currentInput.length, currentInput.length); } catch {}
 	}
 
 	/** @param {FocusEvent} e */
@@ -1068,47 +1066,15 @@ let isMobileDevice = $state(false);
 		currentInput = hiddenInput.value;
 	}
 
-	/** @param {InputEvent} e */
-	function onBeforeInput(e) {
-		if (composing || !hiddenInput) return;
-		if (justComposed) { justComposed = false; e.preventDefault(); return; }
-		if (e.inputType === "insertCompositionText") return;
-		const data = e.data;
-		if (data && typeof data === "string") {
-			e.preventDefault();
-			currentInput += data;
-			hiddenInput.value = currentInput;
-		}
-	}
-
 	function onCompositionStart() {
 		composing = true;
-		justComposed = false;
 	}
 
-	/** @param {CompositionEvent} e */
-	function onCompositionEnd(e) {
+	function onCompositionEnd() {
 		composing = false;
-		justComposed = true;
 		if (hiddenInput) {
-			const val = hiddenInput.value;
-			const composed = e.data || "";
-
-			if (composed.length > 0 && val.endsWith(composed)) {
-				currentInput = val;
-			} else if (composed.length > 0 && val.startsWith(composed)) {
-				currentInput = val.slice(composed.length) + composed;
-				hiddenInput.value = currentInput;
-			} else if (composed.length > 0 && composed.length <= 2) {
-				currentInput += composed;
-				hiddenInput.value = currentInput;
-			} else if (composed.length > 0) {
-				currentInput = val;
-			} else {
-				// Backspace/deletion — don't trust hiddenInput.value (Chrome corrupts it)
-				currentInput = currentInput.slice(0, -1);
-				hiddenInput.value = currentInput;
-			}
+			currentInput = hiddenInput.value;
+			try { hiddenInput.setSelectionRange(currentInput.length, currentInput.length); } catch {}
 		}
 	}
 
@@ -1320,11 +1286,12 @@ let isMobileDevice = $state(false);
 	});
 
 	$effect(() => {
-		if (composing) return;
+		if (composing || !hiddenInput) return;
 		const val = currentInput;
-		if (hiddenInput && hiddenInput.value !== val) {
+		if (hiddenInput.value !== val) {
 			hiddenInput.value = val;
 		}
+		try { hiddenInput.setSelectionRange(currentInput.length, currentInput.length); } catch {}
 	});
 </script>
 
@@ -1449,7 +1416,6 @@ let isMobileDevice = $state(false);
 					autocorrect="off"
 					spellcheck="false"
 					oninput={onInput}
-					onbeforeinput={onBeforeInput}
 					oncompositionstart={onCompositionStart}
 					oncompositionend={onCompositionEnd}
 					onblur={onHiddenBlur}
