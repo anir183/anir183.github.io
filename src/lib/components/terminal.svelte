@@ -643,6 +643,7 @@ let terminalEl = $state();
 /** @type {HTMLInputElement | undefined} */
 let hiddenInput = $state();
 let composing = $state(false);
+let justComposed = false;
 let isMobileDevice = $state(false);
 
 
@@ -1070,6 +1071,8 @@ let isMobileDevice = $state(false);
 	/** @param {InputEvent} e */
 	function onBeforeInput(e) {
 		if (composing || !hiddenInput) return;
+		if (justComposed) { justComposed = false; e.preventDefault(); return; }
+		if (e.inputType === "insertCompositionText") return;
 		const data = e.data;
 		if (data && typeof data === "string") {
 			e.preventDefault();
@@ -1080,11 +1083,13 @@ let isMobileDevice = $state(false);
 
 	function onCompositionStart() {
 		composing = true;
+		justComposed = false;
 	}
 
 	/** @param {CompositionEvent} e */
 	function onCompositionEnd(e) {
 		composing = false;
+		justComposed = true;
 		if (hiddenInput) {
 			const val = hiddenInput.value;
 			const composed = e.data || "";
@@ -1097,8 +1102,12 @@ let isMobileDevice = $state(false);
 			} else if (composed.length > 0 && composed.length <= 2) {
 				currentInput += composed;
 				hiddenInput.value = currentInput;
-			} else {
+			} else if (composed.length > 0) {
 				currentInput = val;
+			} else {
+				// Backspace/deletion — don't trust hiddenInput.value (Chrome corrupts it)
+				currentInput = currentInput.slice(0, -1);
+				hiddenInput.value = currentInput;
 			}
 		}
 	}
