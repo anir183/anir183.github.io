@@ -4,7 +4,8 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"dev": "node scripts/optimize-images && node scripts/optimize-fonts.js && node scripts/copy-devicon-font.js && vite dev",
+		"dev": "vite dev",
+		"dev:fresh": "node scripts/optimize-images && node scripts/optimize-fonts.js && node scripts/copy-devicon-font.js && vite dev",
 		"build": "node scripts/optimize-images && node scripts/optimize-fonts.js && node scripts/copy-devicon-font.js && vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
