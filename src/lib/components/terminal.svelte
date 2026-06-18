@@ -605,6 +605,7 @@
 	let aliasDepth = 0;
 	let awaitingConfirm = $state(false);
 	let focused = $state(false);
+	let _backspaceTarget = /** @type {string | null} */ (null);
 
 	let tabCompletions = $state(/** @type {string[]} */ ([]));
 	let tabCompletionIdx = $state(0);
@@ -991,7 +992,9 @@ let isMobileDevice = $state(false);
 		if (e.key === "Backspace") {
 			e.preventDefault();
 			if (historyIndex !== -1) historyIndex = -1;
-			currentInput = currentInput.slice(0, -1);
+			if (tabCompletions.length > 0) tabCompletions = [];
+			_backspaceTarget = currentInput.slice(0, -1);
+			currentInput = _backspaceTarget;
 			if (hiddenInput) {
 				hiddenInput.value = currentInput;
 				try { hiddenInput.setSelectionRange(currentInput.length, currentInput.length); } catch {}
@@ -1087,6 +1090,18 @@ let isMobileDevice = $state(false);
 	function onInput() {
 		if (!hiddenInput) return;
 		const newVal = hiddenInput.value;
+		if (_backspaceTarget !== null) {
+			const target = _backspaceTarget;
+			_backspaceTarget = null;
+			if (newVal.length > target.length) {
+				currentInput = target;
+				hiddenInput.value = target;
+				try { hiddenInput.setSelectionRange(target.length, target.length); } catch {}
+			} else {
+				currentInput = newVal;
+			}
+			return;
+		}
 		if (newVal.endsWith(currentInput) && newVal.length > currentInput.length) {
 			const prepended = newVal.slice(0, newVal.length - currentInput.length);
 			currentInput = currentInput + prepended;
