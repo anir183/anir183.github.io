@@ -988,6 +988,16 @@ let isMobileDevice = $state(false);
 
 	/** @param {KeyboardEvent} e */
 	function onKeydown(e) {
+		if (e.key === "Backspace") {
+			e.preventDefault();
+			if (historyIndex !== -1) historyIndex = -1;
+			currentInput = currentInput.slice(0, -1);
+			if (hiddenInput) {
+				hiddenInput.value = currentInput;
+				try { hiddenInput.setSelectionRange(currentInput.length, currentInput.length); } catch {}
+			}
+			return;
+		}
 		if (composing) return;
 		if (tabCompletions.length > 0 && e.key !== "Tab" && e.key !== "Shift" && e.key !== "Control" && e.key !== "Alt" && e.key !== "Meta") {
 			tabCompletions = [];
@@ -995,8 +1005,6 @@ let isMobileDevice = $state(false);
 		if (e.key === "Enter") {
 			e.preventDefault();
 			submitCommand();
-		} else if (e.key === "Backspace") {
-			if (historyIndex !== -1) historyIndex = -1;
 		} else if (e.key === "ArrowUp") {
 			e.preventDefault();
 			if (history.length === 0) return;
@@ -1089,9 +1097,6 @@ let isMobileDevice = $state(false);
 		composing = false;
 		if (!hiddenInput) return;
 		currentInput = hiddenInput.value;
-		requestAnimationFrame(() => {
-			try { hiddenInput?.setSelectionRange(currentInput.length, currentInput.length); } catch {}
-		});
 	}
 
 	/** @param {MouseEvent} e */
@@ -1299,13 +1304,6 @@ let isMobileDevice = $state(false);
 			animTl?.kill();
 			animTl = null;
 		};
-	});
-
-	$effect(() => {
-		if (composing || !hiddenInput) return;
-		requestAnimationFrame(() => {
-			try { hiddenInput?.setSelectionRange(currentInput.length, currentInput.length); } catch {}
-		});
 	});
 
 </script>
