@@ -989,14 +989,8 @@ let isMobileDevice = $state(false);
 	/** @param {KeyboardEvent} e */
 	function onKeydown(e) {
 		if (e.key === "Backspace") {
-			e.preventDefault();
 			if (historyIndex !== -1) historyIndex = -1;
-			currentInput = currentInput.slice(0, -1);
-			if (hiddenInput) {
-				hiddenInput.value = currentInput;
-				try { hiddenInput.setSelectionRange(currentInput.length, currentInput.length); } catch {}
-			}
-			return;
+			if (tabCompletions.length > 0) tabCompletions = [];
 		}
 		if (composing) return;
 		if (tabCompletions.length > 0 && e.key !== "Tab" && e.key !== "Shift" && e.key !== "Control" && e.key !== "Alt" && e.key !== "Meta") {
@@ -1091,6 +1085,9 @@ let isMobileDevice = $state(false);
 
 	function onCompositionStart() {
 		composing = true;
+		if (hiddenInput) {
+			try { hiddenInput.setSelectionRange(currentInput.length, currentInput.length); } catch {}
+		}
 	}
 
 	function onCompositionEnd() {
@@ -1418,8 +1415,6 @@ let isMobileDevice = $state(false);
 				<input
 					bind:this={hiddenInput}
 					class="pointer-events-none absolute left-0 top-0 h-px w-px opacity-0"
-					tabindex="-1"
-					aria-hidden="true"
 					type="text"
 					autocomplete="off"
 					data-lpignore="true"
