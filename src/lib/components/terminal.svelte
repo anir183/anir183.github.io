@@ -1298,6 +1298,10 @@ let isMobileDevice = $state(false);
 		};
 	});
 
+	$effect(() => {
+		if (composing || !hiddenInput) return;
+		try { hiddenInput.setSelectionRange(currentInput.length, currentInput.length); } catch {}
+	});
 
 </script>
 
