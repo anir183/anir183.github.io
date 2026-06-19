@@ -11,6 +11,7 @@
 		getCompletions,
 		applyCompletion
 	} from "$lib";
+	import { autoHideScrollbar } from "$lib/actions/scrollbar_hide.svelte.js";
 
 	let {
 		/** @type {import("$lib/utils/socials_data.svelte.js").Social[]} */
@@ -1393,7 +1394,8 @@ let isMobileDevice = $state(false);
 							bind:this={completionPopupEl}
 							role="listbox"
 							tabindex="-1"
-							class="absolute left-0 max-h-40 overflow-y-auto rounded-lg border border-c-border/20 bg-c-bg-1 py-0.5 shadow-xl {popupAbove ? 'bottom-full mb-1.5' : 'top-full mt-1.5'}"
+							use:autoHideScrollbar
+							class="scrollbar-thin absolute left-0 max-h-40 overflow-y-auto overflow-x-hidden rounded-lg border border-c-border/20 bg-c-bg-1 py-0.5 shadow-xl {popupAbove ? 'bottom-full mb-1.5' : 'top-full mt-1.5'}"
 							onmousedown={(e) => e.stopPropagation()}
 						>
 							{#each tabCompletions as comp, i}

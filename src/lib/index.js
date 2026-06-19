@@ -49,3 +49,6 @@ export * from "./utils/terminal_highlight.svelte.js";
 export * from "./utils/terminal_completion.svelte.js";
 
 export * from "./utils/section_snap.svelte.js";
+
+// actions
+export { autoHideScrollbar } from "$lib/actions/scrollbar_hide.svelte.js";

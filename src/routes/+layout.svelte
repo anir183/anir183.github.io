@@ -8,6 +8,7 @@
 
 	import "$lib/devicon-used.css";
 	import { initTheme, assert_failure, Crash, markSpaNavigation } from "$lib";
+	import { autoHideScrollbar } from "$lib/actions/scrollbar_hide.svelte.js";
 
 	let { children } = $props();
 
@@ -44,6 +45,8 @@
 
 	onMount(() => {
 		initTheme();
+		document.documentElement.classList.add("scrollbar-thin");
+		autoHideScrollbar(document.documentElement);
 	});
 </script>
 
