@@ -641,11 +641,8 @@ let outputEl = $state();
 let terminalEl = $state();
 /** @type {HTMLInputElement | undefined} */
 let hiddenInput = $state();
-let composing = $state(false);
 let isMobileDevice = $state(false);
-/** @type {HTMLInputElement | undefined} */
-let mobileInput = $state();
-let isChromeMobile = $state(false);
+
 
 
 	/** @type {{ container: Element, titleBar: Element, separator: Element, initialLines: Element[], inputPrompt: Element } | null} */
@@ -936,7 +933,6 @@ let isChromeMobile = $state(false);
 			history = [...history, ""];
 			historyIndex = -1;
 			currentInput = "";
-			syncInputValue();
 			return;
 		}
 
@@ -973,7 +969,6 @@ let isChromeMobile = $state(false);
 			history = [...history, raw];
 			historyIndex = -1;
 			currentInput = "";
-			syncInputValue();
 			return;
 		}
 
@@ -984,25 +979,12 @@ let isChromeMobile = $state(false);
 		history = [...history, raw];
 		historyIndex = -1;
 		currentInput = "";
-		syncInputValue();
 		execCmd(cmd, raw);
 	}
 
 	/** @param {KeyboardEvent} e */
 	function onKeydown(e) {
-		if (!isChromeMobile) {
-			if (e.key === "Backspace") {
-				e.preventDefault();
-				if (historyIndex !== -1) historyIndex = -1;
-				if (tabCompletions.length > 0) tabCompletions = [];
-				currentInput = currentInput.slice(0, -1);
-				return;
-			}
-			if (e.isComposing || composing) return;
-			if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
-				return;
-			}
-		}
+		if (e.isComposing) return;
 		if (tabCompletions.length > 0 && e.key !== "Tab" && e.key !== "Shift" && e.key !== "Control" && e.key !== "Alt" && e.key !== "Meta") {
 			tabCompletions = [];
 		}
@@ -1018,7 +1000,6 @@ let isChromeMobile = $state(false);
 					: Math.max(0, historyIndex - 1);
 			historyIndex = newIdx;
 			currentInput = history[historyIndex];
-			syncInputValue();
 		} else if (e.key === "ArrowDown") {
 			e.preventDefault();
 			if (historyIndex === -1) return;
@@ -1026,11 +1007,9 @@ let isChromeMobile = $state(false);
 			if (newIdx >= history.length) {
 				historyIndex = -1;
 				currentInput = "";
-				syncInputValue();
 			} else {
 				historyIndex = newIdx;
 				currentInput = history[historyIndex];
-				syncInputValue();
 			}
 		} else if (e.key === "Tab") {
 			e.preventDefault();
@@ -1044,17 +1023,14 @@ let isChromeMobile = $state(false);
 					tabCompletionIdx = (tabCompletionIdx + 1) % len;
 				}
 				currentInput = applyCompletion(currentInput, tabCompletions[tabCompletionIdx]);
-				syncInputValue();
 			} else {
 				const comps = getCompletions(currentInput, cmdMap, aliases, fs, cwd);
 				if (comps.length === 1) {
 					currentInput = applyCompletion(currentInput, comps[0]);
-					syncInputValue();
 				} else if (comps.length > 1) {
 					tabCompletions = comps;
 					tabCompletionIdx = 0;
 					currentInput = applyCompletion(currentInput, comps[0]);
-					syncInputValue();
 				}
 			}
 		} else if (e.key === "Escape") {
@@ -1068,12 +1044,7 @@ let isChromeMobile = $state(false);
 
 	function onFocus() {
 		focused = true;
-		if (isChromeMobile) {
-			mobileInput?.focus({ preventScroll: true });
-		} else {
-			hiddenInput?.focus({ preventScroll: true });
-			try { hiddenInput?.setSelectionRange(currentInput.length, currentInput.length); } catch {}
-		}
+		hiddenInput?.focus({ preventScroll: true });
 	}
 
 	/** @param {FocusEvent} e */
@@ -1082,35 +1053,10 @@ let isChromeMobile = $state(false);
 		focused = false;
 	}
 
-	function onHiddenBlur() {
-		focused = false;
-	}
-
-	function syncInputValue() {
-		if (!hiddenInput) return;
-		hiddenInput.value = currentInput;
-		try { hiddenInput.setSelectionRange(currentInput.length, currentInput.length); } catch {}
-	}
-
-	function onInput() {
-		if (!hiddenInput) return;
-		currentInput = hiddenInput.value;
-	}
-
-	function onCompositionStart() {
-		if (isChromeMobile) return;
-		composing = true;
-		if (hiddenInput) {
-			try { hiddenInput.setSelectionRange(currentInput.length, currentInput.length); } catch {}
+		function onInput() {
+			if (!hiddenInput) return;
+			currentInput = hiddenInput.value;
 		}
-	}
-
-	function onCompositionEnd() {
-		if (isChromeMobile) return;
-		composing = false;
-		if (!hiddenInput) return;
-		currentInput = hiddenInput.value;
-	}
 
 	/** @param {MouseEvent} e */
 	function onHelpClick(e) {
@@ -1141,8 +1087,6 @@ let isChromeMobile = $state(false);
 
 		isMobileDevice =
 			"ontouchstart" in window && matchMedia("(hover: none)").matches;
-		isChromeMobile =
-			isMobileDevice && /Chrome|CriOS/i.test(navigator.userAgent);
 
 		let mounted = true;
 
@@ -1321,14 +1265,6 @@ let isChromeMobile = $state(false);
 		};
 	});
 
-	$effect(() => {
-		if (isChromeMobile) return;
-		if (composing) return;
-		if (hiddenInput && hiddenInput.value !== currentInput) {
-			hiddenInput.value = currentInput;
-		}
-	});
-
 </script>
 
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
@@ -1427,47 +1363,30 @@ let isChromeMobile = $state(false);
 			{:else}
 				<span class="shrink-0 text-c-accent-0">guest@portfolio-183:{promptDir}$</span>
 			{/if}
-			{#if isChromeMobile}
-				<input
-					bind:this={mobileInput}
-					bind:value={currentInput}
-					class="m-0 w-0 min-w-0 flex-1 bg-transparent p-0 text-c-neutral-1 outline-none border-none shadow-none font-c-jetbrains text-xs"
-					type="text"
-					autocomplete="off"
-					autocapitalize="off"
-					autocorrect="off"
-					spellcheck="false"
-					onfocus={() => focused = true}
-					onblur={() => focused = false}
-					style="outline: none !important; border: none !important; box-shadow: none !important; -webkit-tap-highlight-color: transparent !important; -webkit-focus-ring-color: transparent !important;"
-				/>
-			{:else}
-				<span class="relative flex items-center">
-					<span class="whitespace-pre">
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<div
+				class="relative flex-1 self-stretch flex items-center"
+				role="presentation"
+				onclick={() => hiddenInput?.focus()}
+			>
+					<span class="whitespace-pre pointer-events-none">
 					{#each inputSegments as seg, i}
 						<span class={seg.cls}>{seg.text}</span>
 					{/each}
 				</span>
 					<span
-						class="font-bold -ml-[1px]"
+						class="font-bold -ml-[1px] pointer-events-none"
 						class:cursor-blink={focused}
 						class:opacity-0={!focused}>█</span
 					>
 					<input
 						bind:this={hiddenInput}
-						class="pointer-events-none absolute left-0 top-0 h-px w-px opacity-0"
+						class="absolute inset-0 border-none outline-none"
+						style="opacity:0; color:transparent; caret-color:transparent; background:transparent; width:100%; height:100%;"
 						type="text"
+						value={currentInput}
 						autocomplete="off"
-						data-lpignore="true"
-						data-1p-ignore
-						data-bwignore
-						autocapitalize="off"
-						autocorrect="off"
-						spellcheck="false"
 						oninput={onInput}
-						oncompositionstart={onCompositionStart}
-						oncompositionend={onCompositionEnd}
-						onblur={onHiddenBlur}
 					/>
 					{#if tabCompletions.length > 0}
 						<div
@@ -1484,7 +1403,6 @@ let isChromeMobile = $state(false);
 									onmousedown={(e) => {
 										e.preventDefault();
 										currentInput = applyCompletion(currentInput, comp);
-										syncInputValue();
 										tabCompletions = [];
 										terminalEl?.focus();
 									}}>{comp}</button
@@ -1492,8 +1410,7 @@ let isChromeMobile = $state(false);
 							{/each}
 						</div>
 					{/if}
-				</span>
-			{/if}
+				</div>
 		</div>
 	</div>
 </div>
