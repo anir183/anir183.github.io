@@ -98,7 +98,6 @@
 	 * @param {MouseEvent} e
 	 */
 	function onDblClick(e) {
-		if (isMobilePlatform) return;
 		e.preventDefault();
 		toggleZoom(e.clientX, e.clientY);
 	}
