@@ -27,63 +27,6 @@
 	/** @type {boolean} */
 	let rebuilding = false;
 
-	let h3Els = $state(/** @type {HTMLElement[]} */ ([]));
-	let expSplits = $state(new Map());
-
-	let copiedMap = $state(new Map());
-	let animationCompleteMap = $state(new Map());
-	/** @type {Record<string, ReturnType<typeof setTimeout>>} */
-	let copiedTimers = {};
-
-	$effect(() => {
-		if (!h3Els.length) return;
-		let cancelled = false;
-		import("gsap/SplitText").then(({ SplitText }) => {
-			if (cancelled) return;
-			for (let i = 0; i < h3Els.length; i++) {
-				const el = h3Els[i];
-				const id = experiences[i]?.id;
-				if (!el || !id || expSplits.has(id)) continue;
-				const s = new SplitText(el, { type: "chars,words", charsClass: "char", charsTag: "span", wordsClass: "word", wordsTag: "span" });
-				el.style.whiteSpace = "normal";
-				for (const w of /** @type {HTMLElement[]} */ (s.words)) {
-					w.style.whiteSpace = "nowrap";
-				}
-				expSplits.set(id, s);
-			}
-		});
-		return () => { cancelled = true; };
-	});
-
-	/** @param {string} id */
-	function handleExpCopy(id) {
-		const url = `${window.location.origin}${window.location.pathname}#experience-${id}`;
-		navigator.clipboard.writeText(url).catch(() => {});
-		copiedMap.set(id, true);
-		clearTimeout(copiedTimers[id]);
-		copiedTimers[id] = setTimeout(() => copiedMap.set(id, false), 1500);
-		if (!reducedMotion) {
-			const s = expSplits.get(id);
-			if (s) {
-				gsap.timeline()
-					.to(s.chars, { y: -12, opacity: 0, duration: 0.2, stagger: 0.05, ease: "power2.in" })
-					.to(s.chars, { y: 12, duration: 0, stagger: 0.05 }, 0.2)
-					.to(s.chars, { y: 0, opacity: 1, duration: 0.2, stagger: 0.05, ease: "power2.out" }, 0.2);
-			}
-		}
-	}
-
-	/**
-	 * @param {KeyboardEvent} e
-	 * @param {string} id
-	 */
-	function handleExpKeydown(e, id) {
-		if (e.key === "Enter" || e.key === " ") {
-			e.preventDefault();
-			handleExpCopy(id);
-		}
-	}
-
 	$effect(() => {
 		if (headingStart && mountsReady && !reducedMotion) {
 			const timeout = setTimeout(() => {
@@ -240,18 +183,8 @@
 			nodeEls: activationNodeEls,
 			contentWraps: /** @type {HTMLElement[]} */ (contentWraps),
 			segmentLengths,
-			reducedMotion,
-			onContentComplete: (/** @type {number} */ i) => {
-				const id = experiences[i]?.id;
-				if (id) animationCompleteMap.set(id, true);
-			}
+			reducedMotion
 		}));
-
-		if (reducedMotion) {
-			for (const exp of experiences) {
-				if (exp?.id) animationCompleteMap.set(exp.id, true);
-			}
-		}
 
 		// Bottom node activation on scroll
 		if (reducedMotion) {
@@ -330,7 +263,6 @@
 			pathSegments = [];
 			nodePositions = [];
 			viewBoxStr = "0 0 100 100";
-			animationCompleteMap = new Map();
 			await tick();
 			await initExperiences();
 		} finally {
@@ -412,26 +344,7 @@ onDestroy(() => {
 							: 'max-lg:mx-auto lg:mr-[10vw] lg:ml-auto'
 						}"
 				>
-				<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-				<h3
-					bind:this={h3Els[i]}
-					class="text-4xl font-black text-c-neutral-0 font-c-unbounded leading-tight lg:text-5xl xl:text-6xl"
-					class:cursor-pointer={animationCompleteMap.get(exp.id) ?? false}
-					title={animationCompleteMap.get(exp.id) ? "copy link" : undefined}
-					onclick={animationCompleteMap.get(exp.id) ? () => handleExpCopy(exp.id) : undefined}
-					onkeydown={animationCompleteMap.get(exp.id) ? (e) => handleExpKeydown(e, exp.id) : undefined}
-					role={animationCompleteMap.get(exp.id) ? "button" : undefined}
-					tabindex={animationCompleteMap.get(exp.id) ? 0 : undefined}
-				>
-					{exp.role}
-					<span class="copy-icon" class:copy-enabled={animationCompleteMap.get(exp.id) ?? false} aria-hidden="true">
-						{#if copiedMap.get(exp.id)}
-							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-						{:else}
-							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-						{/if}
-					</span>
-				</h3>
+				<AnimatedHeading tag="h3" start={true} triggerOffset="top 20%" sectionId={"experience-"+exp.id} triggerEl={sectionEls[i]} {reducedMotion} class="text-4xl font-black text-c-neutral-0 font-c-unbounded leading-tight lg:text-5xl xl:text-6xl">{exp.role}</AnimatedHeading>
 				<div data-el="company" class="mt-1.5 flex items-baseline gap-5">
 					<p class="text-base font-semibold text-c-accent-0 font-c-ubuntu tracking-wide lg:text-xl">{exp.company}</p>
 					<span class="shrink-0 text-base text-c-neutral-1/40 font-c-jetbrains lg:text-xl">{exp.period}</span>
@@ -462,27 +375,4 @@ onDestroy(() => {
 	</div>
 </div>
 
-<style>
-	.copy-icon {
-		display: inline-flex;
-		align-items: center;
-		vertical-align: middle;
-		margin-left: 0.5rem;
-		opacity: 0;
-		pointer-events: none;
-		transition: opacity 0.15s ease;
-	}
 
-	.copy-icon.copy-enabled {
-		pointer-events: auto;
-	}
-
-	.cursor-pointer:hover .copy-icon,
-	.cursor-pointer:focus-visible .copy-icon {
-		opacity: 0.4;
-	}
-
-	.copy-icon:hover {
-		opacity: 1 !important;
-	}
-</style>

@@ -187,7 +187,6 @@ export async function experiencesEntrySequence(config) {
 
 		// staggered content entrance — heading first, then company, desc, tags
 		const wrap = contentWraps[i];
-		const heading = wrap.querySelector("h3");
 		const company = wrap.querySelector('[data-el="company"]');
 		const desc = wrap.querySelector('[data-el="desc"]');
 		const tags = wrap.querySelector('[data-el="tags"]');
@@ -197,7 +196,6 @@ export async function experiencesEntrySequence(config) {
 				onComplete: () => onContentComplete?.(i)
 			});
 		contentTl.set(wrap, { opacity: 1 }, 0);
-		if (heading) contentTl.fromTo(heading, { y: 40, opacity: 0 }, { y: 0, opacity: 1 }, 0);
 		if (company) contentTl.fromTo(company, { y: 24, opacity: 0 }, { y: 0, opacity: 1 }, 0.2);
 		if (desc) contentTl.fromTo(desc, { y: 20, opacity: 0 }, { y: 0, opacity: 1 }, 0.3);
 		if (tags) contentTl.fromTo(tags, { y: 16, opacity: 0 }, { y: 0, opacity: 1 }, 0.35);

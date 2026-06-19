@@ -134,6 +134,8 @@ export async function heroEntrySequence(config) {
 		if (hamburgerButton) gsap.set(hamburgerButton, { opacity: 1, scale: 1 });
 		activeNavLinks.forEach((a) => gsap.set(a, { opacity: 1 }));
 		if (heroHeadline) gsap.set(heroHeadline, { opacity: 1 });
+		gsap.set(navLines, { y: "0%" });
+		gsap.set(headlineLines, { y: "0%" });
 		return { tl: gsap.timeline({ delay: 0 }) };
 	}
 

@@ -13,6 +13,7 @@
 		ease = "power3.out",
 		triggerOffset = "top 85%",
 		sectionId,
+		triggerEl = undefined,
 		children
 	} = $props();
 
@@ -94,8 +95,11 @@
 		// Phase 2: create ScrollTrigger animation
 		if (st) return;
 
+		const trigger = triggerEl ?? el;
+		if (!trigger) return;
+
 		st = ScrollTriggerPlugin.create({
-			trigger: el,
+			trigger,
 			start: triggerOffset,
 			animation: gsap.to(chars, {
 				x: 0,
@@ -119,7 +123,7 @@
 
 	// Phase 2: create ScrollTrigger when start becomes true
 	$effect(() => {
-		if (start && setupDone && !st && !reducedMotion) {
+		if (start && setupDone && !st && (triggerEl ?? el) && !reducedMotion) {
 			initAnimation();
 		}
 	});
