@@ -1050,7 +1050,7 @@
 							i
 						].y})"
 						data-node-id={skill.id}
-						class="cursor-pointer"
+						class="cursor-pointer outline-none focus-visible:outline-2 focus-visible:outline-c-accent-0/50"
 						role="button"
 						tabindex="0"
 						onclick={(e) => {
