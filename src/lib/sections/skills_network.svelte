@@ -155,23 +155,27 @@
 	 */
 	function onPointerDown(e) {
 		if (e.button !== 0) return;
-		if (isMobilePlatform) return;
+		if (isMobilePlatform && e.pointerType !== "touch") return;
 
-		// Touch double-tap detection (desktop double-click uses native ondblclick)
 		if (e.pointerType === "touch") {
-			const now = performance.now();
-			const dx = Math.abs(e.clientX - lastTapX);
-			const dy = Math.abs(e.clientY - lastTapY);
-			const isDoubleTap = now - lastTapTime < 300 && dx < 40 && dy < 40;
-			lastTapTime = now;
-			lastTapX = e.clientX;
-			lastTapY = e.clientY;
-			if (isDoubleTap) {
-				const rect = svgContainerEl?.getBoundingClientRect();
-				if (!rect) return;
-				toggleZoom(e.clientX - rect.left, e.clientY - rect.top);
+			if (isMobilePlatform) {
+				if (zoom === 1) return;
 				e.preventDefault();
-				return;
+			} else {
+				const now = performance.now();
+				const dx = Math.abs(e.clientX - lastTapX);
+				const dy = Math.abs(e.clientY - lastTapY);
+				const isDoubleTap = now - lastTapTime < 300 && dx < 40 && dy < 40;
+				lastTapTime = now;
+				lastTapX = e.clientX;
+				lastTapY = e.clientY;
+				if (isDoubleTap) {
+					const rect = svgContainerEl?.getBoundingClientRect();
+					if (!rect) return;
+					toggleZoom(e.clientX - rect.left, e.clientY - rect.top);
+					e.preventDefault();
+					return;
+				}
 			}
 		}
 
@@ -1072,8 +1076,9 @@
 			<svg
 				bind:this={svgEl}
 				viewBox="0 0 1000 {viewBoxHeight}"
-				class="h-full w-full"
+				class="h-full w-full select-none"
 				style="transform: scale({zoom}) translate({panX}px, {panY}px); transition: {graphTransition}; transform-origin: 0 0"
+				style:touch-action={zoom > 1 ? "none" : undefined}
 				preserveAspectRatio="xMidYMid meet"
 				role="img"
 				aria-label="Skills network graph"

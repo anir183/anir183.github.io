@@ -35,6 +35,21 @@
 	let lastTapY = 0;
 	let zoomedIn = $state(false);
 
+	$effect(() => {
+		const scrollY = window.scrollY;
+		document.body.classList.add("overflow-hidden");
+		document.body.style.top = `-${scrollY}px`;
+		return () => {
+			document.body.classList.remove("overflow-hidden");
+			document.body.style.top = "";
+			const html = document.documentElement;
+			const origScrollBehavior = html.style.scrollBehavior;
+			html.style.scrollBehavior = "auto";
+			window.scrollTo(0, scrollY);
+			html.style.scrollBehavior = origScrollBehavior;
+		};
+	});
+
 	/**
 	 * @param {number} cx
 	 * @param {number} cy
@@ -65,21 +80,25 @@
 
 	function onPointerDown(e) {
 		if (e.button !== 0) return;
-		if (isMobilePlatform) return;
+		if (isMobilePlatform && e.pointerType !== "touch") return;
 
-		// Touch double-tap
 		if (e.pointerType === "touch") {
-			const now = performance.now();
-			const dx = Math.abs(e.clientX - lastTapX);
-			const dy = Math.abs(e.clientY - lastTapY);
-			const isDoubleTap = now - lastTapTime < 300 && dx < 40 && dy < 40;
-			lastTapTime = now;
-			lastTapX = e.clientX;
-			lastTapY = e.clientY;
-			if (isDoubleTap) {
-				toggleZoom(e.clientX, e.clientY);
+			if (isMobilePlatform) {
+				if (scale === 1) return;
 				e.preventDefault();
-				return;
+			} else {
+				const now = performance.now();
+				const dx = Math.abs(e.clientX - lastTapX);
+				const dy = Math.abs(e.clientY - lastTapY);
+				const isDoubleTap = now - lastTapTime < 300 && dx < 40 && dy < 40;
+				lastTapTime = now;
+				lastTapX = e.clientX;
+				lastTapY = e.clientY;
+				if (isDoubleTap) {
+					toggleZoom(e.clientX, e.clientY);
+					e.preventDefault();
+					return;
+				}
 			}
 		}
 
@@ -226,7 +245,7 @@
 	<Picture
 		{src}
 		alt=""
-		class="touch-action-none max-h-[90vh] max-w-[90vw] cursor-grab object-contain {isDragging
+		class="touch-action-none select-none max-h-[90vh] max-w-[90vw] cursor-grab object-contain {isDragging
 			? 'cursor-grabbing'
 			: ''}"
 		style="transform: scale({scale}) translate({panX}px, {panY}px); transition: {imgTransition}"
