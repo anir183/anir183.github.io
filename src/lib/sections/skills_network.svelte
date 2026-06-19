@@ -755,7 +755,7 @@
 						}
 					}
 				);
-				if (!isTouchDevice) zoomEnabled = true;
+				zoomEnabled = true;
 			}
 		});
 
@@ -868,10 +868,10 @@
 							}
 						}
 					);
-					if (!isTouchDevice) zoomEnabled = true;
-				}
-			},
-			"-=0.3"
+				zoomEnabled = true;
+			}
+		},
+		"-=0.3"
 		);
 
 		tl.call(() => {
@@ -968,7 +968,7 @@
 		if (svgContainerEl) ro.observe(svgContainerEl);
 
 		if (reducedMotion) {
-			if (!isTouchDevice) zoomEnabled = true;
+			zoomEnabled = true;
 			return () => {
 				mql.removeEventListener("change", onMqlChange);
 				ro.disconnect();

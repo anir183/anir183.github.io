@@ -17,7 +17,6 @@
 		typeof window !== "undefined" &&
 			window.matchMedia("(prefers-reduced-motion: reduce)").matches
 	);
-	let isTouchDevice = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
 	let imgTransition = $state("none");
 	let momentumRaf = /** @type {number | null} */ (null);
 	let velocityX = 0;
@@ -60,27 +59,34 @@
 		}
 	}
 
-	/**
-	 * @param {TouchEvent} e
-	 */
-	function onTouchStart(e) {
-		if (e.touches.length !== 1) {
-			lastTapTime = 0;
-			return;
-		}
-		const now = performance.now();
-		const dx = Math.abs(e.touches[0].clientX - lastTapX);
-		const dy = Math.abs(e.touches[0].clientY - lastTapY);
-		const isDoubleTap = (now - lastTapTime) < 300 && dx < 40 && dy < 40;
+	function onPointerDown(e) {
+		if (e.button !== 0) return;
 
-		lastTapTime = now;
-		lastTapX = e.touches[0].clientX;
-		lastTapY = e.touches[0].clientY;
-
-		if (isDoubleTap) {
-			toggleZoom(e.touches[0].clientX, e.touches[0].clientY);
-			e.preventDefault();
+		// Touch double-tap
+		if (e.pointerType === 'touch') {
+			const now = performance.now();
+			const dx = Math.abs(e.clientX - lastTapX);
+			const dy = Math.abs(e.clientY - lastTapY);
+			const isDoubleTap = (now - lastTapTime) < 300 && dx < 40 && dy < 40;
+			lastTapTime = now;
+			lastTapX = e.clientX;
+			lastTapY = e.clientY;
+			if (isDoubleTap) {
+				toggleZoom(e.clientX, e.clientY);
+				e.preventDefault();
+				return;
+			}
 		}
+
+		e.preventDefault();
+		killMomentum();
+		clearTimeout(transitionTimeout);
+		imgTransition = "none";
+		isDragging = true;
+		dragStartX = e.clientX;
+		dragStartY = e.clientY;
+		dragStartPanX = panX;
+		dragStartPanY = panY;
 	}
 
 	/**
@@ -111,7 +117,6 @@
 	 * @param {WheelEvent} e
 	 */
 	function onWheel(e) {
-		if (isTouchDevice) return;
 		e.preventDefault();
 		killMomentum();
 		const delta = e.deltaY > 0 ? 1 : -1;
@@ -132,26 +137,7 @@
 		}
 	}
 
-	/**
-	 * @param {MouseEvent} e
-	 */
-	function onMouseDown(e) {
-		if (isTouchDevice || e.button !== 0) return;
-		e.preventDefault();
-		killMomentum();
-		clearTimeout(transitionTimeout);
-		imgTransition = "none";
-		isDragging = true;
-		dragStartX = e.clientX;
-		dragStartY = e.clientY;
-		dragStartPanX = panX;
-		dragStartPanY = panY;
-	}
-
-	/**
-	 * @param {MouseEvent} e
-	 */
-	function onMouseMove(e) {
+	function onPointerMove(e) {
 		if (!isDragging) return;
 		const newPanX = dragStartPanX + (e.clientX - dragStartX);
 		const newPanY = dragStartPanY + (e.clientY - dragStartY);
@@ -170,7 +156,7 @@
 		panY = newPanY;
 	}
 
-	function onMouseUp() {
+	function onPointerUp() {
 		isDragging = false;
 		if (!reducedMotion && (Math.abs(velocityX) > 0.5 || Math.abs(velocityY) > 0.5)) {
 			const friction = 0.92;
@@ -217,9 +203,9 @@
 	class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 cursor-pointer overflow-hidden"
 	onclick={close}
 	onkeydown={onBackdropKeydown}
-	onmousemove={onMouseMove}
-	onmouseup={onMouseUp}
-	onmouseleave={onMouseUp}
+	onpointermove={onPointerMove}
+	onpointerup={onPointerUp}
+	onpointerleave={onPointerUp}
 	role="button"
 	tabindex="0"
 >
@@ -230,12 +216,11 @@
 	<Picture
 		src={src}
 		alt=""
-		class="max-h-[90vh] max-w-[90vw] object-contain cursor-grab {isDragging ? 'cursor-grabbing' : ''}"
+		class="max-h-[90vh] max-w-[90vw] object-contain cursor-grab touch-action-none {isDragging ? 'cursor-grabbing' : ''}"
 		style="transform: scale({scale}) translate({panX}px, {panY}px); transition: {imgTransition}"
 		onwheel={onWheel}
-		onmousedown={onMouseDown}
+		onpointerdown={onPointerDown}
 		ondblclick={onDblClick}
-		ontouchstart={onTouchStart}
 		onclick={(/** @type {MouseEvent} */ e) => e.stopPropagation()}
 		draggable={false}
 	/>
