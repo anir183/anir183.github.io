@@ -17,9 +17,13 @@ export function createSectionSnap(options = {}) {
 	if (reducedMotion) return () => {};
 
 	const isMobile = window.matchMedia("(pointer: coarse)").matches;
+	const isChrome = /Chrome\//.test(navigator.userAgent) && !/Edg\//.test(navigator.userAgent);
+
+	const chromeScale = isChrome ? 1.7 : 1.0;
+
 	const effectiveThreshold = isMobile ? 0.05 : threshold;
-	const effectiveSnapDelay = isMobile ? 300 : snapDelay;
-	const effectiveCooldown = isMobile ? 800 : cooldown;
+	const effectiveSnapDelay = (isMobile ? 300 : snapDelay) * chromeScale;
+	const effectiveCooldown = (isMobile ? 800 : cooldown) * chromeScale;
 
 	/** @type {ReturnType<typeof setTimeout> | undefined} */
 	let timeout;
