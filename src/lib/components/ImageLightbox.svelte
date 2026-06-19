@@ -17,6 +17,9 @@
 		typeof window !== "undefined" &&
 			window.matchMedia("(prefers-reduced-motion: reduce)").matches
 	);
+	let isMobilePlatform =
+		typeof window !== "undefined" &&
+		window.matchMedia("(hover: none) and (pointer: coarse)").matches;
 	let imgTransition = $state("none");
 	let momentumRaf = /** @type {number | null} */ (null);
 	let velocityX = 0;
@@ -24,7 +27,8 @@
 	let lastMovePanX = 0;
 	let lastMovePanY = 0;
 	let lastMoveTime = 0;
-	let transitionTimeout = /** @type {ReturnType<typeof setTimeout> | undefined} */ (undefined);
+	let transitionTimeout =
+		/** @type {ReturnType<typeof setTimeout> | undefined} */ (undefined);
 
 	let lastTapTime = 0;
 	let lastTapX = 0;
@@ -61,13 +65,14 @@
 
 	function onPointerDown(e) {
 		if (e.button !== 0) return;
+		if (isMobilePlatform) return;
 
 		// Touch double-tap
-		if (e.pointerType === 'touch') {
+		if (e.pointerType === "touch") {
 			const now = performance.now();
 			const dx = Math.abs(e.clientX - lastTapX);
 			const dy = Math.abs(e.clientY - lastTapY);
-			const isDoubleTap = (now - lastTapTime) < 300 && dx < 40 && dy < 40;
+			const isDoubleTap = now - lastTapTime < 300 && dx < 40 && dy < 40;
 			lastTapTime = now;
 			lastTapX = e.clientX;
 			lastTapY = e.clientY;
@@ -93,6 +98,7 @@
 	 * @param {MouseEvent} e
 	 */
 	function onDblClick(e) {
+		if (isMobilePlatform) return;
 		e.preventDefault();
 		toggleZoom(e.clientX, e.clientY);
 	}
@@ -104,7 +110,9 @@
 		}
 	}
 
-	function close() { onclose?.(); }
+	function close() {
+		onclose?.();
+	}
 
 	/**
 	 * @param {KeyboardEvent} e
@@ -117,6 +125,7 @@
 	 * @param {WheelEvent} e
 	 */
 	function onWheel(e) {
+		if (isMobilePlatform) return;
 		e.preventDefault();
 		killMomentum();
 		const delta = e.deltaY > 0 ? 1 : -1;
@@ -158,7 +167,10 @@
 
 	function onPointerUp() {
 		isDragging = false;
-		if (!reducedMotion && (Math.abs(velocityX) > 0.5 || Math.abs(velocityY) > 0.5)) {
+		if (
+			!reducedMotion &&
+			(Math.abs(velocityX) > 0.5 || Math.abs(velocityY) > 0.5)
+		) {
 			const friction = 0.92;
 			const minV = 0.5;
 			let vx = velocityX;
@@ -194,13 +206,12 @@
 			close();
 		}
 	}
-
 </script>
 
 <svelte:window onkeydown={onKeydown} />
 
 <div
-	class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 cursor-pointer overflow-hidden"
+	class="fixed inset-0 z-50 flex cursor-pointer items-center justify-center overflow-hidden bg-black/80"
 	onclick={close}
 	onkeydown={onBackdropKeydown}
 	onpointermove={onPointerMove}
@@ -210,13 +221,15 @@
 	tabindex="0"
 >
 	<button
-		class="absolute top-4 right-4 text-white text-2xl font-bold leading-none cursor-pointer z-10"
-		onclick={close}
-	>&times;</button>
+		class="absolute top-4 right-4 z-10 cursor-pointer text-2xl leading-none font-bold text-white"
+		onclick={close}>&times;</button
+	>
 	<Picture
-		src={src}
+		{src}
 		alt=""
-		class="max-h-[90vh] max-w-[90vw] object-contain cursor-grab touch-action-none {isDragging ? 'cursor-grabbing' : ''}"
+		class="touch-action-none max-h-[90vh] max-w-[90vw] cursor-grab object-contain {isDragging
+			? 'cursor-grabbing'
+			: ''}"
 		style="transform: scale({scale}) translate({panX}px, {panY}px); transition: {imgTransition}"
 		onwheel={onWheel}
 		onpointerdown={onPointerDown}

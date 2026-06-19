@@ -20,8 +20,13 @@
 	/** @type {HTMLAnchorElement | undefined} */
 	let buttonEl = $state();
 	let isMobile = $state(false);
-	let reducedMotion = $state(typeof window !== 'undefined' && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-	let isTouchDevice = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+	let reducedMotion = $state(
+		typeof window !== "undefined" &&
+			window.matchMedia("(prefers-reduced-motion: reduce)").matches
+	);
+	let isMobilePlatform =
+		typeof window !== "undefined" &&
+		window.matchMedia("(hover: none) and (pointer: coarse)").matches;
 	let containerWidth = $state(1000);
 	let containerHeight = $state(700);
 	let selectedId = $state(/** @type {string | null} */ (null));
@@ -72,11 +77,17 @@
 	let graphTransition = $state("none");
 	/** @type {ReturnType<typeof setTimeout> | undefined} */
 	let transitionTimeout = undefined;
-	let resizeTimeout = /** @type {ReturnType<typeof setTimeout> | undefined} */ (undefined);
+	let resizeTimeout = /** @type {ReturnType<typeof setTimeout> | undefined} */ (
+		undefined
+	);
 	let entryAnimDone = false;
 
 	function clampPan() {
-		if (zoom <= 1) { panX = 0; panY = 0; return; }
+		if (zoom <= 1) {
+			panX = 0;
+			panY = 0;
+			return;
+		}
 		const minPanX = containerWidth / zoom - containerWidth;
 		const minPanY = containerHeight / zoom - containerHeight;
 		panX = Math.max(minPanX, Math.min(0, panX));
@@ -107,7 +118,12 @@
 		if (!reducedMotion && duration) {
 			graphTransition = `transform ${duration}s ease-out`;
 			clearTimeout(transitionTimeout);
-			transitionTimeout = setTimeout(() => { graphTransition = "none"; }, duration * 1000 + 50);
+			transitionTimeout = setTimeout(
+				() => {
+					graphTransition = "none";
+				},
+				duration * 1000 + 50
+			);
 		}
 	}
 
@@ -127,7 +143,9 @@
 			if (!reducedMotion) {
 				graphTransition = "transform 0.25s ease-out";
 				clearTimeout(transitionTimeout);
-				transitionTimeout = setTimeout(() => { graphTransition = "none"; }, 300);
+				transitionTimeout = setTimeout(() => {
+					graphTransition = "none";
+				}, 300);
 			}
 		}
 	}
@@ -137,13 +155,14 @@
 	 */
 	function onPointerDown(e) {
 		if (e.button !== 0) return;
+		if (isMobilePlatform) return;
 
 		// Touch double-tap detection (desktop double-click uses native ondblclick)
-		if (e.pointerType === 'touch') {
+		if (e.pointerType === "touch") {
 			const now = performance.now();
 			const dx = Math.abs(e.clientX - lastTapX);
 			const dy = Math.abs(e.clientY - lastTapY);
-			const isDoubleTap = (now - lastTapTime) < 300 && dx < 40 && dy < 40;
+			const isDoubleTap = now - lastTapTime < 300 && dx < 40 && dy < 40;
 			lastTapTime = now;
 			lastTapX = e.clientX;
 			lastTapY = e.clientY;
@@ -200,7 +219,11 @@
 
 	function onPointerUp() {
 		isDragging = false;
-		if (zoomEnabled && !reducedMotion && (Math.abs(velocityX) > 0.3 || Math.abs(velocityY) > 0.3)) {
+		if (
+			zoomEnabled &&
+			!reducedMotion &&
+			(Math.abs(velocityX) > 0.3 || Math.abs(velocityY) > 0.3)
+		) {
 			const friction = 0.92;
 			const minV = 0.05;
 			let vx = velocityX;
@@ -208,9 +231,12 @@
 			/**
 			 * @param {number} _ts
 			 */
-		function step(_ts) {
-			if (!sectionVisible) { momentumRaf = null; return; }
-			panX += vx;
+			function step(_ts) {
+				if (!sectionVisible) {
+					momentumRaf = null;
+					return;
+				}
+				panX += vx;
 				panY += vy;
 				vx *= friction;
 				vy *= friction;
@@ -232,6 +258,7 @@
 	 * @param {WheelEvent} e
 	 */
 	function onWheel(e) {
+		if (isMobilePlatform) return;
 		if (!zoomEnabled) return;
 		if (!isInGraphArea(e.clientX, e.clientY)) return;
 		e.preventDefault();
@@ -255,12 +282,19 @@
 		toggleZoom(e.clientX - rect.left, e.clientY - rect.top);
 	}
 
-	const uncoloredDevicons = new Set(['linux-plain', 'github-original', 'vercel-original']);
+	const uncoloredDevicons = new Set([
+		"linux-plain",
+		"github-original",
+		"vercel-original"
+	]);
 
 	let graphBounds = $derived.by(() => {
 		const positions = effectivePositions;
 		if (positions.length === 0) return null;
-		let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+		let minX = Infinity,
+			minY = Infinity,
+			maxX = -Infinity,
+			maxY = -Infinity;
 		for (const p of positions) {
 			if (p.x < minX) minX = p.x;
 			if (p.y < minY) minY = p.y;
@@ -269,7 +303,12 @@
 		}
 		const padX = (maxX - minX) * 0.2;
 		const padY = (maxY - minY) * 0.2;
-		return { minX: minX - padX, minY: minY - padY, maxX: maxX + padX, maxY: maxY + padY };
+		return {
+			minX: minX - padX,
+			minY: minY - padY,
+			maxX: maxX + padX,
+			maxY: maxY + padY
+		};
 	});
 
 	let packetTweens = /** @type {gsap.core.Tween[]} */ ([]);
@@ -293,7 +332,9 @@
 		displaySkills.find((s) => s.id === (selectedId ?? hoveredId)) ?? null
 	);
 
-	let viewBoxHeight = $derived(Math.max(600, Math.min(2000, 1000 * containerHeight / containerWidth)));
+	let viewBoxHeight = $derived(
+		Math.max(600, Math.min(2000, (1000 * containerHeight) / containerWidth))
+	);
 
 	let nodePositions = $derived(
 		displaySkills.map(
@@ -320,7 +361,7 @@
 			const mx = (a.x + b.x) / 2;
 			const my = (a.y + b.y) / 2;
 			const cx = mx;
-			const cy = my + 16 * viewBoxHeight / 700;
+			const cy = my + (16 * viewBoxHeight) / 700;
 			return `M ${a.x} ${a.y} Q ${cx} ${cy} ${b.x} ${b.y}`;
 		})
 	);
@@ -336,7 +377,7 @@
 			if (!a || !b) return null;
 			const mx = (a.x + b.x) / 2;
 			const my = (a.y + b.y) / 2;
-			return { from: a, to: b, cx: mx, cy: my + 16 * viewBoxHeight / 700 };
+			return { from: a, to: b, cx: mx, cy: my + (16 * viewBoxHeight) / 700 };
 		})
 	);
 
@@ -437,7 +478,12 @@
 		br.y = graphBounds.maxY;
 		const brScreen = br.matrixTransform(ctm);
 
-		return clientX >= tlScreen.x && clientX <= brScreen.x && clientY >= tlScreen.y && clientY <= brScreen.y;
+		return (
+			clientX >= tlScreen.x &&
+			clientX <= brScreen.x &&
+			clientY >= tlScreen.y &&
+			clientY <= brScreen.y
+		);
 	}
 
 	function closeMobileDetail() {
@@ -445,8 +491,6 @@
 		animateToRest();
 		mobileDetailSkill = null;
 	}
-
-
 
 	function startPackets() {
 		if (!svgEl) return;
@@ -518,7 +562,12 @@
 						gsap.fromTo(
 							circle,
 							{ opacity: 0 },
-							{ opacity: 0.35, duration: 1, ease: "power2.out", overwrite: true }
+							{
+								opacity: 0.35,
+								duration: 1,
+								ease: "power2.out",
+								overwrite: true
+							}
 						);
 					}
 				});
@@ -718,9 +767,9 @@
 		packetTweens = [];
 		packetEls.forEach((el) => el.remove());
 		packetEls = [];
-		svgEl.querySelectorAll("[data-packet-edge]").forEach(
-			/** @param {Element} el */ (el) => el.remove()
-		);
+		svgEl
+			.querySelectorAll("[data-packet-edge]")
+			.forEach(/** @param {Element} el */ (el) => el.remove());
 
 		pulseTween?.kill();
 		pulseTween = null;
@@ -730,7 +779,7 @@
 		pathEls.forEach(
 			/** @param {SVGPathElement} p */ (p) => {
 				if (p instanceof SVGPathElement) {
-					if (!p.getAttribute('d')) return;
+					if (!p.getAttribute("d")) return;
 					p.style.removeProperty("strokeDasharray");
 					p.style.removeProperty("strokeDashoffset");
 					const len = p.getTotalLength();
@@ -780,14 +829,14 @@
 
 		edgePathLengths = displayEdges.map((_, i) => {
 			const p = pathEls[i];
-			if (!p || !p.getAttribute('d')) return 1;
+			if (!p || !p.getAttribute("d")) return 1;
 			return p.getTotalLength();
 		});
 
 		gsap.set(nodeEls, { scale: 0, opacity: 0 });
 		pathEls.forEach(
 			/** @param {SVGPathElement} p */ (p) => {
-				if (!p.getAttribute('d')) return;
+				if (!p.getAttribute("d")) return;
 				const len = p.getTotalLength();
 				p.style.strokeDasharray = String(len);
 				p.style.strokeDashoffset = String(len);
@@ -868,10 +917,10 @@
 							}
 						}
 					);
-				zoomEnabled = true;
-			}
-		},
-		"-=0.3"
+					zoomEnabled = true;
+				}
+			},
+			"-=0.3"
 		);
 
 		tl.call(() => {
@@ -947,12 +996,16 @@
 
 		const mql = window.matchMedia(`(max-width: ${LG_BREAKPOINT - 1}px)`);
 		isMobile = mql.matches;
-		const onMqlChange = (/** @type {MediaQueryListEvent} */ e) => (isMobile = e.matches);
+		const onMqlChange = (/** @type {MediaQueryListEvent} */ e) =>
+			(isMobile = e.matches);
 		mql.addEventListener("change", onMqlChange);
 
 		let roFirst = true;
 		const ro = new ResizeObserver(([entry]) => {
-			if (roFirst) { roFirst = false; return; }
+			if (roFirst) {
+				roFirst = false;
+				return;
+			}
 			const box = entry.contentBoxSize?.[0] ?? entry.borderBoxSize?.[0];
 			if (box) {
 				containerWidth = box.inlineSize;
@@ -994,14 +1047,12 @@
 	class="flex w-full max-lg:h-screen max-lg:flex-col max-lg:py-4 max-lg:pb-8 lg:min-h-screen lg:flex-row"
 >
 	<!-- mobile heading -->
-	<div
-		class="pt-20 pb-4 px-5 bg-c-bg-0 lg:hidden"
-	>
+	<div class="bg-c-bg-0 px-5 pt-20 pb-4 lg:hidden">
 		<AnimatedHeading
 			tag="h2"
 			start={true}
-			reducedMotion={reducedMotion}
-			class="font-c-unbounded text-3xl max-sm:text-xl font-black text-c-neutral-0"
+			{reducedMotion}
+			class="font-c-unbounded text-3xl font-black text-c-neutral-0 max-sm:text-xl"
 			sectionId="skills"
 		>
 			Some <span class="text-c-accent-0">skills</span> I have honed.
@@ -1010,9 +1061,12 @@
 
 	<!-- SVG graph panel (left on desktop, top on mobile) -->
 	<div
-		class="flex w-full items-center justify-center px-3 max-lg:flex-1 max-lg:min-h-[40vh] lg:self-center lg:h-[70vh] lg:w-3/5 lg:px-6"
+		class="flex w-full items-center justify-center px-3 max-lg:min-h-[40vh] max-lg:flex-1 lg:h-[70vh] lg:w-3/5 lg:self-center lg:px-6"
 	>
-	<div bind:this={svgContainerEl} class="relative h-full w-full overflow-hidden">
+		<div
+			bind:this={svgContainerEl}
+			class="relative h-full w-full overflow-hidden"
+		>
 			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 			<svg
 				bind:this={svgEl}
@@ -1043,7 +1097,7 @@
 						stroke-width="1.2"
 					/>
 				{/each}
-			
+
 				{#each displaySkills as skill, i (skill.id)}
 					<g
 						transform="translate({effectivePositions[i].x}, {effectivePositions[
@@ -1089,8 +1143,15 @@
 						{/if}
 						{#if skill.devicon}
 							<foreignObject x="-16" y="-16" width="32" height="32">
-								<div class="flex h-full w-full items-center justify-center leading-none">
-									<i class="devicon-{skill.devicon} {!uncoloredDevicons.has(skill.devicon) && 'colored'} max-lg:text-4xl" style="font-size: 20px;"></i>
+								<div
+									class="flex h-full w-full items-center justify-center leading-none"
+								>
+									<i
+										class="devicon-{skill.devicon} {!uncoloredDevicons.has(
+											skill.devicon
+										) && 'colored'} max-lg:text-4xl"
+										style="font-size: 20px;"
+									></i>
 								</div>
 							</foreignObject>
 						{:else}
@@ -1118,7 +1179,11 @@
 					>
 						<div class="flex items-center gap-2.5">
 							{#if activeSkill.devicon}
-								<i class="devicon-{activeSkill.devicon} {!uncoloredDevicons.has(activeSkill.devicon) && 'colored'} text-3xl shrink-0 leading-none"></i>
+								<i
+									class="devicon-{activeSkill.devicon} {!uncoloredDevicons.has(
+										activeSkill.devicon
+									) && 'colored'} shrink-0 text-3xl leading-none"
+								></i>
 							{:else}
 								<span class="text-3xl">{activeSkill.icon}</span>
 							{/if}
@@ -1164,12 +1229,12 @@
 
 	<!-- content panel (right on desktop, bottom on mobile) -->
 	<div
-		class="flex w-full flex-col justify-center gap-5 px-5 max-lg:py-6 bg-c-bg-0 lg:w-2/5 lg:gap-8 lg:px-10 lg:py-20 lg:pl-12"
+		class="flex w-full flex-col justify-center gap-5 bg-c-bg-0 px-5 max-lg:py-6 lg:w-2/5 lg:gap-8 lg:px-10 lg:py-20 lg:pl-12"
 	>
 		<AnimatedHeading
 			tag="h2"
 			start={!isMobile}
-			reducedMotion={reducedMotion}
+			{reducedMotion}
 			class="font-c-unbounded text-2xl font-black text-c-neutral-0 max-lg:hidden lg:text-5xl"
 			sectionId="skills"
 		>
@@ -1178,7 +1243,7 @@
 
 		<p
 			bind:this={paraEl}
-			class="font-c-ubuntu text-base max-sm:text-xs leading-relaxed text-c-neutral-1 lg:text-xl"
+			class="font-c-ubuntu text-base leading-relaxed text-c-neutral-1 max-sm:text-xs lg:text-xl"
 		>
 			A collection of technologies and tools I've worked with across frontend
 			and backend development, cloud infrastructure, and design. Each node
@@ -1187,7 +1252,7 @@
 
 		<AccentLink
 			href={resolve("/experiences")}
-			class="-translate-x-3 px-3 py-1 font-c-unbounded text-xs max-sm:text-xs font-bold max-lg:pointer-events-auto lg:text-sm"
+			class="-translate-x-3 px-3 py-1 font-c-unbounded text-xs font-bold max-lg:pointer-events-auto max-sm:text-xs lg:text-sm"
 			bind:el={buttonEl}
 		>
 			Experiences
@@ -1212,11 +1277,18 @@
 			role="document"
 			onclick={(e) => e.stopPropagation()}
 			onkeydown={() => {}}
-			transition:scale={{ start: reducedMotion ? 1 : 0.92, duration: reducedMotion ? 0 : 150 }}
+			transition:scale={{
+				start: reducedMotion ? 1 : 0.92,
+				duration: reducedMotion ? 0 : 150
+			}}
 		>
 			<div class="flex items-center gap-3">
 				{#if mobileDetailSkill.devicon}
-					<i class="devicon-{mobileDetailSkill.devicon} {!uncoloredDevicons.has(mobileDetailSkill.devicon) && 'colored'} text-4xl shrink-0 leading-none"></i>
+					<i
+						class="devicon-{mobileDetailSkill.devicon} {!uncoloredDevicons.has(
+							mobileDetailSkill.devicon
+						) && 'colored'} shrink-0 text-4xl leading-none"
+					></i>
 				{:else}
 					<span class="text-4xl">{mobileDetailSkill.icon}</span>
 				{/if}
@@ -1265,4 +1337,3 @@
 		</div>
 	</div>
 {/if}
-
