@@ -1038,7 +1038,7 @@ let isMobileDevice = $state(false);
 			if (tabCompletions.length > 0) {
 				tabCompletions = [];
 			} else {
-				terminalEl?.blur();
+				hiddenInput?.blur();
 			}
 		}
 	}
@@ -1277,7 +1277,7 @@ let isMobileDevice = $state(false);
 	aria-label="Terminal"
 	onkeydown={onKeydown}
 	onfocus={onFocus}
-	onblur={onBlur}
+	onfocusout={onBlur}
 >
 	<div
 		class="flex w-full items-center gap-2.5 px-4 py-2.5 max-lg:px-3 max-lg:py-2"
