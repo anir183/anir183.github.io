@@ -261,6 +261,7 @@
 		if (isMobilePlatform) return;
 		if (!zoomEnabled) return;
 		if (!isInGraphArea(e.clientX, e.clientY)) return;
+		if (zoom === 1 && e.deltaY > 0) return;
 		e.preventDefault();
 		killMomentum();
 		const rect = svgContainerEl?.getBoundingClientRect();
