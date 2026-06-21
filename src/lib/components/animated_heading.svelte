@@ -24,6 +24,9 @@
 	let copyEnabled = $state(false);
 	/** @type {ReturnType<typeof setTimeout> | undefined} */
 	let copiedTimer;
+	let isMobilePlatform =
+		typeof window !== "undefined" &&
+		window.matchMedia("(hover: none) and (pointer: coarse)").matches;
 
 	function copy() {
 		if (!sectionId) return;
@@ -68,22 +71,23 @@
 
 		// Phase 1: split text and set initial invisible state
 		if (!setupDone) {
+			const splitType = isMobilePlatform ? "words" : "chars,words";
 			split = new SplitTextPlugin(el, {
-				type: "chars,words",
+				type: splitType,
 				charsClass: "char",
 				charsTag: "span",
 				wordsClass: "word",
 				wordsTag: "span"
 			});
 
-			chars = split.chars;
+			chars = isMobilePlatform ? split.words : split.chars;
 
 			el.style.whiteSpace = "normal";
 
 			gsap.set(chars, {
 				x: fromX,
 				opacity: 0,
-				skewX: fromSkew
+				skewX: isMobilePlatform ? 0 : fromSkew
 			});
 
 			setupDone = true;
@@ -98,6 +102,9 @@
 		const trigger = triggerEl ?? el;
 		if (!trigger) return;
 
+		const animStagger = isMobilePlatform ? 0.08 : stagger;
+		const animDuration = isMobilePlatform ? 0.5 : duration;
+
 		st = ScrollTriggerPlugin.create({
 			trigger,
 			start: triggerOffset,
@@ -105,8 +112,8 @@
 				x: 0,
 				opacity: 1,
 				skewX: 0,
-				stagger,
-				duration,
+				stagger: animStagger,
+				duration: animDuration,
 				ease,
 				onComplete: () => { copyEnabled = true; }
 			}),
