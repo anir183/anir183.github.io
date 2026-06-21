@@ -56,8 +56,11 @@
 	<meta property="og:title" content="anir183" />
 	<meta property="og:description" content="Anirban RoyChowdhury — full-stack developer & cyber security student. Portfolio showcasing projects, skills, and experience." />
 	<meta property="og:type" content="website" />
-	<meta property="og:image" content="https://anir183.is-a.dev/assets/branding/logo_dark.svg" />
-	<meta name="twitter:card" content="summary" />
+	<meta property="og:image" content="https://anir183.is-a.dev/assets/branding/banner.jpg" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta property="og:image:type" content="image/jpeg" />
+	<meta name="twitter:card" content="summary_large_image" />
 	<link rel="canonical" href="https://anir183.is-a.dev" />
 	<script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Anirban RoyChowdhury","url":"https://anir183.is-a.dev","jobTitle":"Full-Stack Developer & Cyber Security Student","sameAs":["https://github.com/anir183","https://www.linkedin.com/in/anir183"]}</script>
 	<script>
