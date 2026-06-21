@@ -182,7 +182,7 @@
 <DotGrid headingSelector="#projects-heading" />
 <Navbar bind:navEl bind:themeBtn bind:hamburgerBtn {navItems} />
 
-<section id="projects-heading" class="relative z-10 flex min-h-dvh items-center px-5 max-lg:px-3">
+<section id="projects-heading" class="relative z-10 flex min-h-svh items-center px-5 max-lg:px-3">
 	<div class="mx-auto w-full max-w-4xl">
 		<AnimatedHeading
 			tag="h1"

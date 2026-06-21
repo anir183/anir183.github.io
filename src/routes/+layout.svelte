@@ -99,7 +99,7 @@
 {:else}
 	<main
 		id="main-content"
-		class="relative min-h-dvh overflow-x-clip bg-c-bg-0 text-c-neutral-0 antialiased"
+		class="relative min-h-svh overflow-x-clip bg-c-bg-0 text-c-neutral-0 antialiased"
 	>
 		{@render children()}
 	</main>

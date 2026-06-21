@@ -1049,7 +1049,7 @@
 	bind:this={sectionEl}
 	use:inertOffscreen
 	id="skills"
-	class="flex w-full max-lg:h-dvh max-lg:flex-col max-lg:py-4 max-lg:pb-8 lg:min-h-dvh lg:flex-row"
+	class="flex w-full max-lg:h-svh max-lg:flex-col max-lg:py-4 max-lg:pb-8 lg:min-h-svh lg:flex-row"
 >
 	<!-- mobile heading -->
 	<div class="bg-c-bg-0 px-5 pt-20 pb-4 lg:hidden">

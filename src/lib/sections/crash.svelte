@@ -190,7 +190,7 @@
 
 <section
 	bind:this={sectionEl}
-	class="relative flex min-h-dvh flex-col overflow-hidden bg-c-bg-0"
+	class="relative flex min-h-svh flex-col overflow-hidden bg-c-bg-0"
 	class:opacity-0={hidden}
 >
 	<div class="flex flex-1 flex-col items-center justify-center gap-6 px-3 text-center">
