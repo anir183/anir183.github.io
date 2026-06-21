@@ -298,7 +298,7 @@ onDestroy(() => {
 </script>
 
 <div class="relative">
-	<section id="experiences-heading" class="relative z-10 flex min-h-dvh items-center px-5 max-lg:px-3">
+	<section id="experiences-heading" class="relative z-10 flex min-h-screen items-center px-5 max-lg:px-3">
 		<div class="mx-auto w-full max-w-4xl">
 			<AnimatedHeading tag="h1" start={headingStart} {reducedMotion} class="font-c-unbounded text-5xl max-sm:text-2xl font-black text-center lg:text-7xl" sectionId="experiences-heading"
 			>Experiences</AnimatedHeading>
@@ -334,7 +334,7 @@ onDestroy(() => {
 			<section
 				bind:this={sectionEls[i]}
 				id="experience-{exp.id}"
-				class="relative z-10 flex min-h-dvh items-center px-5 max-lg:px-3"
+				class="relative z-10 flex min-h-screen items-center px-5 max-lg:px-3"
 			>
 				<div
 					bind:this={contentWraps[i]}
