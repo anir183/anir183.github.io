@@ -249,7 +249,7 @@
 <section
 	bind:this={sectionEl}
 	id="project-{project?.id}"
-	class="w-full max-lg:static lg:sticky lg:top-0 lg:flex lg:min-h-screen lg:items-center lg:px-10 lg:py-20 max-lg:flex max-lg:min-h-screen max-lg:flex-col"
+	class="w-full max-lg:static lg:sticky lg:top-0 lg:flex lg:min-h-dvh lg:items-center lg:px-10 lg:py-20 max-lg:flex max-lg:min-h-dvh max-lg:flex-col"
 >
 	<!-- DESKTOP: ProjectInfo left panel -->
 	<div data-content-panel="desktop" class="lg:w-2/5 lg:pr-8 max-lg:hidden">

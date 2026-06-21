@@ -78,7 +78,7 @@
 	bind:this={sectionEl}
 	use:inertOffscreen
 	id="socials"
-	class="flex w-full flex-col max-lg:h-screen lg:min-h-screen lg:flex-row lg:gap-12"
+	class="flex w-full flex-col max-lg:h-dvh lg:min-h-dvh lg:flex-row lg:gap-12"
 >
 	<!-- mobile heading -->
 	<div
@@ -97,7 +97,7 @@
 
 	<!-- terminal panel (middle on mobile, left on desktop) -->
 	<div
-		class="flex w-full px-3 max-lg:flex-1 max-lg:min-h-0 max-lg:items-stretch max-lg:justify-start max-lg:py-6 lg:sticky lg:top-0 lg:order-1 lg:h-screen lg:w-3/5 lg:items-center lg:justify-center lg:px-12"
+		class="flex w-full px-3 max-lg:flex-1 max-lg:min-h-0 max-lg:items-stretch max-lg:justify-start max-lg:py-6 lg:sticky lg:top-0 lg:order-1 lg:h-dvh lg:w-3/5 lg:items-center lg:justify-center lg:px-12"
 	>
 		<div class="w-full max-lg:flex max-lg:flex-1 max-lg:min-h-0 max-lg:flex-col">
 			<Terminal bind:playEntry={terminalPlay} {socials} />

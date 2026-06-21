@@ -190,7 +190,7 @@
 
 <section
 	bind:this={sectionEl}
-	class="relative flex min-h-screen flex-col bg-c-bg-0"
+	class="relative flex min-h-dvh flex-col bg-c-bg-0"
 >
 	<Navbar
 		{navItems}

@@ -129,7 +129,7 @@
 	bind:this={sectionEl}
 	use:inertOffscreen
 	id="about"
-	class="flex min-h-screen w-full flex-col lg:flex-row"
+	class="flex min-h-dvh w-full flex-col lg:flex-row"
 >
 	<!-- mobile heading -->
 	<div
@@ -148,7 +148,7 @@
 
 	<!-- scene panel (middle on mobile, sticky right on desktop) -->
 	<div
-		class="flex w-full justify-center px-3 max-lg:flex-1 max-lg:items-center lg:sticky lg:top-0 lg:order-2 lg:h-screen lg:w-1/2 lg:items-center lg:px-6"
+		class="flex w-full justify-center px-3 max-lg:flex-1 max-lg:items-center lg:sticky lg:top-0 lg:order-2 lg:h-dvh lg:w-1/2 lg:items-center lg:px-6"
 	>
 		<div class="w-full max-w-[60%] max-sm:max-w-[75%] max-lg:h-auto max-lg:aspect-[2160/2668] lg:h-full lg:max-h-[70vh]">
 			<AboutScene bind:sceneEl={sceneContainer} />
