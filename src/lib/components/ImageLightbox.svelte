@@ -20,6 +20,7 @@
 	let isMobilePlatform =
 		typeof window !== "undefined" &&
 		window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+	let isHovered = $state(false);
 	let imgTransition = $state("none");
 	let momentumRaf = /** @type {number | null} */ (null);
 	let velocityX = 0;
@@ -234,7 +235,8 @@
 	onkeydown={onBackdropKeydown}
 	onpointermove={onPointerMove}
 	onpointerup={onPointerUp}
-	onpointerleave={onPointerUp}
+	onpointerleave={() => { onPointerUp(); isHovered = false; }}
+	onpointerenter={() => (isHovered = true)}
 	role="button"
 	tabindex="0"
 >
@@ -245,9 +247,11 @@
 	<Picture
 		{src}
 		alt=""
-		class="touch-action-none select-none max-h-[90vh] max-w-[90vw] cursor-grab object-contain {isDragging
+		class="touch-action-none select-none max-h-[90vh] max-w-[90vw] object-contain {isDragging
 			? 'cursor-grabbing'
-			: ''}"
+			: scale === 1
+				? 'cursor-zoom-in'
+				: 'cursor-grab'}"
 		style="transform: scale({scale}) translate({panX}px, {panY}px); transition: {imgTransition}"
 		onwheel={onWheel}
 		onpointerdown={onPointerDown}
@@ -255,4 +259,26 @@
 		onclick={(/** @type {MouseEvent} */ e) => e.stopPropagation()}
 		draggable={false}
 	/>
+	{#if scale === 1}
+		<div
+	class="pointer-events-none absolute bottom-4 right-4 z-10 flex items-center gap-1.5 rounded-full bg-c-bg-2/90 px-3 py-1.5 text-xs text-c-neutral-0 backdrop-blur-sm transition-opacity duration-200"
+					class:opacity-0={!isMobilePlatform && !isHovered}
+					class:opacity-100={isMobilePlatform || isHovered}
+				>
+					{#if isMobilePlatform}
+						<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+							<circle cx="11" cy="11" r="8"/>
+							<line x1="21" y1="21" x2="16.65" y2="16.65"/>
+							<line x1="8" y1="11" x2="14" y2="11"/>
+							<line x1="11" y1="8" x2="11" y2="14"/>
+						</svg>
+					{:else}
+						<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+							<circle cx="11" cy="11" r="8"/>
+							<line x1="21" y1="21" x2="16.65" y2="16.65"/>
+						</svg>
+					{/if}
+			<span>{isMobilePlatform ? "double-tap" : "scroll"}</span>
+		</div>
+	{/if}
 </div>

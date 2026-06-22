@@ -27,6 +27,7 @@
 	let isMobilePlatform =
 		typeof window !== "undefined" &&
 		window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+	let isGraphHovered = $state(false);
 	let containerWidth = $state(1000);
 	let containerHeight = $state(700);
 	let selectedId = $state(/** @type {string | null} */ (null));
@@ -1071,12 +1072,18 @@
 		<div
 			bind:this={svgContainerEl}
 			class="relative h-full w-full overflow-hidden"
+			onpointerenter={() => (isGraphHovered = true)}
+			onpointerleave={() => (isGraphHovered = false)}
 		>
 			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 			<svg
 				bind:this={svgEl}
 				viewBox="0 0 1000 {viewBoxHeight}"
-				class="h-full w-full select-none"
+				class="h-full w-full select-none {zoom === 1
+					? 'cursor-zoom-in'
+					: zoom > 1
+						? 'cursor-grab'
+						: ''}"
 				style="transform: scale({zoom}) translate({panX}px, {panY}px); transition: {graphTransition}; transform-origin: 0 0"
 				style:touch-action={zoom > 1 ? "none" : undefined}
 				preserveAspectRatio="xMidYMid meet"
@@ -1228,6 +1235,28 @@
 							</div>
 						{/if}
 					</div>
+				</div>
+			{/if}
+			{#if zoom === 1}
+				<div
+					class="pointer-events-none absolute bottom-3 right-3 z-20 flex items-center gap-1.5 rounded-full bg-c-bg-2/90 px-3 py-1.5 text-xs text-c-neutral-0 backdrop-blur-sm transition-opacity duration-500"
+					class:opacity-0={!zoomEnabled || (!isMobilePlatform && !isGraphHovered)}
+					class:opacity-100={zoomEnabled && (isMobilePlatform || isGraphHovered)}
+				>
+					{#if isMobilePlatform}
+						<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+							<circle cx="11" cy="11" r="8"/>
+							<line x1="21" y1="21" x2="16.65" y2="16.65"/>
+							<line x1="8" y1="11" x2="14" y2="11"/>
+							<line x1="11" y1="8" x2="11" y2="14"/>
+						</svg>
+					{:else}
+						<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+							<circle cx="11" cy="11" r="8"/>
+							<line x1="21" y1="21" x2="16.65" y2="16.65"/>
+						</svg>
+					{/if}
+					<span>{isMobilePlatform ? "double-tap" : "scroll"}</span>
 				</div>
 			{/if}
 		</div>
