@@ -1138,7 +1138,7 @@
 						onmouseleave={onNodeLeave}
 					>
 						<circle
-							r={isMobile ? 37 : 21}
+							r={isMobile ? 55 : 21}
 							class="fill-c-bg-2/50"
 							stroke-width="1.2"
 							stroke="var(--color-c-border)"
@@ -1155,15 +1155,14 @@
 							/>
 						{/if}
 						{#if skill.devicon}
-							<foreignObject x="-16" y="-16" width="32" height="32">
+							<foreignObject x="-22" y="-22" width="44" height="44">
 								<div
 									class="flex h-full w-full items-center justify-center leading-none"
 								>
 									<i
 										class="devicon-{skill.devicon} {!uncoloredDevicons.has(
 											skill.devicon
-										) && 'colored'} max-lg:text-4xl"
-										style="font-size: 20px;"
+										) && 'colored'} text-base max-lg:text-4xl"
 									></i>
 								</div>
 							</foreignObject>
@@ -1171,7 +1170,7 @@
 							<text
 								text-anchor="middle"
 								dominant-baseline="central"
-								class="pointer-events-none fill-c-neutral-0 text-xs select-none max-lg:text-2xl"
+								class="pointer-events-none fill-c-neutral-0 text-xs select-none max-lg:text-3xl"
 							>
 								{skill.icon}
 							</text>
