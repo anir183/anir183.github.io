@@ -15,6 +15,7 @@
 <a
 	bind:this={el}
 	{href}
+	data-hover
 	target={isExternal ? "_blank" : undefined}
 	rel={isExternal ? "noopener noreferrer" : undefined}
 	class="group relative inline-flex w-fit items-center overflow-hidden text-c-neutral-0 no-underline transition-colors duration-200 hover:text-c-bg-0 {className}"

@@ -12,7 +12,8 @@
 <button
 	bind:this={el}
 	{onclick}
-	class="group relative inline-flex w-fit items-center overflow-hidden cursor-pointer text-c-neutral-0 outline-none transition-colors duration-200 hover:text-c-bg-0 {className}"
+	data-hover
+	class="group relative inline-flex w-fit cursor-pointer items-center overflow-hidden text-c-neutral-0 transition-colors duration-200 outline-none hover:text-c-bg-0 {className}"
 >
 	<span class="relative">
 		<span class="relative z-10">
