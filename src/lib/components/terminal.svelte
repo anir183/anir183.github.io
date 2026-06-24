@@ -25,7 +25,7 @@
 		{ cmd: "help", desc: "show available commands" },
 		{ cmd: "whoami", desc: "display the current user" },
 		{ cmd: "date", desc: "show current date and time" },
-		{ cmd: "uptime", desc: "show how long the system has been running" },
+		{ cmd: "uptime", desc: "show uptime since deployment" },
 		{ cmd: "ls", desc: "list directory contents" },
 		{ cmd: "cd", desc: "change directory" },
 		{ cmd: "pwd", desc: "print working directory" },
