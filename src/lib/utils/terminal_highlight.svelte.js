@@ -262,6 +262,44 @@ export function segmentDate(date) {
 	];
 }
 
+/* ─── uptime decorative highlighting ──────────────────── */
+
+/**
+ * @param {number} deployTimestamp
+ * @returns {Segment[]}
+ */
+export function segmentUptime(deployTimestamp) {
+	const now = new Date();
+	const timeStr = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
+
+	const elapsed = Math.max(0, Math.floor(now.getTime() / 1000) - deployTimestamp);
+	const days = Math.floor(elapsed / 86400);
+	const hours = Math.floor((elapsed % 86400) / 3600);
+	const minutes = Math.floor((elapsed % 3600) / 60);
+	const uptimeStr = days > 0
+		? `${days} day${days > 1 ? "s" : ""}, ${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`
+		: `${hours}:${String(minutes).padStart(2, "0")}`;
+
+	return [
+		{ text: `${timeStr} `, cls: "text-c-info" },
+		{ text: "up ", cls: "text-c-neutral-1" },
+		{ text: `${uptimeStr}, `, cls: "text-c-neutral-0" },
+		{ text: "1 user,  ", cls: "text-c-neutral-1" },
+		{ text: "load average: ", cls: "text-c-neutral-1" },
+		{ text: genLoadAvg(), cls: "text-c-info" }
+	];
+}
+
+function genLoadAvg() {
+	const t = Math.floor(Date.now() / 60000);
+	const s = (t * 9301 + 49297) % 233280;
+	return [
+		((s % 233280) / 233280 * 2).toFixed(2),
+		(((s + 137) % 233280) / 233280 * 2).toFixed(2),
+		(((s + 271) % 233280) / 233280 * 2).toFixed(2)
+	].join(", ");
+}
+
 /* ─── input highlighting (typing) ─────────────────────── */
 
 /**

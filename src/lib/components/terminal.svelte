@@ -7,6 +7,7 @@
 		segmentBashrc, segmentQuotes,
 		segmentGrepLine,
 		segmentDate,
+		segmentUptime,
 		highlightInput,
 		getCompletions,
 		applyCompletion
@@ -24,6 +25,7 @@
 		{ cmd: "help", desc: "show available commands" },
 		{ cmd: "whoami", desc: "display the current user" },
 		{ cmd: "date", desc: "show current date and time" },
+		{ cmd: "uptime", desc: "show how long the system has been running" },
 		{ cmd: "ls", desc: "list directory contents" },
 		{ cmd: "cd", desc: "change directory" },
 		{ cmd: "pwd", desc: "print working directory" },
@@ -730,6 +732,12 @@ let isMobileDevice = $state(false);
 
 		if (cmd === "date") {
 			addRichLine(segmentDate(new Date()));
+			return;
+		}
+
+		if (cmd === "uptime") {
+			// @ts-ignore - __BUILD_TIME__ is replaced by Vite define at build time
+			addRichLine(segmentUptime(__BUILD_TIME__));
 			return;
 		}
 
