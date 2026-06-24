@@ -24,9 +24,7 @@
 		]
 	} = $props();
 
-	let reducedMotion = $state(
-		browser && window.matchMedia("(prefers-reduced-motion: reduce)").matches
-	);
+	let reducedMotion = $state(browser && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 	let mobileMenuOpen = $state(false);
 	/** @type {HTMLElement | undefined} */
 	let mobilePanelEl = $state();
@@ -76,6 +74,7 @@
 		window.addEventListener("scroll", onScroll, { passive: true });
 		return () => window.removeEventListener("scroll", onScroll);
 	});
+
 </script>
 
 <nav
@@ -87,7 +86,6 @@
 	<a
 		bind:this={logoEl}
 		href={resolve("/")}
-		data-hover
 		class="flex shrink-0 items-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)]"
 		aria-label="anir183"
 	>
@@ -115,7 +113,6 @@
 		{#each navItems as item (item.label)}
 			<a
 				href={item.href}
-				data-hover
 				class="group relative overflow-hidden px-6 py-2.5 no-underline"
 			>
 				<span
@@ -133,7 +130,6 @@
 		<button
 			bind:this={themeBtn}
 			onclick={toggleTheme}
-			data-hover
 			aria-label="Toggle theme"
 			class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-c-border/40 bg-c-bg-2/30 text-sm text-c-neutral-0 opacity-0 backdrop-blur-xl transition-all duration-300 hover:border-c-border hover:bg-c-bg-2/50 max-lg:h-7 max-lg:w-7"
 		>
@@ -149,7 +145,6 @@
 		<button
 			bind:this={hamburgerBtn}
 			onclick={() => (mobileMenuOpen = !mobileMenuOpen)}
-			data-hover
 			class="relative ml-1.5 h-8 w-8 cursor-pointer opacity-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)] lg:hidden"
 			aria-label="Toggle menu"
 		>
@@ -186,10 +181,7 @@
 			bind:this={mobilePanelEl}
 			tabindex="-1"
 			class="absolute top-0 right-0 flex h-full w-64 flex-col items-center justify-center bg-c-bg-0 shadow-2xl outline-none max-sm:w-full"
-			transition:fly={{
-				duration: reducedMotion ? 0 : 250,
-				x: reducedMotion ? 0 : 400
-			}}
+			transition:fly={{ duration: reducedMotion ? 0 : 250, x: reducedMotion ? 0 : 400 }}
 		>
 			<button
 				onclick={() => (mobileMenuOpen = false)}
@@ -200,22 +192,22 @@
 			</button>
 
 			<div bind:this={mobileLinksEl} class="flex flex-col items-center gap-5">
-				{#each navItems as item (item.label)}
-					<a
-						href={item.href}
-						onclick={() => (mobileMenuOpen = false)}
-						class="group relative px-6 py-3 no-underline"
+		{#each navItems as item (item.label)}
+				<a
+					href={item.href}
+					onclick={() => (mobileMenuOpen = false)}
+					class="group relative px-6 py-3 no-underline"
+				>
+					<span
+						class="relative inline-flex items-center overflow-hidden font-c-unbounded text-3xl font-black tracking-wide text-c-neutral-0 transition-colors duration-200 group-hover:text-c-bg-0"
 					>
 						<span
-							class="relative inline-flex items-center overflow-hidden font-c-unbounded text-3xl font-black tracking-wide text-c-neutral-0 transition-colors duration-200 group-hover:text-c-bg-0"
-						>
-							<span
-								class="absolute inset-0 translate-y-full -skew-x-6 bg-c-accent-0 transition-transform duration-[400ms] ease-out group-hover:translate-y-0"
-							></span>
-							<span class="relative z-10">{item.label}</span>
-						</span>
-					</a>
-				{/each}
+							class="absolute inset-0 translate-y-full -skew-x-6 bg-c-accent-0 transition-transform duration-[400ms] ease-out group-hover:translate-y-0"
+						></span>
+						<span class="relative z-10">{item.label}</span>
+					</span>
+				</a>
+			{/each}
 			</div>
 		</div>
 	</div>
