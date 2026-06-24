@@ -284,7 +284,7 @@ export function segmentUptime(deployTimestamp) {
 		{ text: `${timeStr} `, cls: "text-c-info" },
 		{ text: "up ", cls: "text-c-neutral-1" },
 		{ text: `${uptimeStr}, `, cls: "text-c-neutral-0" },
-		{ text: "1 user,  ", cls: "text-c-neutral-1" },
+		{ text: "1 user, ", cls: "text-c-neutral-1" },
 		{ text: "load average: ", cls: "text-c-neutral-1" },
 		{ text: genLoadAvg(), cls: "text-c-info" }
 	];
