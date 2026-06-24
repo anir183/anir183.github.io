@@ -277,8 +277,8 @@ export function segmentUptime(deployTimestamp) {
 	const hours = Math.floor((elapsed % 86400) / 3600);
 	const minutes = Math.floor((elapsed % 3600) / 60);
 	const uptimeStr = days > 0
-		? `${days} day${days > 1 ? "s" : ""}, ${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`
-		: `${hours}:${String(minutes).padStart(2, "0")}`;
+		? `${days}d ${hours}h ${minutes}m`
+		: `${hours}h ${minutes}m`;
 
 	return [
 		{ text: `${timeStr} `, cls: "text-c-info" },
