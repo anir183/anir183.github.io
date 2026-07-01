@@ -40,7 +40,7 @@
 					observer.disconnect();
 					if (reducedMotion || canceled) return;
 
-					const textElements = el.querySelectorAll("h3, p, a[href]");
+					const textElements = el.querySelectorAll("h3, p, a[href^='/'], a[href^='https://anir183.is-a.dev']");
 					if (!textElements.length) {
 						gsap.to(el, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" });
 						return;
