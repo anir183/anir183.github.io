@@ -192,6 +192,12 @@
 			>
 				Resume
 			</AccentLink>
+			<AccentLink
+				href="https://anir183.is-a.dev/blog"
+				class="-translate-x-3 px-3 py-1 font-c-unbounded text-xs max-sm:text-xs font-bold lg:text-sm"
+			>
+				Blog
+			</AccentLink>
 		</div>
 	</div>
 </section>

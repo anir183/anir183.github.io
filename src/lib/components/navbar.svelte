@@ -20,7 +20,8 @@
 			{ label: "Projects", href: resolve("/#projects") },
 			{ label: "Skills", href: resolve("/#skills") },
 			{ label: "About", href: resolve("/#about") },
-			{ label: "Socials", href: resolve("/#socials") }
+			{ label: "Socials", href: resolve("/#socials") },
+			{ label: "Blog", href: "https://anir183.is-a.dev/blog" }
 		]
 	} = $props();
 

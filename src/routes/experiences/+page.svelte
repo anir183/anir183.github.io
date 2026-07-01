@@ -40,7 +40,8 @@
 	const navItems = [
 		{ label: "Home", href: resolve("/") },
 		{ label: "Projects", href: resolve("/projects") },
-		{ label: "Experiences", href: resolve("/experiences") }
+		{ label: "Experiences", href: resolve("/experiences") },
+		{ label: "Blog", href: "https://anir183.is-a.dev/blog" }
 	];
 
 	onMount(() => {
