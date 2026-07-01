@@ -21,7 +21,7 @@
 			{ label: "Skills", href: resolve("/#skills") },
 			{ label: "About", href: resolve("/#about") },
 			{ label: "Socials", href: resolve("/#socials") },
-			{ label: "Blog", href: "https://anir183.is-a.dev/blog" }
+			{ label: "Blog", href: "https://anir183.is-a.dev/blog", external: true }
 		]
 	} = $props();
 
@@ -122,7 +122,9 @@
 					<span
 						class="absolute inset-0 translate-y-full -skew-x-6 bg-c-accent-0 transition-transform duration-[400ms] ease-out group-hover:translate-y-0"
 					></span>
-					<span class="relative z-10">{item.label}</span>
+					<span class="relative z-10">
+						{item.label} {#if item.external}<span class="inline-block text-[1.1em] font-sans leading-none" aria-hidden>↗</span>{/if}
+					</span>
 				</span>
 			</a>
 		{/each}
@@ -193,22 +195,24 @@
 			</button>
 
 			<div bind:this={mobileLinksEl} class="flex flex-col items-center gap-5">
-		{#each navItems as item (item.label)}
-				<a
-					href={item.href}
-					onclick={() => (mobileMenuOpen = false)}
-					class="group relative px-6 py-3 no-underline"
-				>
-					<span
-						class="relative inline-flex items-center overflow-hidden font-c-unbounded text-3xl font-black tracking-wide text-c-neutral-0 transition-colors duration-200 group-hover:text-c-bg-0"
+				{#each navItems as item (item.label)}
+					<a
+						href={item.href}
+						onclick={() => (mobileMenuOpen = false)}
+						class="group relative px-6 py-3 no-underline"
 					>
 						<span
-							class="absolute inset-0 translate-y-full -skew-x-6 bg-c-accent-0 transition-transform duration-[400ms] ease-out group-hover:translate-y-0"
-						></span>
-						<span class="relative z-10">{item.label}</span>
-					</span>
-				</a>
-			{/each}
+							class="relative inline-flex items-center overflow-hidden font-c-unbounded text-3xl font-black tracking-wide text-c-neutral-0 transition-colors duration-200 group-hover:text-c-bg-0"
+						>
+							<span
+								class="absolute inset-0 translate-y-full -skew-x-6 bg-c-accent-0 transition-transform duration-[400ms] ease-out group-hover:translate-y-0"
+							></span>
+							<span class="relative z-10">
+								{item.label} {#if item.external}<span class="inline-block text-[1.1em] font-sans leading-none" aria-hidden>↗</span>{/if}
+							</span>
+						</span>
+					</a>
+				{/each}
 			</div>
 		</div>
 	</div>

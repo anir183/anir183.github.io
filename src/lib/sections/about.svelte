@@ -196,7 +196,7 @@
 				href="https://anir183.is-a.dev/blog"
 				class="-translate-x-3 px-3 py-1 font-c-unbounded text-xs max-sm:text-xs font-bold lg:text-sm"
 			>
-				Blog
+				Blog <span class="inline-block text-[1.3em] font-sans leading-none" aria-hidden>↗</span>
 			</AccentLink>
 		</div>
 	</div>
