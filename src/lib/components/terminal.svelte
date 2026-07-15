@@ -610,6 +610,52 @@
 	let focused = $state(false);
 	let tabCompletions = $state(/** @type {string[]} */ ([]));
 	let tabCompletionIdx = $state(0);
+	let cursorPos = $state(0);
+
+	/**
+	 * Sync cursorPos from the hidden input's selectionStart.
+	 * @returns {number}
+	 */
+	function syncCursorPos() {
+		if (!hiddenInput) return currentInput.length;
+		cursorPos = hiddenInput.selectionStart ?? currentInput.length;
+		return cursorPos;
+	}
+
+	/** @type {Record<string, string>} */
+	const COLOR_VAR_MAP = {
+		"text-c-accent-0": "var(--color-c-accent-0)",
+		"text-c-accent-1": "var(--color-c-accent-1)",
+		"text-c-neutral-0": "var(--color-c-neutral-0)",
+		"text-c-neutral-1": "var(--color-c-neutral-1)",
+		"text-c-info": "var(--color-c-info)",
+		"text-c-success": "var(--color-c-success)",
+		"text-c-warning": "var(--color-c-warning)",
+		"text-c-error": "var(--color-c-error)"
+	};
+
+	/**
+	 * @param {string} cls
+	 * @returns {string}
+	 */
+	function colorForSegmentClass(cls) {
+		return COLOR_VAR_MAP[cls] || "var(--color-c-neutral-0)";
+	}
+
+	/**
+	 * Find the segment covering the given character offset.
+	 * @param {Array<{ text: string, cls: string }>} segments
+	 * @param {number} offset
+	 * @returns {{ text: string, cls: string } | null}
+	 */
+	function segmentAtCursor(segments, offset) {
+		let pos = 0;
+		for (const seg of segments) {
+			if (offset < pos + seg.text.length) return seg;
+			pos += seg.text.length;
+		}
+		return null;
+	}
 
 /** @type {HTMLDivElement | undefined} */
 let completionPopupEl = $state();
@@ -637,6 +683,10 @@ $effect(() => {
 });
 
 	let inputSegments = $derived(highlightInput(currentInput, cmdMap, aliases, fs, cwd));
+
+	let cursorSegment = $derived(segmentAtCursor(inputSegments, cursorPos));
+	let cursorBg = $derived(cursorSegment ? colorForSegmentClass(cursorSegment.cls) : "var(--color-c-neutral-0)");
+	let cursorChar = $derived(currentInput[cursorPos] ?? " ");
 
 /** @type {HTMLDivElement | undefined} */
 let outputEl = $state();
@@ -942,6 +992,7 @@ let isMobileDevice = $state(false);
 			history = [...history, ""];
 			historyIndex = -1;
 			currentInput = "";
+			cursorPos = 0;
 			return;
 		}
 
@@ -978,6 +1029,7 @@ let isMobileDevice = $state(false);
 			history = [...history, raw];
 			historyIndex = -1;
 			currentInput = "";
+			cursorPos = 0;
 			return;
 		}
 
@@ -988,6 +1040,7 @@ let isMobileDevice = $state(false);
 		history = [...history, raw];
 		historyIndex = -1;
 		currentInput = "";
+		cursorPos = 0;
 		execCmd(cmd, raw);
 	}
 
@@ -1009,6 +1062,7 @@ let isMobileDevice = $state(false);
 					: Math.max(0, historyIndex - 1);
 			historyIndex = newIdx;
 			currentInput = history[historyIndex];
+			cursorPos = currentInput.length;
 		} else if (e.key === "ArrowDown") {
 			e.preventDefault();
 			if (historyIndex === -1) return;
@@ -1020,6 +1074,17 @@ let isMobileDevice = $state(false);
 				historyIndex = newIdx;
 				currentInput = history[historyIndex];
 			}
+			cursorPos = currentInput.length;
+		} else if (e.key === "ArrowLeft") {
+			cursorPos = Math.max(0, cursorPos - 1);
+		} else if (e.key === "ArrowRight") {
+			cursorPos = Math.min(currentInput.length, cursorPos + 1);
+		} else if (e.key === "Home") {
+			e.preventDefault();
+			cursorPos = 0;
+		} else if (e.key === "End") {
+			e.preventDefault();
+			cursorPos = currentInput.length;
 		} else if (e.key === "Tab") {
 			e.preventDefault();
 			if (historyIndex !== -1) historyIndex = -1;
@@ -1042,6 +1107,7 @@ let isMobileDevice = $state(false);
 					currentInput = applyCompletion(currentInput, comps[0]);
 				}
 			}
+			cursorPos = currentInput.length;
 		} else if (e.key === "Escape") {
 			if (tabCompletions.length > 0) {
 				tabCompletions = [];
@@ -1065,6 +1131,7 @@ let isMobileDevice = $state(false);
 		function onInput() {
 			if (!hiddenInput) return;
 			currentInput = hiddenInput.value;
+			cursorPos = hiddenInput.selectionStart ?? currentInput.length;
 		}
 
 	/** @param {MouseEvent} e */
@@ -1075,6 +1142,7 @@ let isMobileDevice = $state(false);
 			const cmd = btn.getAttribute("data-cmd");
 			if (cmd) {
 				addLine("prompt", `guest@portfolio-183:${promptDir}$ ${cmd}`);
+				cursorPos = 0;
 				execCmd(cmd);
 				terminalEl?.focus();
 			}
@@ -1096,6 +1164,8 @@ let isMobileDevice = $state(false);
 
 		isMobileDevice =
 			"ontouchstart" in window && matchMedia("(hover: none)").matches;
+
+		hiddenInput?.addEventListener("select", syncCursorPos);
 
 		let mounted = true;
 
@@ -1125,6 +1195,7 @@ let isMobileDevice = $state(false);
 
 		return () => {
 			mounted = false;
+			hiddenInput?.removeEventListener("select", syncCursorPos);
 		};
 	});
 
@@ -1379,15 +1450,16 @@ let isMobileDevice = $state(false);
 				onclick={() => hiddenInput?.focus()}
 			>
 					<span class="whitespace-pre pointer-events-none">
-					{#each inputSegments as seg, i}
+					{#each inputSegments as seg, i (i)}
 						<span class={seg.cls}>{seg.text}</span>
 					{/each}
 				</span>
 					<span
-						class="font-bold -ml-[1px] pointer-events-none"
+						class="absolute inset-y-0 flex items-center font-bold pointer-events-none leading-none"
 						class:cursor-blink={focused}
-						class:opacity-0={!focused}>█</span
-					>
+						class:opacity-0={!focused}
+						style="left: {cursorPos}ch; width: 1ch; background-color: {cursorBg}; color: var(--color-c-bg-1)"
+					>{cursorChar}</span>
 					<input
 						bind:this={hiddenInput}
 						class="absolute inset-0 border-none outline-none"
@@ -1410,12 +1482,13 @@ let isMobileDevice = $state(false);
 								<button
 									data-idx={i}
 									class="block w-full whitespace-nowrap px-2.5 py-0.5 text-left font-c-jetbrains text-xs transition-colors {i === tabCompletionIdx ? 'bg-c-accent-0/10 text-c-accent-0' : 'text-c-neutral-0'}"
-									onmousedown={(e) => {
-										e.preventDefault();
-										currentInput = applyCompletion(currentInput, comp);
-										tabCompletions = [];
-										terminalEl?.focus();
-									}}>{comp}</button
+								onmousedown={(e) => {
+									e.preventDefault();
+									currentInput = applyCompletion(currentInput, comp);
+									cursorPos = currentInput.length;
+									tabCompletions = [];
+									terminalEl?.focus();
+								}}>{comp}</button
 								>
 							{/each}
 						</div>
