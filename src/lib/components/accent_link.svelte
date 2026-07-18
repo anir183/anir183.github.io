@@ -6,6 +6,8 @@
 		class: className = "",
 		/** @type {HTMLAnchorElement | undefined} */
 		el = $bindable(),
+		/** @type {boolean} */
+		newTab = false,
 		children
 	} = $props();
 
@@ -15,8 +17,8 @@
 <a
 	bind:this={el}
 	{href}
-	target={isExternal ? "_blank" : undefined}
-	rel={isExternal ? "noopener noreferrer" : undefined}
+	target={newTab || isExternal ? "_blank" : undefined}
+	rel={newTab || isExternal ? "noopener noreferrer" : undefined}
 	class="group relative inline-flex w-fit items-center overflow-hidden text-c-neutral-0 no-underline transition-colors duration-200 hover:text-c-bg-0 {className}"
 >
 	<span class="relative">

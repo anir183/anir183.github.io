@@ -21,6 +21,7 @@
 			{ label: "Skills", href: resolve("/#skills") },
 			{ label: "About", href: resolve("/#about") },
 			{ label: "Socials", href: resolve("/#socials") },
+			{ label: "Resume", href: "/assets/resume.pdf", external: true },
 			{ label: "Blog", href: "https://anir183.is-a.dev/blog", external: true }
 		]
 	} = $props();
@@ -114,6 +115,8 @@
 		{#each navItems as item (item.label)}
 			<a
 				href={item.href}
+				target={item.external ? "_blank" : undefined}
+				rel={item.external ? "noopener noreferrer" : undefined}
 				class="group relative overflow-hidden px-6 py-2.5 no-underline"
 			>
 				<span
@@ -198,6 +201,8 @@
 				{#each navItems as item (item.label)}
 					<a
 						href={item.href}
+						target={item.external ? "_blank" : undefined}
+						rel={item.external ? "noopener noreferrer" : undefined}
 						onclick={() => (mobileMenuOpen = false)}
 						class="group relative px-6 py-3 no-underline"
 					>

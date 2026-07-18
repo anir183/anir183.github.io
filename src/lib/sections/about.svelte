@@ -188,6 +188,7 @@
 			</AccentLink>
 			<AccentLink
 				href="/assets/resume.pdf"
+				newTab
 				class="-translate-x-3 px-3 py-1 font-c-unbounded text-xs max-sm:text-xs font-bold lg:text-sm"
 			>
 				Resume

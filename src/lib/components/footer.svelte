@@ -7,6 +7,7 @@
 			{ label: "Home", href: "/" },
 			{ label: "Projects", href: "/projects" },
 			{ label: "Experiences", href: "/experiences" },
+			{ label: "Resume", href: "/assets/resume.pdf", external: true },
 			{ label: "Blog", href: "https://anir183.is-a.dev/blog", external: true }
 		]
 	} = $props();
@@ -209,6 +210,8 @@
 				{#each pageLinks as link (link.label)}
 					<a
 						href={link.href}
+						target={link.external ? "_blank" : undefined}
+						rel={link.external ? "noopener noreferrer" : undefined}
 						class="transition-colors hover:text-c-accent-0/75"
 					>{link.label} {#if link.external}<span class="inline-block text-[1.1em] font-sans leading-none" aria-hidden>↗</span>{/if}</a
 					>
