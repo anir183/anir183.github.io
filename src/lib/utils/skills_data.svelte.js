@@ -168,6 +168,16 @@ const _skills = [
 		relatedTechnologies: ["node", "mongodb", "postgres"]
 	},
 	{
+		id: "fastapi",
+		name: "FastAPI",
+		icon: "⚡",
+		devicon: "fastapi-plain",
+		category: "Web & Mobile",
+		description: "Modern async Python framework for building APIs",
+		experience: "1 year",
+		relatedTechnologies: ["python", "sqlite", "websockets"]
+	},
+	{
 		id: "flet",
 		name: "Flet",
 		icon: "🪶",
@@ -186,6 +196,18 @@ const _skills = [
 		description: "Google's app development platform with auth, database, hosting, and serverless functions",
 		experience: "2 years",
 		relatedTechnologies: ["react", "flutter", "node", "java"]
+	},
+
+	// ── Computer Vision ──
+	{
+		id: "opencv",
+		name: "OpenCV",
+		icon: "👁️",
+		devicon: "opencv-plain",
+		category: "Computer Vision",
+		description: "Computer-vision library for image and video processing",
+		experience: "6 months",
+		relatedTechnologies: ["python", "anpr"]
 	},
 
 	// ── Databases ──
@@ -295,7 +317,7 @@ const _skills = [
 ];
 
 /** @type {string[]} */
-export const skillCategories = ["Languages", "Web & Mobile", "Databases", "Game Development", "DevOps & Tools"];
+export const skillCategories = ["Languages", "Web & Mobile", "Computer Vision", "Databases", "Game Development", "DevOps & Tools"];
 
 /** Adjacency pairs for network connections */
 export const skillConnections = [
@@ -306,6 +328,9 @@ export const skillConnections = [
 	["dart", "flutter"],
 	["python", "flet"],
 	["python", "sqlite"],
+	["python", "fastapi"],
+	["python", "opencv"],
+	["fastapi", "sqlite"],
 	["csharp", "unity"],
 	["csharp", "godot"],
 	["c", "rust"],
