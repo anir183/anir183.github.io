@@ -2,11 +2,59 @@
  * @typedef {{ id: string, number: string, name: string, image: string, imageMobile: string, tags: string[], description: string, images: string[], imagesMobile: string[], link: string }} Project
  */
 
-/** @type {Project[]} */
+/**
+ * All applicable projects, ordered by importance (most important first).
+ * The home page shows the first four, the projects page shows all of them,
+ * and the resume lists the top five.
+ *
+ * @type {Project[]}
+ */
 export const projects = [
 	{
-		id: "safe-ping",
+		id: "traffiq",
 		number: "01",
+		name: "traffIQ",
+		image: "/assets/project_images/placeholder.jpg",
+		imageMobile: "/assets/project_images/placeholder_mobile.jpg",
+		tags: ["python", "computer vision", "anpr", "gis"],
+		description:
+			"A city-wide AI engine that links isolated CCTV and ANPR cameras into a unified vehicle-tracking and traffic-analytics platform. Computer-vision models identify vehicles at the edge, observations are correlated across cameras to reconstruct trajectories, and real-time and historical traffic insights are surfaced to operators. Built across successive Smart India Hackathon internal rounds.",
+		images: [
+			"/assets/project_images/placeholder.jpg",
+			"/assets/project_images/placeholder.jpg",
+			"/assets/project_images/placeholder.jpg"
+		],
+		imagesMobile: [
+			"/assets/project_images/placeholder_mobile.jpg",
+			"/assets/project_images/placeholder_mobile.jpg",
+			"/assets/project_images/placeholder_mobile.jpg"
+		],
+		link: "https://github.com/anir183/traffIQ"
+	},
+	{
+		id: "phisim",
+		number: "02",
+		name: "PhiSim",
+		image: "/assets/project_images/placeholder.jpg",
+		imageMobile: "/assets/project_images/placeholder_mobile.jpg",
+		tags: ["python", "fastapi", "sqlite", "websockets"],
+		description:
+			"A local, self-contained phishing-awareness lab. Participants move through believable mailbox, messenger, marketplace and MFA experiences while an analyst console records safe, explainable telemetry. FastAPI backend with SQLite persistence, a live WebSocket event stream, and deterministic indicator analysis — no real email, SMS, credentials or outbound network calls.",
+		images: [
+			"/assets/project_images/placeholder.jpg",
+			"/assets/project_images/placeholder.jpg",
+			"/assets/project_images/placeholder.jpg"
+		],
+		imagesMobile: [
+			"/assets/project_images/placeholder_mobile.jpg",
+			"/assets/project_images/placeholder_mobile.jpg",
+			"/assets/project_images/placeholder_mobile.jpg"
+		],
+		link: "https://github.com/anir183/phisim"
+	},
+	{
+		id: "safe-ping",
+		number: "03",
 		name: "Safe Ping",
 		image: "/assets/project_images/safe_ping/regular_0.png",
 		imageMobile: "/assets/project_images/safe_ping/mobile_0.png",
@@ -26,8 +74,50 @@ export const projects = [
 		link: "https://github.com/anir183/safe-ping"
 	},
 	{
+		id: "showtime-hub",
+		number: "04",
+		name: "Showtime Hub",
+		image: "/assets/project_images/movie_booking/regular_0.png",
+		imageMobile: "/assets/project_images/movie_booking/mobile_0.png",
+		tags: ["java", "javaawt", "jswing"],
+		description:
+			"A simple movie booking app simulation made in pure JAVA, with default UI libraries like JSwing and JavaAWT that comes with a stock JAVA install. Stores data in the filesystem within .txt files. Hackathon winner.",
+		images: [
+			"/assets/project_images/movie_booking/regular_0.png",
+			"/assets/project_images/movie_booking/regular_1.png",
+			"/assets/project_images/movie_booking/regular_2.png"
+		],
+		imagesMobile: [
+			"/assets/project_images/movie_booking/mobile_0.png",
+			"/assets/project_images/movie_booking/mobile_1.png",
+			"/assets/project_images/movie_booking/mobile_2.png"
+		],
+		link: "https://github.com/anir183/movie-booking.java"
+	},
+	{
+		id: "auto-updater",
+		number: "05",
+		name: "Auto Updater",
+		image: "/assets/project_images/placeholder.jpg",
+		imageMobile: "/assets/project_images/placeholder_mobile.jpg",
+		tags: ["csharp", "unity", "networking"],
+		description:
+			"A cross-platform application launcher, installer and updater built in Unity. Originally a .NET WPF app, it was ported to Unity to ship on Windows, macOS and Linux, and uses Unity Remote Config to control update behaviour remotely without redeploying.",
+		images: [
+			"/assets/project_images/placeholder.jpg",
+			"/assets/project_images/placeholder.jpg",
+			"/assets/project_images/placeholder.jpg"
+		],
+		imagesMobile: [
+			"/assets/project_images/placeholder_mobile.jpg",
+			"/assets/project_images/placeholder_mobile.jpg",
+			"/assets/project_images/placeholder_mobile.jpg"
+		],
+		link: "https://github.com/anir183/auto-updater.unity"
+	},
+	{
 		id: "shebs",
-		number: "02",
+		number: "06",
 		name: "SHEBS",
 		image: "/assets/project_images/shebs/regular_0.png",
 		imageMobile: "/assets/project_images/shebs/mobile_0.png",
@@ -48,7 +138,7 @@ export const projects = [
 	},
 	{
 		id: "cognify",
-		number: "03",
+		number: "07",
 		name: "Cognify",
 		image: "/assets/project_images/cognify/regular_0.png",
 		imageMobile: "/assets/project_images/cognify/mobile_0.png",
@@ -66,26 +156,8 @@ export const projects = [
 			"/assets/project_images/cognify/mobile_2.png"
 		],
 		link: "https://github.com/anir183/cognify"
-	},
-	{
-		id: "showtime-hub",
-		number: "04",
-		name: "Showtime Hub",
-		image: "/assets/project_images/movie_booking/regular_0.png",
-		imageMobile: "/assets/project_images/movie_booking/mobile_0.png",
-		tags: ["java", "javaawt", "jswing"],
-		description:
-			"A simple movie booking app simulation made in pure JAVA, with default UI libraries like JSwing and JavaAWT that comes with a stock JAVA install. Stores data in the filesystem within .txt files.",
-		images: [
-			"/assets/project_images/movie_booking/regular_0.png",
-			"/assets/project_images/movie_booking/regular_1.png",
-			"/assets/project_images/movie_booking/regular_2.png"
-		],
-		imagesMobile: [
-			"/assets/project_images/movie_booking/mobile_0.png",
-			"/assets/project_images/movie_booking/mobile_1.png",
-			"/assets/project_images/movie_booking/mobile_2.png"
-		],
-		link: "https://github.com/anir183/movie-booking.java"
 	}
 ];
+
+/** Projects shown on the home page (the four most important). */
+export const homeProjects = projects.slice(0, 4);

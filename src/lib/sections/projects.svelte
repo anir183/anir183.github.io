@@ -2,7 +2,7 @@
 	import { onMount, tick } from "svelte";
 	import { resolve } from "$app/paths";
 	import {
-		projects,
+		homeProjects,
 		AnimatedHeading,
 		CubeGrid,
 		AccentLink,
@@ -12,7 +12,7 @@
 	import { inertOffscreen } from "$lib/actions/inert_offscreen.js";
 
 	/** @type {import("$lib/utils/projects_data.svelte.js").Project | null} */
-	let activeProject = $state(projects[0]);
+	let activeProject = $state(homeProjects[0]);
 	let isMobile = $state(false);
 	let reducedMotion = $state(typeof window !== 'undefined' && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
@@ -100,7 +100,7 @@
 			bind:this={projectListEl}
 			class="mt-10 flex flex-col gap-3 max-lg:pointer-events-auto"
 		>
-			{#each projects as project (project.id)}
+			{#each homeProjects as project (project.id)}
 				<li>
 					<button
 						onmouseenter={() => (activeProject = project)}
@@ -135,7 +135,7 @@
 		bind:this={gridContainerEl}
 		class="sticky bottom-0 flex h-[50vh] w-full items-center justify-center max-lg:static max-lg:h-svh max-lg:p-10 max-sm:px-5 max-sm:py-8 lg:top-0 lg:h-svh lg:w-3/5 lg:pr-12"
 	>
-		{#each projects as project (project.id)}
+		{#each homeProjects as project (project.id)}
 			<Picture
 				src={project.image}
 				alt="Screenshot of {project.name}"
