@@ -189,6 +189,7 @@ export async function experiencesEntrySequence(config) {
 		const wrap = contentWraps[i];
 		const company = wrap.querySelector('[data-el="company"]');
 		const desc = wrap.querySelector('[data-el="desc"]');
+		const results = wrap.querySelector('[data-el="results"]');
 		const tags = wrap.querySelector('[data-el="tags"]');
 
 		const contentTl = gsap.timeline({
@@ -198,6 +199,7 @@ export async function experiencesEntrySequence(config) {
 		contentTl.set(wrap, { opacity: 1 }, 0);
 		if (company) contentTl.fromTo(company, { y: 24, opacity: 0 }, { y: 0, opacity: 1 }, 0.2);
 		if (desc) contentTl.fromTo(desc, { y: 20, opacity: 0 }, { y: 0, opacity: 1 }, 0.3);
+		if (results) contentTl.fromTo(results, { y: 18, opacity: 0 }, { y: 0, opacity: 1 }, 0.32);
 		if (tags) contentTl.fromTo(tags, { y: 16, opacity: 0 }, { y: 0, opacity: 1 }, 0.35);
 
 		const contentSt = ScrollTrigger.create({

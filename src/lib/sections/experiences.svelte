@@ -346,12 +346,26 @@ onDestroy(() => {
 				>
 				<AnimatedHeading tag="h3" start={true} triggerOffset="top 20%" sectionId={"experience-"+exp.id} triggerEl={sectionEls[i]} {reducedMotion} class="text-4xl font-black text-c-neutral-0 font-c-unbounded leading-tight lg:text-5xl xl:text-6xl">{exp.role}</AnimatedHeading>
 				<div data-el="company" class="mt-1.5 flex items-baseline gap-5">
-					<p class="text-base font-semibold text-c-accent-0 font-c-ubuntu tracking-wide lg:text-xl">{exp.company}</p>
+					{#if exp.link}
+						<a
+							href={exp.link}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="text-base font-semibold text-c-accent-0 font-c-ubuntu tracking-wide underline-offset-4 hover:underline lg:text-xl"
+						>{exp.company}</a>
+					{:else}
+						<p class="text-base font-semibold text-c-accent-0 font-c-ubuntu tracking-wide lg:text-xl">{exp.company}</p>
+					{/if}
 					<span class="shrink-0 text-base text-c-neutral-1/40 font-c-jetbrains lg:text-xl">{exp.period}</span>
 				</div>
 				<p data-el="desc" class="mt-5 text-base max-sm:text-xs leading-relaxed text-c-neutral-1 font-c-ubuntu lg:text-xl max-w-prose">
 					{exp.description}
 				</p>
+				{#if exp.results}
+					<p data-el="results" class="mt-3 text-sm text-c-accent-0/80 font-c-jetbrains lg:text-base">
+						{exp.results}
+					</p>
+				{/if}
 				{#if exp.tags?.length}
 					<div data-el="tags" class="mt-5 flex flex-wrap gap-1.5">
 						{#each exp.tags as tag}
