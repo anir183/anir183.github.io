@@ -103,20 +103,27 @@
 			{#each homeProjects as project (project.id)}
 				<li>
 					<button
-						onmouseenter={() => (activeProject = project)}
 						onclick={() => (activeProject = project)}
 						class="group cursor-pointer text-left transition-colors duration-200 hover:text-c-accent-0"
 						class:text-c-accent-0={activeProject?.id === project.id}
+						class:is-active={activeProject?.id === project.id}
 						aria-pressed={activeProject?.id === project.id}
 					>
-						<span
-							class="font-c-bebas text-xs font-bold tracking-widest text-c-neutral-1"
-						>
-							{project.tags.join(" · ")}
+						<span class="flex flex-col">
+							<span
+								class="font-c-bebas text-xs font-bold tracking-widest text-c-neutral-1"
+							>
+								{project.tags.join(" · ")}
+							</span>
+							<span class="mt-0.5 flex items-center">
+								<span aria-hidden="true" class="project-marker"></span>
+								<h3
+									class="font-c-ubuntu text-xl max-sm:text-sm font-bold lg:text-2xl"
+								>
+									{project.name}
+								</h3>
+							</span>
 						</span>
-						<h3 class="mt-0.5 font-c-ubuntu text-xl max-sm:text-sm font-bold lg:text-2xl">
-							{project.name}
-						</h3>
 					</button>
 				</li>
 			{/each}
@@ -156,3 +163,24 @@
 		</div>
 	</div>
 </section>
+
+<style>
+	.project-marker {
+		align-self: center;
+		width: 0;
+		margin-right: 0;
+		height: 1.15em;
+		flex-shrink: 0;
+		background-color: var(--color-c-accent-0);
+		/* left edge straight, right edge slants slightly inward toward the bottom */
+		clip-path: polygon(0 0, 100% 0, calc(100% - 4px) 100%, 0 100%);
+		transition:
+			width 220ms ease-out,
+			margin-right 220ms ease-out;
+	}
+
+	button.is-active .project-marker {
+		width: 10px;
+		margin-right: 12px;
+	}
+</style>
