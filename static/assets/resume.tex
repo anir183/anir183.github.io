@@ -76,6 +76,17 @@
     \end{tabular*}\vspace{-7pt}
 }
 
+% Like \resumeSubheading but with an extra, lightly-spaced note line under the
+% degree/dates row, used for scores and the growing yearly YGPA list.
+\newcommand{\resumeSubheadingNote}[5]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\[1.5pt]
+      \multicolumn{2}{@{}l}{\small#5}
+    \end{tabular*}\vspace{-7pt}
+}
+
 \newcommand{\resumeSubSubheading}[2]{
     \item
     \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
@@ -108,7 +119,7 @@
 %----------HEADING----------
 \begin{center}
     \textbf{\Huge \scshape Anirban RoyChowdhury} \\ \vspace{1pt}
-    \small +91 9903127100 $|$ \href{mailto:anirbanrc@proton.me}{\underline{anirbanrc@proton.me}} $|$
+    \small \href{mailto:anirbanrc@proton.me}{\underline{anirbanrc@proton.me}} $|$
     \href{https://linkedin.com/in/anir183}{\underline{linkedin.com/in/anir183}} $|$
     \href{https://github.com/anir183}{\underline{github.com/anir183}} $|$
     \href{https://anir183.is-a.dev}{\underline{anir183.is-a.dev}}
@@ -118,12 +129,20 @@
 %-----------EDUCATION-----------
 \section{Education}
   \resumeSubHeadingListStart
-    \resumeSubheading
-      {Techno Main Salt Lake}{Kolkata, India}
-      {B.Tech in Cyber Security}{2024 -- Present}
-    \resumeSubheading
-      {P.B. Academic School}{Kolkata, India}
-      {Higher Secondary (Computer Science)}{2022 -- 2024}
+    % Yearly YGPA lives on its own line; to add 3rd/4th year, append to the last
+    % argument, e.g. {YGPA: 7.74 1st year, 8.05 2nd year, 8.2 3rd year, 8.4 4th year}
+    \resumeSubheadingNote
+      {\href{https://www.technomainsaltlake.ticollege.ac.in}{Techno Main Salt Lake}}{Kolkata, India}
+      {B.Tech CSE (Cyber Security)}{2024 -- Present}
+      {YGPA: 7.74 1st year, 8.05 2nd year}
+    \resumeSubheadingNote
+      {\href{https://pbacademic.in/}{P.B. Academic School}}{Kolkata, India}
+      {Higher Secondary (ISC, Computer Science)}{2022 -- 2024}
+      {92\% best of 4, 88.8\% overall}
+    \resumeSubheadingNote
+      {\href{https://npskolkata.com/}{National Public School}}{Kolkata, India}
+      {Primary, Middle \& Secondary (ICSE, PCMC)}{2012 -- 2022}
+      {89.6\% best of 5, 88.5\% overall}
   \resumeSubHeadingListEnd
 
 
@@ -132,8 +151,17 @@
   \resumeSubHeadingListStart
 
     \resumeSubheading
+      {Co-Founder \& Full-Stack Developer}{2023 -- Present}
+      {CacheCrew}{}
+      \resumeItemListStart
+        \resumeItem{Co-founded a hackathon team that has designed and shipped multiple full-stack, cross-platform applications}
+        \resumeItem{Built real-time backends, computer-vision pipelines and responsive front-ends end to end}
+        \resumeItem{Progressed through multiple Smart India Hackathon internal rounds, owning delivery and demos under tight deadlines}
+      \resumeItemListEnd
+
+    \resumeSubheading
       {Backend Developer}{2024 -- 2026}
-      {IIC TMSL}{}
+      {\href{https://www.linkedin.com/company/iictmsl/}{IIC TMSL}}{}
       \resumeItemListStart
         \resumeItem{Built and shipped backends for user registration and payment websites for club events}
         \resumeItem{Maintained existing organization sites from updating REST APIs to managing frontend UX}
@@ -141,10 +169,9 @@
 
     \resumeSubheading
       {Self-Taught Developer}{2019 -- Present}
-      {Independent}{}
+      {\href{https://anir183.is-a.dev}{Independent}}{}
       \resumeItemListStart
-        \resumeItem{Strong grasp of procedural and object-oriented programming across multiple languages including Java, Python, C, C\#, and Rust}
-        \resumeItem{Multi-framework proficiency with experience across Web Dev, App Dev, System Design, Game Dev, DBMS, and DevOps}
+        \resumeItem{Continuous self-directed learning across web, app, game and systems programming, picking up new languages and frameworks quickly}
       \resumeItemListEnd
 
   \resumeSubHeadingListEnd
@@ -154,19 +181,29 @@
 \section{Projects}
     \resumeSubHeadingListStart
       \resumeProjectHeading
-          {\textbf{Safe Ping} $|$ \emph{Python, Flet, FastAPI, WebSockets}}{}
+          {\href{https://github.com/anir183/traffIQ}{\textbf{traffIQ}} $|$ \emph{Python, Computer Vision, ANPR, GIS}}{}
+          \resumeItemListStart
+            \resumeItem{City-wide AI engine linking CCTV and ANPR cameras into unified multi-camera vehicle tracking and traffic analytics}
+          \resumeItemListEnd
+      \resumeProjectHeading
+          {\href{https://github.com/anir183/phisim}{\textbf{PhiSim}} $|$ \emph{Python, FastAPI, SQLite, WebSockets}}{}
+          \resumeItemListStart
+            \resumeItem{Local phishing-awareness lab with safe telemetry, deterministic indicator analysis and a live analyst console}
+          \resumeItemListEnd
+      \resumeProjectHeading
+          {\href{https://github.com/anir183/safe-ping}{\textbf{Safe Ping}} $|$ \emph{Python, Flet, FastAPI, WebSockets}}{}
           \resumeItemListStart
             \resumeItem{A secure workspace and chat application with real-time WebSocket communication}
           \resumeItemListEnd
       \resumeProjectHeading
-          {\textbf{SHEBS} $|$ \emph{Flutter, Firebase, Go}}{}
+          {\href{https://github.com/anir183/movie-booking.java}{\textbf{Showtime Hub}} $|$ \emph{Java, Swing, AWT}}{}
           \resumeItemListStart
-            \resumeItem{Rapid Crisis Response system for detecting, reporting, and synchronizing crisis response across hospitality ecosystems}
+            \resumeItem{Desktop movie-booking simulator with a custom file-based data store, built in pure Java --- hackathon winner}
           \resumeItemListEnd
       \resumeProjectHeading
-          {\textbf{Cognify} $|$ \emph{Flutter, Go, Firebase, Hardhat}}{}
+          {\href{https://github.com/anir183/auto-updater.unity}{\textbf{Auto Updater}} $|$ \emph{C\#, Unity, Networking}}{}
           \resumeItemListStart
-            \resumeItem{AI-driven EdTech platform with real-time adaptation, performance analysis, and gamified learning experiences}
+            \resumeItem{Cross-platform installer and updater with remote-controllable update behaviour}
           \resumeItemListEnd
     \resumeSubHeadingListEnd
 
@@ -176,7 +213,8 @@
  \begin{itemize}[leftmargin=0.15in, label={}]
     \small{\item{
      \textbf{Languages}{: Java, JavaScript, Python, C, C\#, Rust, Go, Dart, Lua, SQL} \\
-     \textbf{Web \& Mobile}{: React, Svelte, Flutter, Node.js, Express, Firebase} \\
+     \textbf{Web, Mobile \& APIs}{: React, Svelte, Flutter, Flet, Node.js, Express, FastAPI, WebSockets, Firebase} \\
+     \textbf{Computer Vision}{: OpenCV, ANPR, Edge Inference} \\
      \textbf{Databases}{: MongoDB, PostgreSQL, SQLite} \\
      \textbf{Game Dev}{: Unity, Godot} \\
      \textbf{DevOps \& Tools}{: Linux, Git, GitHub, Vercel, Render}
