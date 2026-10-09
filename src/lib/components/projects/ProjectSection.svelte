@@ -20,6 +20,7 @@
 	/** @type {HTMLElement | undefined} */
 	let imageTrackEl = $state();
 	let activeIndex = $state(0);
+	let lightboxIndex = $state(0);
 	let showLightbox = $state(false);
 	let isMobile = $state(false);
 	let imgWrapsRef = $state(/** @type {HTMLElement[]} */ ([]));
@@ -37,6 +38,7 @@
 	 */
 	function handleDesktopImgClick(i) {
 		if (i === activeIndex) {
+			lightboxIndex = i;
 			showLightbox = true;
 			return;
 		}
@@ -199,6 +201,7 @@
 							scrub: 1,
 							animation: flexTl,
 							onUpdate: (self) => {
+								if (showLightbox) return;
 								activeIndex = Math.round(self.progress * (n - 1));
 							}
 						});
@@ -327,7 +330,7 @@
 </section>
 
 {#if showLightbox}
-	<ImageLightbox src={images[activeIndex]} onclose={() => showLightbox = false} />
+	<ImageLightbox src={images[lightboxIndex]} onclose={() => showLightbox = false} />
 {/if}
 </div>
 
