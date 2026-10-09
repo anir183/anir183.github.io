@@ -98,20 +98,20 @@ export const projects = [
 		id: "auto-updater",
 		number: "05",
 		name: "Auto Updater",
-		image: "/assets/project_images/placeholder.jpg",
-		imageMobile: "/assets/project_images/placeholder_mobile.jpg",
+		image: "/assets/project_images/auto_updater/regular_0.png",
+		imageMobile: "/assets/project_images/auto_updater/mobile_0.png",
 		tags: ["csharp", "unity", "networking"],
 		description:
 			"A cross-platform application launcher, installer and updater built in Unity. Originally a .NET WPF app, it was ported to Unity to ship on Windows, macOS and Linux, and uses Unity Remote Config to control update behaviour remotely without redeploying.",
 		images: [
-			"/assets/project_images/placeholder.jpg",
-			"/assets/project_images/placeholder.jpg",
-			"/assets/project_images/placeholder.jpg"
+			"/assets/project_images/auto_updater/regular_0.png",
+			"/assets/project_images/auto_updater/regular_1.png",
+			"/assets/project_images/auto_updater/regular_2.png"
 		],
 		imagesMobile: [
-			"/assets/project_images/placeholder_mobile.jpg",
-			"/assets/project_images/placeholder_mobile.jpg",
-			"/assets/project_images/placeholder_mobile.jpg"
+			"/assets/project_images/auto_updater/mobile_0.png",
+			"/assets/project_images/auto_updater/mobile_1.png",
+			"/assets/project_images/auto_updater/mobile_2.png"
 		],
 		link: "https://github.com/anir183/auto-updater.unity"
 	},
