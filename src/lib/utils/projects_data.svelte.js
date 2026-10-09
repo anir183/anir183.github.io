@@ -14,20 +14,20 @@ export const projects = [
 		id: "traffiq",
 		number: "01",
 		name: "traffIQ",
-		image: "/assets/project_images/placeholder.jpg",
-		imageMobile: "/assets/project_images/placeholder_mobile.jpg",
+		image: "/assets/project_images/traffiq/regular_0.png",
+		imageMobile: "/assets/project_images/traffiq/mobile_0.png",
 		tags: ["python", "computer vision", "anpr", "gis"],
 		description:
 			"A city-wide AI engine that links isolated CCTV and ANPR cameras into a unified vehicle-tracking and traffic-analytics platform. Computer-vision models identify vehicles at the edge, observations are correlated across cameras to reconstruct trajectories, and real-time and historical traffic insights are surfaced to operators. Built across successive Smart India Hackathon internal rounds.",
 		images: [
-			"/assets/project_images/placeholder.jpg",
-			"/assets/project_images/placeholder.jpg",
-			"/assets/project_images/placeholder.jpg"
+			"/assets/project_images/traffiq/regular_0.png",
+			"/assets/project_images/traffiq/regular_1.png",
+			"/assets/project_images/traffiq/regular_2.png"
 		],
 		imagesMobile: [
-			"/assets/project_images/placeholder_mobile.jpg",
-			"/assets/project_images/placeholder_mobile.jpg",
-			"/assets/project_images/placeholder_mobile.jpg"
+			"/assets/project_images/traffiq/mobile_0.png",
+			"/assets/project_images/traffiq/mobile_1.png",
+			"/assets/project_images/traffiq/mobile_2.png"
 		],
 		link: "https://github.com/anir183/traffIQ"
 	},
@@ -35,20 +35,20 @@ export const projects = [
 		id: "phisim",
 		number: "02",
 		name: "PhiSim",
-		image: "/assets/project_images/placeholder.jpg",
-		imageMobile: "/assets/project_images/placeholder_mobile.jpg",
+		image: "/assets/project_images/phisim/regular_0.png",
+		imageMobile: "/assets/project_images/phisim/mobile_0.png",
 		tags: ["python", "fastapi", "sqlite", "websockets"],
 		description:
 			"A local, self-contained phishing-awareness lab. Participants move through believable mailbox, messenger, marketplace and MFA experiences while an analyst console records safe, explainable telemetry. FastAPI backend with SQLite persistence, a live WebSocket event stream, and deterministic indicator analysis — no real email, SMS, credentials or outbound network calls.",
 		images: [
-			"/assets/project_images/placeholder.jpg",
-			"/assets/project_images/placeholder.jpg",
-			"/assets/project_images/placeholder.jpg"
+			"/assets/project_images/phisim/regular_0.png",
+			"/assets/project_images/phisim/regular_1.png",
+			"/assets/project_images/phisim/regular_2.png"
 		],
 		imagesMobile: [
-			"/assets/project_images/placeholder_mobile.jpg",
-			"/assets/project_images/placeholder_mobile.jpg",
-			"/assets/project_images/placeholder_mobile.jpg"
+			"/assets/project_images/phisim/mobile_0.png",
+			"/assets/project_images/phisim/mobile_1.png",
+			"/assets/project_images/phisim/mobile_2.png"
 		],
 		link: "https://github.com/anir183/phisim"
 	},
