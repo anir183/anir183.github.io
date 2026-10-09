@@ -13,6 +13,7 @@
 		applyCompletion
 	} from "$lib";
 	import { autoHideScrollbar } from "$lib/actions/scrollbar_hide.svelte.js";
+	import { SvelteMap } from "svelte/reactivity";
 
 	let {
 		/** @type {import("$lib/utils/socials_data.svelte.js").Social[]} */
@@ -570,7 +571,7 @@
 		"/home/guest/skills": { name: "Skills", hash: "#skills" }
 	};
 
-	const aliases = new Map();
+	const aliases = new SvelteMap();
 	const aliasRegex = /alias\s+([\w.]+)\s*=\s*'([^']*)'/g;
 	const bashrc = fs["/home/guest/.bashrc"];
 	if (bashrc && bashrc.type === "file" && typeof bashrc.content === "string") {
@@ -787,6 +788,7 @@ let isMobileDevice = $state(false);
 
 		if (cmd === "uptime") {
 			// @ts-ignore - __BUILD_TIME__ is replaced by Vite define at build time
+			// eslint-disable-next-line no-undef
 			addRichLine(segmentUptime(__BUILD_TIME__));
 			return;
 		}
@@ -1443,7 +1445,6 @@ let isMobileDevice = $state(false);
 			{:else}
 				<span class="shrink-0 text-c-accent-0">guest@portfolio-183:{promptDir}$</span>
 			{/if}
-			<!-- svelte-ignore a11y_click_events_have_key_events -->
 			<div
 				class="relative flex-1 self-stretch flex items-center"
 				role="presentation"
