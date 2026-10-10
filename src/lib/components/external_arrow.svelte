@@ -11,7 +11,7 @@
 </script>
 
 <svg
-	class={"inline-block shrink-0 align-[-0.25em] leading-none " + klass}
+	class={"inline-block shrink-0 align-[-0.15em] leading-none " + klass}
 	style={`width: ${size}; height: ${size}`}
 	viewBox="0 0 16 16"
 	fill="none"
