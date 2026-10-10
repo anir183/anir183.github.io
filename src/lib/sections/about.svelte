@@ -5,6 +5,7 @@
 		AboutScene,
 		AccentLink,
 		AnimatedHeading,
+		ExternalArrow,
 		createParallax,
 		aboutEntrySequence,
 		LG_BREAKPOINT
@@ -197,7 +198,7 @@
 				href="https://anir183.is-a.dev/blog"
 				class="-translate-x-3 px-3 py-1 font-c-unbounded text-xs max-sm:text-xs font-bold lg:text-sm"
 			>
-				Blog <span class="inline-block text-[1.3em] font-sans leading-none" aria-hidden>↗</span>
+				Blog <ExternalArrow size="1.15em" />
 			</AccentLink>
 		</div>
 	</div>

@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from "svelte";
 	import { gsap } from "gsap";
+	import { ExternalArrow } from "$lib";
 
 	let {
 		pageLinks = [
@@ -213,7 +214,7 @@
 						target={link.external ? "_blank" : undefined}
 						rel={link.external ? "noopener noreferrer" : undefined}
 						class="transition-colors hover:text-c-accent-0/75"
-					>{link.label} {#if link.external}<span class="inline-block text-[1.1em] font-sans leading-none" aria-hidden>↗</span>{/if}</a
+					>{link.label} {#if link.external}<ExternalArrow />{/if}</a
 					>
 				{/each}
 			</div>

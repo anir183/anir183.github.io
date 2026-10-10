@@ -4,6 +4,7 @@
 	import { browser } from "$app/environment";
 	import { fade, fly } from "svelte/transition";
 	import {
+		ExternalArrow,
 		theme,
 		themes,
 		toggleTheme,
@@ -126,7 +127,7 @@
 						class="absolute inset-0 translate-y-full -skew-x-6 bg-c-accent-0 transition-transform duration-[400ms] ease-out group-hover:translate-y-0"
 					></span>
 					<span class="relative z-10">
-						{item.label} {#if item.external}<span class="inline-block text-[1.1em] font-sans leading-none" aria-hidden>↗</span>{/if}
+						{item.label} {#if item.external}<ExternalArrow />{/if}
 					</span>
 				</span>
 			</a>
@@ -213,7 +214,7 @@
 								class="absolute inset-0 translate-y-full -skew-x-6 bg-c-accent-0 transition-transform duration-[400ms] ease-out group-hover:translate-y-0"
 							></span>
 							<span class="relative z-10">
-								{item.label} {#if item.external}<span class="inline-block text-[1.1em] font-sans leading-none" aria-hidden>↗</span>{/if}
+								{item.label} {#if item.external}<ExternalArrow />{/if}
 							</span>
 						</span>
 					</a>
