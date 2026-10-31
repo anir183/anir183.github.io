@@ -20,6 +20,8 @@
 	let queuedImage = null;
 	/** @type {number} */
 	let paintVersion = 0;
+	/** @type {Set<HTMLImageElement>} */
+	const webpProbes = new Set();
 
 	/** @type {Array<{el: HTMLDivElement, front: HTMLDivElement | null, rear: HTMLDivElement | null, tint: Element[], col: number, row: number}>} */
 	let tileMeta = [];
@@ -158,24 +160,36 @@
 		const version = ++paintVersion;
 		const webpUrl = webpSrc(image);
 
-		tileMeta.forEach((t) => {
-			const target = face === "front" ? t.front : t.rear;
-			if (!target) return;
-			target.style.backgroundImage = `url("${image}")`;
-			target.style.backgroundSize = `${bgW}px ${bgH}px`;
-			target.style.backgroundPosition = `-${t.col * w + offsetX}px -${t.row * h + offsetY}px`;
-		});
-
-		const preloader = new Image();
-		preloader.onload = () => {
-			if (version !== paintVersion) return;
+		/** @param {string} url */
+		const applyBackground = (url) => {
 			tileMeta.forEach((t) => {
 				const target = face === "front" ? t.front : t.rear;
 				if (!target) return;
-				target.style.backgroundImage = `url("${webpUrl}")`;
+				target.style.backgroundImage = `url("${url}")`;
+				target.style.backgroundSize = `${bgW}px ${bgH}px`;
+				target.style.backgroundPosition = `-${t.col * w + offsetX}px -${t.row * h + offsetY}px`;
 			});
 		};
-		preloader.src = webpUrl;
+
+		// Prefer the webp: it is the same URL the hidden <Picture> <img>
+		// already fetches, so this is usually a cache hit — and it avoids
+		// downloading the much larger PNG on the happy path.
+		applyBackground(webpUrl);
+
+		if (webpUrl !== image) {
+			// Keep a reference while the probe is in flight: an unreferenced
+			// Image can be garbage-collected before its error event fires,
+			// which would skip the PNG fallback.
+			const probe = new Image();
+			webpProbes.add(probe);
+			probe.onload = () => webpProbes.delete(probe);
+			probe.onerror = () => {
+				webpProbes.delete(probe);
+				if (version !== paintVersion) return;
+				applyBackground(image);
+			};
+			probe.src = webpUrl;
+		}
 	}
 
 	/**
