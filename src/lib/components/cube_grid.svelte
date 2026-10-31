@@ -2,6 +2,7 @@
 	import { onMount, tick } from "svelte";
 	import { gsap } from "gsap";
 	import { staggerRotateTiles, webpSrc } from "$lib";
+	import { getImageDimensions as getStaticImageDimensions } from "$lib/utils/image-dimensions.js";
 
 	let { activeImage = null, entryActive = $bindable(true) } = $props();
 
@@ -99,6 +100,12 @@
 	}
 
 	/**
+	 * Natural size of an image. Falls back to the build-time dimensions
+	 * manifest (`src/lib/generated/image-dimensions.json`) so the first
+	 * paint never depends on the hidden <img> having finished loading —
+	 * on a cold/slow connection it usually hasn't, which used to leave
+	 * the grid transparent until a project was clicked.
+	 *
 	 * @param {string} src
 	 * @returns {{ w: number, h: number } | null}
 	 */
@@ -107,7 +114,7 @@
 		if (el && el.complete && el.naturalWidth) {
 			return { w: el.naturalWidth, h: el.naturalHeight };
 		}
-		return null;
+		return getStaticImageDimensions(src);
 	}
 
 	/**
@@ -121,7 +128,16 @@
 		const fullH = rows * h;
 
 		const dims = getImageDimensions(image);
-		if (!dims) return;
+		if (!dims) {
+			// Not in the dimensions manifest (e.g. an image added without
+			// running the build pipeline). Retry once it has loaded, but
+			// never overwrite a newer paint that happened in the meantime.
+			const token = paintVersion;
+			ensureImageLoaded(image).then((ok) => {
+				if (ok && token === paintVersion) paintFaces(image, face);
+			});
+			return;
+		}
 		const imgAspect = dims.w / dims.h;
 		const gridAspect = fullW / fullH;
 
