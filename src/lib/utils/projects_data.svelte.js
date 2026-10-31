@@ -32,8 +32,29 @@ export const projects = [
 		link: "https://github.com/anir183/traffIQ"
 	},
 	{
-		id: "phisim",
+		id: "casesync",
 		number: "02",
+		name: "CaseSync",
+		image: "/assets/project_images/casesync/regular_0.png",
+		imageMobile: "/assets/project_images/casesync/mobile_0.png",
+		tags: ["typescript", "react", "elysia", "mongodb"],
+		description:
+			"AICTE complaint-management platform that consolidates institution-related cases scattered across bureaus and cells into a single source of truth. Officials get a full case registry with lifecycle, ownership and an append-only audit trail, while exact and fuzzy matching surface cross-bureau overlaps for human-reviewed coordination. SLA tracking, reports and a verified public complainant portal round it out.",
+		images: [
+			"/assets/project_images/casesync/regular_0.png",
+			"/assets/project_images/casesync/regular_1.png",
+			"/assets/project_images/casesync/regular_2.png"
+		],
+		imagesMobile: [
+			"/assets/project_images/casesync/mobile_0.png",
+			"/assets/project_images/casesync/mobile_1.png",
+			"/assets/project_images/casesync/mobile_2.png"
+		],
+		link: "https://github.com/anir183/casesync"
+	},
+	{
+		id: "phisim",
+		number: "03",
 		name: "PhiSim",
 		image: "/assets/project_images/phisim/regular_0.png",
 		imageMobile: "/assets/project_images/phisim/mobile_0.png",
@@ -54,7 +75,7 @@ export const projects = [
 	},
 	{
 		id: "safe-ping",
-		number: "03",
+		number: "04",
 		name: "Safe Ping",
 		image: "/assets/project_images/safe_ping/regular_0.png",
 		imageMobile: "/assets/project_images/safe_ping/mobile_0.png",
@@ -75,7 +96,7 @@ export const projects = [
 	},
 	{
 		id: "showtime-hub",
-		number: "04",
+		number: "05",
 		name: "Showtime Hub",
 		image: "/assets/project_images/movie_booking/regular_0.png",
 		imageMobile: "/assets/project_images/movie_booking/mobile_0.png",
@@ -96,7 +117,7 @@ export const projects = [
 	},
 	{
 		id: "auto-updater",
-		number: "05",
+		number: "06",
 		name: "Auto Updater",
 		image: "/assets/project_images/auto_updater/regular_0.png",
 		imageMobile: "/assets/project_images/auto_updater/mobile_0.png",
@@ -117,7 +138,7 @@ export const projects = [
 	},
 	{
 		id: "shebs",
-		number: "06",
+		number: "07",
 		name: "SHEBS",
 		image: "/assets/project_images/shebs/regular_0.png",
 		imageMobile: "/assets/project_images/shebs/mobile_0.png",
@@ -138,7 +159,7 @@ export const projects = [
 	},
 	{
 		id: "cognify",
-		number: "07",
+		number: "08",
 		name: "Cognify",
 		image: "/assets/project_images/cognify/regular_0.png",
 		imageMobile: "/assets/project_images/cognify/mobile_0.png",
